@@ -4,7 +4,6 @@ services:
   hoc:
     build: .
     image: local/hoc:latest
-    command: --help
     volumes:
       - repositories:/repos
     ports:
