@@ -1,13 +1,10 @@
 #[macro_use]
 extern crate actix_web;
-extern crate badge;
-extern crate git2;
-extern crate openssl_probe;
-extern crate pretty_env_logger;
-extern crate structopt;
 
-use actix_web::{http::StatusCode, middleware, web, App, HttpResponse, HttpServer, ResponseError};
+use actix_web::{error, middleware, web, App, HttpResponse, HttpServer, ResponseError};
 use badge::{Badge, BadgeOptions};
+use bytes::Bytes;
+use futures::{unsync::mpsc, Stream};
 use git2::{Repository, ResetType};
 use std::{
     path::{Path, PathBuf},
@@ -17,6 +14,8 @@ use std::{
 use structopt::StructOpt;
 
 type State = Arc<String>;
+
+const INDEX: &str = include_str!("../static/index.html");
 
 #[derive(StructOpt, Debug)]
 struct Opt {
@@ -142,9 +141,11 @@ fn calculate_hoc(
         status: hoc.to_string(),
     };
     let badge = Badge::new(badge_opt)?;
-    Ok(HttpResponse::Ok()
-        .content_type("image/svg+xml")
-        .body(badge.to_svg()))
+
+    let (tx, rx_body) = mpsc::unbounded();
+    let _ = tx.unbounded_send(Bytes::from(badge.to_svg().as_bytes()));
+
+    Ok(HttpResponse::Ok().streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request"))))
 }
 
 fn github(
@@ -170,9 +171,10 @@ fn bitbucket(
 
 #[get("/")]
 fn index() -> HttpResponse {
-    HttpResponse::build(StatusCode::OK)
-        .content_type("text/html; charset=utf-8")
-        .body(include_str!("../static/index.html"))
+    let (tx, rx_body) = mpsc::unbounded();
+    let _ = tx.unbounded_send(Bytes::from(INDEX.as_bytes()));
+
+    HttpResponse::Ok().streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request")))
 }
 
 fn main() -> std::io::Result<()> {
