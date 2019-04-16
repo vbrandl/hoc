@@ -14,7 +14,7 @@ The API is as simple as
 https://<host>/<service>/<user>/<repo>
 ```
 
-where `<service` is one of `gitub`, `gitlab` or `bitbucket`.
+where `<service>` is one of `gitub`, `gitlab` or `bitbucket`.
 
 
 ## TODO
