@@ -130,8 +130,9 @@ fn github(
     let file = Path::new(&path);
     if !file.exists() {
         Repository::clone(&format!("https://{}", gh_path), file)?;
+    } else {
+        pull(&path)?;
     }
-    pull(&path)?;
     let hoc = hoc(&path)?;
     let badge_opt = BadgeOptions {
         subject: "Hits-of-Code".to_string(),
