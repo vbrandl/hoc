@@ -1,3 +1,4 @@
+#[macro_use]
 extern crate actix_web;
 extern crate badge;
 extern crate git2;
@@ -5,7 +6,7 @@ extern crate openssl_probe;
 extern crate pretty_env_logger;
 extern crate structopt;
 
-use actix_web::{middleware, web, App, HttpResponse, HttpServer, ResponseError};
+use actix_web::{http::StatusCode, middleware, web, App, HttpResponse, HttpServer, ResponseError};
 use badge::{Badge, BadgeOptions};
 use git2::{Repository, ResetType};
 use std::{
@@ -167,6 +168,13 @@ fn bitbucket(
     calculate_hoc("bitbucket.org", state, data)
 }
 
+#[get("/")]
+fn index() -> HttpResponse {
+    HttpResponse::build(StatusCode::OK)
+        .content_type("text/html; charset=utf-8")
+        .body(include_str!("../static/index.html"))
+}
+
 fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     pretty_env_logger::init();
@@ -178,6 +186,7 @@ fn main() -> std::io::Result<()> {
         App::new()
             .data(state.clone())
             .wrap(middleware::Logger::default())
+            .service(index)
             .service(web::resource("/github/{user}/{repo}").to(github))
             .service(web::resource("/gitlab/{user}/{repo}").to(gitlab))
             .service(web::resource("/bitbucket/{user}/{repo}").to(bitbucket))
