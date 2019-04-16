@@ -18,5 +18,5 @@ where `<service` is one of `gitub`, `gitlab` or `bitbucket`.
 ## TODO
 
 * [ ] Customization of badges (e.g. colors)
-* [X] Support other platforms beside GitHub (GitLab and Bitbucket)
+* [x] Support other platforms beside GitHub (GitLab and Bitbucket)
 * [ ] Allow exclusion of certain files/globs from the HoC count
