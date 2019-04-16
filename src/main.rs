@@ -48,7 +48,7 @@ impl std::fmt::Display for Error {
         match self {
             Error::Git(e) => write!(fmt, "Git({})", e),
             Error::Io(e) => write!(fmt, "Io({})", e),
-            Error::Badge(s) => write!(fmt, "Basge({})", s),
+            Error::Badge(s) => write!(fmt, "Badge({})", s),
             Error::Internal => write!(fmt, "Internal"),
         }
     }
@@ -121,15 +121,16 @@ fn hoc(repo: &str) -> Result<u64, Error> {
     Ok(res)
 }
 
-fn github(
+fn calculate_hoc(
+    service: &str,
     state: web::Data<State>,
     data: web::Path<(String, String)>,
 ) -> Result<HttpResponse, Error> {
-    let gh_path = format!("github.com/{}/{}", data.0, data.1);
-    let path = format!("{}/{}", *state, gh_path);
+    let service_path = format!("{}/{}/{}", service, data.0, data.1);
+    let path = format!("{}/{}", *state, service_path);
     let file = Path::new(&path);
     if !file.exists() {
-        Repository::clone(&format!("https://{}", gh_path), file)?;
+        Repository::clone(&format!("https://{}", service_path), file)?;
     } else {
         pull(&path)?;
     }
@@ -145,6 +146,27 @@ fn github(
         .body(badge.to_svg()))
 }
 
+fn github(
+    state: web::Data<State>,
+    data: web::Path<(String, String)>,
+) -> Result<HttpResponse, Error> {
+    calculate_hoc("github.com", state, data)
+}
+
+fn gitlab(
+    state: web::Data<State>,
+    data: web::Path<(String, String)>,
+) -> Result<HttpResponse, Error> {
+    calculate_hoc("gitlab.com", state, data)
+}
+
+fn bitbucket(
+    state: web::Data<State>,
+    data: web::Path<(String, String)>,
+) -> Result<HttpResponse, Error> {
+    calculate_hoc("bitbucket.org", state, data)
+}
+
 fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     pretty_env_logger::init();
@@ -157,6 +179,8 @@ fn main() -> std::io::Result<()> {
             .data(state.clone())
             .wrap(middleware::Logger::default())
             .service(web::resource("/github/{user}/{repo}").to(github))
+            .service(web::resource("/gitlab/{user}/{repo}").to(gitlab))
+            .service(web::resource("/bitbucket/{user}/{repo}").to(bitbucket))
     })
     .bind(interface)?
     .run()
