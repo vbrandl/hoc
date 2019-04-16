@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hits-of-Code Badges</title>
+</head>
+<body>
+
+<h1>Hits-of-Code Badges</h1>
+
+<div>
+This API offers badges for the Hits-of-Code metric for your repositories. This metric was proposed by
+<a href="https://www.yegor256.com/">Yegor Bugayenko</a> as an
+<a href="https://www.yegor256.com/2014/11/14/hits-of-code.html">alternative to Lines-of-Code</a>.
+</div>
+
+<p />
+
+<div>
+Instead of counting the number of existing lines in a codebase, the number of modified lines is counted. That way, the
+metric can only grow and never shrink. While this metric still cannot give any information about the code quality, it
+gives an overview about the amount of work put into a codebase.
+</div>
+
+<p />
+
+<div>
+There is a <a href="https://github.com/yegor256/hoc/">command-line tool</a> to calculate the HoC of a repository, but
+some people might want a nice badge to put in their README, that's why I implemented this API. Currently the API can be
+used for GitHub, GitLab and Bitbucket repositories. Just put the following code in your README:
+
+<code>
+<pre>
+        ![Hits-of-Code](https://hoc.oldsql.cc/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
+</pre>
+</code>
+
+where <code>&lt;service&gt;</code> is one of <code>github</code>, <code>gitlab</code> or <code>bitbucket</code>. So the
+following Markdown
+
+<code>
+<pre>
+        ![Hits-of-Code](https://hoc.oldsql.cc/github/vbrandl/elm-chess)
+</pre>
+</code>
+
+would render this badge:
+
+<code>
+<pre>
+        <img src="https://hoc.oldsql.cc/github/vbrandl/elm-chess" />
+</pre>
+</code>
+</div>
+
+<h2>Source Code</h2>
+
+<div>
+The whole service is licensed under the <a href="https://opensource.org/licenses/MIT">MIT license</a> and the source
+code <a href="https://github.com/vbrandl/hoc">can be found on GitHub</a>. Feature proposals or pull requests are
+welcome.
+</div>
+
+<h2>Contact</h2>
+
+<div>
+You can reach me via mail: <a href="mailto:mail+hoc@vbrandl.net">mail+hoc@vbrandl.net</a> preferably using
+my <a href="https://mirror.oldsql.cc/key.asc">GPG key</a>
+(<a href="pool.sks-keyservers.net/pks/lookup?op=get&search=0x1FFE431282F4B8CC0A7579167FB009175885FC76">from a
+    keyserver</a>), or by using any other UID from my key.
+</div>
+
+</body>
+</html>
