@@ -125,10 +125,11 @@ fn github(
     state: web::Data<State>,
     data: web::Path<(String, String)>,
 ) -> Result<HttpResponse, Error> {
-    let path = format!("{}/github.com/{}/{}", *state, data.0, data.1);
+    let gh_path = format!("github.com/{}/{}", data.0, data.1);
+    let path = format!("{}/{}", *state, gh_path);
     let file = Path::new(&path);
     if !file.exists() {
-        Repository::clone(&format!("https://{}", path), file)?;
+        Repository::clone(&format!("https://{}", gh_path), file)?;
     }
     pull(&path)?;
     let hoc = hoc(&path)?;
