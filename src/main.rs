@@ -145,7 +145,9 @@ fn calculate_hoc(
     let (tx, rx_body) = mpsc::unbounded();
     let _ = tx.unbounded_send(Bytes::from(badge.to_svg().as_bytes()));
 
-    Ok(HttpResponse::Ok().streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request"))))
+    Ok(HttpResponse::Ok()
+        .content_type("image/svg+xml")
+        .streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request"))))
 }
 
 fn github(
