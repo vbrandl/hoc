@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  hoc:
+    build: .
+    image: local/hoc:latest
+    command: --help
+    volumes:
+      - repositories:/repos
+    ports:
+      - "127.0.0.1:8080:8080"
+
+volumes:
+  repositories:
