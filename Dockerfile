@@ -20,4 +20,5 @@ RUN cargo build --release
 
 FROM alpine:latest
 
+RUN apk --no-cache add --update git
 COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/hoc /hoc
