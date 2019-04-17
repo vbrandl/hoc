@@ -16,6 +16,7 @@ use structopt::StructOpt;
 type State = Arc<String>;
 
 const INDEX: &str = include_str!("../static/index.html");
+const CSS: &str = include_str!("../static/tacit-css.min.css");
 
 #[derive(StructOpt, Debug)]
 struct Opt {
@@ -181,6 +182,16 @@ fn index() -> HttpResponse {
         .streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request")))
 }
 
+#[get("/tacit-css.min.css")]
+fn css() -> HttpResponse {
+    let (tx, rx_body) = mpsc::unbounded();
+    let _ = tx.unbounded_send(Bytes::from(CSS.as_bytes()));
+
+    HttpResponse::Ok()
+        .content_type("text/css")
+        .streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request")))
+}
+
 fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     pretty_env_logger::init();
@@ -193,6 +204,7 @@ fn main() -> std::io::Result<()> {
             .data(state.clone())
             .wrap(middleware::Logger::default())
             .service(index)
+            .service(css)
             .service(web::resource("/github/{user}/{repo}").to(github))
             .service(web::resource("/gitlab/{user}/{repo}").to(gitlab))
             .service(web::resource("/bitbucket/{user}/{repo}").to(bitbucket))

@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="tacit-css.min.css"/>
     <title>Hits-of-Code Badges</title>
 </head>
 <body>
@@ -25,32 +26,32 @@ gives an overview about the amount of work put into a codebase.
 <p />
 
 <div>
+<p>
 There is a <a href="https://github.com/yegor256/hoc/">command-line tool</a> to calculate the HoC of a repository, but
 some people might want a nice badge to put in their README, that's why I implemented this API. Currently the API can be
 used for GitHub, GitLab and Bitbucket repositories. Just put the following code in your README:
 
-<code>
 <pre>
-        ![Hits-of-Code](https://hoc.oldsql.cc/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
+![Hits-of-Code](https://hoc.oldsql.cc/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
 </pre>
-</code>
+</p>
 
+<p>
 where <code>&lt;service&gt;</code> is one of <code>github</code>, <code>gitlab</code> or <code>bitbucket</code>. So the
 following Markdown
 
-<code>
 <pre>
-        ![Hits-of-Code](https://hoc.oldsql.cc/github/vbrandl/elm-chess)
+![Hits-of-Code](https://hoc.oldsql.cc/github/vbrandl/elm-chess)
 </pre>
-</code>
+</p>
 
+<p>
 would render this badge:
 
-<code>
 <pre>
-        <img src="https://hoc.oldsql.cc/github/vbrandl/elm-chess" />
+<img src="https://hoc.oldsql.cc/github/vbrandl/elm-chess" />
 </pre>
-</code>
+</p>
 </div>
 
 <h2>Source Code</h2>
