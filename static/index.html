@@ -10,48 +10,44 @@
 <h1>Hits-of-Code Badges</h1>
 
 <div>
+<p>
 This API offers badges for the Hits-of-Code metric for your repositories. This metric was proposed by
 <a href="https://www.yegor256.com/">Yegor Bugayenko</a> as an
 <a href="https://www.yegor256.com/2014/11/14/hits-of-code.html">alternative to Lines-of-Code</a>.
-</div>
+</p>
 
-<p />
-
-<div>
-Instead of counting the number of existing lines in a codebase, the number of modified lines is counted. That way, the
+<p>
+    Instead of counting the number of existing lines in a codebase, the number of modified lines is counted. That way, the
 metric can only grow and never shrink. While this metric still cannot give any information about the code quality, it
 gives an overview about the amount of work put into a codebase.
-</div>
+</p>
 
-<p />
-
-<div>
 <p>
 There is a <a href="https://github.com/yegor256/hoc/">command-line tool</a> to calculate the HoC of a repository, but
 some people might want a nice badge to put in their README, that's why I implemented this API. Currently the API can be
 used for GitHub, GitLab and Bitbucket repositories. Just put the following code in your README:
+</p>
 
 <pre>
 ![Hits-of-Code](https://hoc.oldsql.cc/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
 </pre>
-</p>
 
 <p>
 where <code>&lt;service&gt;</code> is one of <code>github</code>, <code>gitlab</code> or <code>bitbucket</code>. So the
 following Markdown
+</p>
 
 <pre>
 ![Hits-of-Code](https://hoc.oldsql.cc/github/vbrandl/elm-chess)
 </pre>
-</p>
 
 <p>
 would render this badge:
+</p>
 
 <pre>
 <img src="https://hoc.oldsql.cc/github/vbrandl/elm-chess" />
 </pre>
-</p>
 </div>
 
 <h2>Source Code</h2>
