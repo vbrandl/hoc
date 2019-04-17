@@ -176,7 +176,9 @@ fn index() -> HttpResponse {
     let (tx, rx_body) = mpsc::unbounded();
     let _ = tx.unbounded_send(Bytes::from(INDEX.as_bytes()));
 
-    HttpResponse::Ok().streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request")))
+    HttpResponse::Ok()
+        .content_type("text/html")
+        .streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request")))
 }
 
 fn main() -> std::io::Result<()> {
