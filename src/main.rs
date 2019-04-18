@@ -1,7 +1,11 @@
 #[macro_use]
 extern crate actix_web;
 
-use actix_web::{error, http, middleware, web, App, HttpResponse, HttpServer, ResponseError};
+use actix_web::{
+    error,
+    http::{self, header::Expires},
+    middleware, web, App, HttpResponse, HttpServer, ResponseError,
+};
 use badge::{Badge, BadgeOptions};
 use bytes::Bytes;
 use futures::{unsync::mpsc, Stream};
@@ -10,6 +14,7 @@ use std::{
     path::{Path, PathBuf},
     process::Command,
     sync::Arc,
+    time::{Duration, SystemTime},
 };
 use structopt::StructOpt;
 
@@ -146,8 +151,10 @@ fn calculate_hoc(
     let (tx, rx_body) = mpsc::unbounded();
     let _ = tx.unbounded_send(Bytes::from(badge.to_svg().as_bytes()));
 
+    let expiration = SystemTime::now() + Duration::from_secs(60);
     Ok(HttpResponse::Ok()
         .content_type("image/svg+xml")
+        .set(Expires(expiration.into()))
         .streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request"))))
 }
 
