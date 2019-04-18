@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate actix_web;
 
-use actix_web::{error, middleware, web, App, HttpResponse, HttpServer, ResponseError};
+use actix_web::{error, http, middleware, web, App, HttpResponse, HttpServer, ResponseError};
 use badge::{Badge, BadgeOptions};
 use bytes::Bytes;
 use futures::{unsync::mpsc, Stream};
@@ -172,6 +172,12 @@ fn bitbucket(
     calculate_hoc("bitbucket.org", state, data)
 }
 
+fn overview(_: web::Path<(String, String)>) -> HttpResponse {
+    HttpResponse::TemporaryRedirect()
+        .header(http::header::LOCATION, "/")
+        .finish()
+}
+
 #[get("/")]
 fn index() -> HttpResponse {
     let (tx, rx_body) = mpsc::unbounded();
@@ -208,6 +214,9 @@ fn main() -> std::io::Result<()> {
             .service(web::resource("/github/{user}/{repo}").to(github))
             .service(web::resource("/gitlab/{user}/{repo}").to(gitlab))
             .service(web::resource("/bitbucket/{user}/{repo}").to(bitbucket))
+            .service(web::resource("/view/github/{user}/{repo}").to(overview))
+            .service(web::resource("/view/gitlab/{user}/{repo}").to(overview))
+            .service(web::resource("/view/github/{user}/{repo}").to(overview))
     })
     .bind(interface)?
     .run()
