@@ -3,7 +3,10 @@ extern crate actix_web;
 
 use actix_web::{
     error,
-    http::{self, header::Expires},
+    http::{
+        self,
+        header::{CacheControl, CacheDirective, Expires},
+    },
     middleware, web, App, HttpResponse, HttpServer, ResponseError,
 };
 use badge::{Badge, BadgeOptions};
@@ -151,10 +154,16 @@ fn calculate_hoc(
     let (tx, rx_body) = mpsc::unbounded();
     let _ = tx.unbounded_send(Bytes::from(badge.to_svg().as_bytes()));
 
-    let expiration = SystemTime::now() + Duration::from_secs(60);
+    let expiration = SystemTime::now() + Duration::from_secs(30);
     Ok(HttpResponse::Ok()
         .content_type("image/svg+xml")
         .set(Expires(expiration.into()))
+        .set(CacheControl(vec![
+            CacheDirective::MaxAge(0u32),
+            CacheDirective::MustRevalidate,
+            CacheDirective::NoCache,
+            CacheDirective::NoStore,
+        ]))
         .streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request"))))
 }
 
