@@ -4,8 +4,8 @@
 [![Docker build](https://img.shields.io/docker/cloud/build/vbrandl/hits-of-code.svg)](https://hub.docker.com/r/vbrandl/hits-of-code)
 
 Small webservice, that returns a badge of the Hits-of-Code of a git repository, as described by [Yegor
-Bugayenko](https://www.yegor256.com/2014/11/14/hits-of-code.html). Currently only GitHub repositories are supported, but
-it can be trivially extended to support other platforms such as GitLab or Bitbucket.
+Bugayenko](https://www.yegor256.com/2014/11/14/hits-of-code.html). It is implemented in
+[Rust](https://www.rust-lang.org/), using the [actix-web](https://actix.rs/) web framework.
 
 A live version of this API can be found on [hitsofcode.com](https://hitsofcode.com/).
 
