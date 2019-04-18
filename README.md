@@ -1,7 +1,7 @@
 # Hits-of-Code
 
 ![Hits-of-Code](https://hitsofcode.com/github/vbrandl/hoc)
-![[Docker build](https://img.shields.io/docker/cloud/build/vbrandl/hits-of-code.svg)](https://hub.docker.com/r/vbrandl/hits-of-code)
+[![Docker build](https://img.shields.io/docker/cloud/build/vbrandl/hits-of-code.svg)](https://hub.docker.com/r/vbrandl/hits-of-code)
 
 Small webservice, that returns a badge of the Hits-of-Code of a git repository, as described by [Yegor
 Bugayenko](https://www.yegor256.com/2014/11/14/hits-of-code.html). Currently only GitHub repositories are supported, but
