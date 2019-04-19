@@ -2,19 +2,23 @@ use actix_web::{HttpResponse, ResponseError};
 
 #[derive(Debug)]
 pub(crate) enum Error {
-    Git(git2::Error),
-    Io(std::io::Error),
     Badge(String),
+    Git(git2::Error),
+    Internal,
+    Io(std::io::Error),
     ParseColor,
+    Serial(serde_json::Error),
 }
 
 impl std::fmt::Display for Error {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Error::Git(e) => write!(fmt, "Git({})", e),
-            Error::Io(e) => write!(fmt, "Io({})", e),
             Error::Badge(s) => write!(fmt, "Badge({})", s),
+            Error::Git(e) => write!(fmt, "Git({})", e),
+            Error::Internal => write!(fmt, "Internal Error"),
+            Error::Io(e) => write!(fmt, "Io({})", e),
             Error::ParseColor => write!(fmt, "Parse error"),
+            Error::Serial(e) => write!(fmt, "Serial({})", e),
         }
     }
 }
@@ -42,5 +46,11 @@ impl From<git2::Error> for Error {
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Self {
         Error::Io(err)
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(err: serde_json::Error) -> Self {
+        Error::Serial(err)
     }
 }
