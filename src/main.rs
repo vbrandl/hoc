@@ -1,12 +1,15 @@
 #[macro_use]
 extern crate actix_web;
+extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
 
+mod cache;
 mod color;
 mod error;
 
 use crate::{
+    cache::CacheState,
     color::{ColorKind, ToCode},
     error::Error,
 };
@@ -32,7 +35,10 @@ use std::{
 };
 use structopt::StructOpt;
 
-type State = Arc<String>;
+struct State {
+    repos: String,
+    cache: String,
+}
 
 const INDEX: &str = include_str!("../static/index.html");
 const CSS: &str = include_str!("../static/tacit-css.min.css");
@@ -47,6 +53,14 @@ struct Opt {
     )]
     /// Path to store cloned repositories
     outdir: PathBuf,
+    #[structopt(
+        short = "c",
+        long = "cachedir",
+        parse(from_os_str),
+        default_value = "./cache"
+    )]
+    /// Path to store cache
+    cachedir: PathBuf,
     #[structopt(short = "p", long = "port", default_value = "8080")]
     /// Port to listen on
     port: u16,
@@ -67,25 +81,46 @@ fn pull(path: impl AsRef<Path>) -> Result<(), Error> {
     Ok(())
 }
 
-fn hoc(repo: &str) -> Result<u64, Error> {
+fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<u64, Error> {
+    let repo_dir = format!("{}/{}", repo_dir, repo);
+    let cache_dir = format!("{}/{}.json", cache_dir, repo);
+    let cache_dir = Path::new(&cache_dir);
+    let head = format!(
+        "{}",
+        Repository::open_bare(&repo_dir)?
+            .head()?
+            .target()
+            .ok_or(Error::Internal)?
+    );
+    let mut arg = vec![
+        "log".to_string(),
+        "--pretty=tformat:".to_string(),
+        "--numstat".to_string(),
+        "--ignore-space-change".to_string(),
+        "--ignore-all-space".to_string(),
+        "--ignore-submodules".to_string(),
+        "--no-color".to_string(),
+        "--find-copies-harder".to_string(),
+        "-M".to_string(),
+        "--diff-filter=ACDM".to_string(),
+    ];
+    let cache = CacheState::read_from_file(&cache_dir, &head)?;
+    match &cache {
+        CacheState::Current(res) => return Ok(*res),
+        CacheState::Old(cache) => {
+            arg.push(format!("{}..HEAD", cache.head));
+        }
+        CacheState::No => {}
+    };
+    arg.push("--".to_string());
+    arg.push(".".to_string());
     let output = Command::new("git")
-        .arg("log")
-        .arg("--pretty=tformat:")
-        .arg("--numstat")
-        .arg("--ignore-space-change")
-        .arg("--ignore-all-space")
-        .arg("--ignore-submodules")
-        .arg("--no-color")
-        .arg("--find-copies-harder")
-        .arg("-M")
-        .arg("--diff-filter=ACDM")
-        .arg("--")
-        .arg(".")
-        .current_dir(repo)
+        .args(&arg)
+        .current_dir(&repo_dir)
         .output()?
         .stdout;
     let output = String::from_utf8_lossy(&output);
-    let res: u64 = output
+    let count: u64 = output
         .lines()
         .map(|s| {
             s.split_whitespace()
@@ -96,17 +131,20 @@ fn hoc(repo: &str) -> Result<u64, Error> {
         })
         .sum();
 
-    Ok(res)
+    let cache = cache.calculate_new_cache(count, head);
+    cache.write_to_file(cache_dir)?;
+
+    Ok(cache.count)
 }
 
 fn calculate_hoc(
     service: &str,
-    state: web::Data<State>,
+    state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
     color: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse, Error> {
     let service_path = format!("{}/{}/{}", service, data.0, data.1);
-    let path = format!("{}/{}", *state, service_path);
+    let path = format!("{}/{}", state.repos, service_path);
     let file = Path::new(&path);
     if !file.exists() {
         create_dir_all(file)?;
@@ -115,7 +153,7 @@ fn calculate_hoc(
         repo.remote_set_url("origin", &format!("https://{}", service_path))?;
     }
     pull(&path)?;
-    let hoc = hoc(&path)?;
+    let hoc = hoc(&service_path, &state.repos, &state.cache)?;
     let color = color
         .into_inner()
         .color
@@ -146,7 +184,7 @@ fn calculate_hoc(
 }
 
 fn github(
-    state: web::Data<State>,
+    state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
     color: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse, Error> {
@@ -154,7 +192,7 @@ fn github(
 }
 
 fn gitlab(
-    state: web::Data<State>,
+    state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
     color: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse, Error> {
@@ -162,7 +200,7 @@ fn gitlab(
 }
 
 fn bitbucket(
-    state: web::Data<State>,
+    state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
     color: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse, Error> {
@@ -229,7 +267,10 @@ fn main() -> std::io::Result<()> {
     openssl_probe::init_ssl_cert_env_vars();
     let opt = Opt::from_args();
     let interface = format!("{}:{}", opt.host, opt.port);
-    let state = Arc::new(opt.outdir.display().to_string());
+    let state = Arc::new(State {
+        repos: opt.outdir.display().to_string(),
+        cache: opt.cachedir.display().to_string(),
+    });
     HttpServer::new(move || {
         App::new()
             .data(state.clone())
