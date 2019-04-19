@@ -49,7 +49,7 @@ $ docker run -it --rm vbrandl/hits-of-code --help
 
 ## TODO
 
-* [ ] Customization of badges (e.g. colors)
+* [x] Customization of badges (e.g. colors)
 * [x] Support other platforms beside GitHub (GitLab and Bitbucket)
 * [ ] Allow exclusion of certain files/globs from the HoC count
 
