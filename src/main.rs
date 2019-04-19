@@ -103,6 +103,7 @@ fn calculate_hoc(
     service: &str,
     state: web::Data<State>,
     data: web::Path<(String, String)>,
+    color: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse, Error> {
     let service_path = format!("{}/{}/{}", service, data.0, data.1);
     let path = format!("{}/{}", *state, service_path);
@@ -115,9 +116,15 @@ fn calculate_hoc(
     }
     pull(&path)?;
     let hoc = hoc(&path)?;
+    let color = color
+        .into_inner()
+        .color
+        .map(|s| ColorKind::try_from(s.as_str()))
+        .and_then(Result::ok)
+        .unwrap_or_default();
     let badge_opt = BadgeOptions {
         subject: "Hits-of-Code".to_string(),
-        color: "#44CC11".to_string(),
+        color: color.to_code(),
         status: hoc.to_string(),
     };
     let badge = Badge::new(badge_opt)?;
@@ -135,28 +142,59 @@ fn calculate_hoc(
             CacheDirective::NoCache,
             CacheDirective::NoStore,
         ]))
-        .streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request"))))
+        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
 }
 
 fn github(
     state: web::Data<State>,
     data: web::Path<(String, String)>,
+    color: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse, Error> {
-    calculate_hoc("github.com", state, data)
+    calculate_hoc("github.com", state, data, color)
 }
 
 fn gitlab(
     state: web::Data<State>,
     data: web::Path<(String, String)>,
+    color: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse, Error> {
-    calculate_hoc("gitlab.com", state, data)
+    calculate_hoc("gitlab.com", state, data, color)
 }
 
 fn bitbucket(
     state: web::Data<State>,
     data: web::Path<(String, String)>,
+    color: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse, Error> {
-    calculate_hoc("bitbucket.org", state, data)
+    calculate_hoc("bitbucket.org", state, data, color)
+}
+
+#[get("/badge")]
+fn badge_example(col: web::Query<BadgeQuery>) -> Result<HttpResponse, Error> {
+    let col = col.into_inner();
+    let color = col
+        .color
+        .clone()
+        .map(|s| ColorKind::try_from(s.as_str()))
+        .transpose()?
+        // .and_then(Result::ok)
+        .unwrap_or_default();
+    let badge_opt = BadgeOptions {
+        subject: "Hits-of-Code".to_string(),
+        color: color.to_code(),
+        status: col.color.unwrap_or_else(|| "success".to_string()),
+    };
+    let badge = Badge::new(badge_opt)?;
+
+    let (tx, rx_body) = mpsc::unbounded();
+    let _ = tx.unbounded_send(Bytes::from(badge.to_svg().as_bytes()));
+
+    let expiration = SystemTime::now() + Duration::from_secs(60 * 60 * 24 * 365);
+    Ok(HttpResponse::Ok()
+        .content_type("image/svg+xml")
+        .set(Expires(expiration.into()))
+        .set(CacheControl(vec![CacheDirective::Public]))
+        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
 }
 
 fn overview(_: web::Path<(String, String)>) -> HttpResponse {
@@ -172,7 +210,7 @@ fn index() -> HttpResponse {
 
     HttpResponse::Ok()
         .content_type("text/html")
-        .streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request")))
+        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request")))
 }
 
 #[get("/tacit-css.min.css")]
@@ -182,7 +220,7 @@ fn css() -> HttpResponse {
 
     HttpResponse::Ok()
         .content_type("text/css")
-        .streaming(rx_body.map_err(|_| error::ErrorBadRequest("bad request")))
+        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request")))
 }
 
 fn main() -> std::io::Result<()> {
@@ -198,6 +236,7 @@ fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .service(index)
             .service(css)
+            .service(badge_example)
             .service(web::resource("/github/{user}/{repo}").to(github))
             .service(web::resource("/gitlab/{user}/{repo}").to(gitlab))
             .service(web::resource("/bitbucket/{user}/{repo}").to(bitbucket))
