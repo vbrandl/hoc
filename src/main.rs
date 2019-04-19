@@ -1,19 +1,29 @@
 #[macro_use]
 extern crate actix_web;
+#[macro_use]
+extern crate serde_derive;
 
+mod color;
+mod error;
+
+use crate::{
+    color::{ColorKind, ToCode},
+    error::Error,
+};
 use actix_web::{
-    error,
+    error::ErrorBadRequest,
     http::{
         self,
         header::{CacheControl, CacheDirective, Expires},
     },
-    middleware, web, App, HttpResponse, HttpServer, ResponseError,
+    middleware, web, App, HttpResponse, HttpServer,
 };
 use badge::{Badge, BadgeOptions};
 use bytes::Bytes;
 use futures::{unsync::mpsc, Stream};
 use git2::Repository;
 use std::{
+    convert::TryFrom,
     fs::create_dir_all,
     path::{Path, PathBuf},
     process::Command,
@@ -45,47 +55,9 @@ struct Opt {
     host: String,
 }
 
-#[derive(Debug)]
-enum Error {
-    Git(git2::Error),
-    Io(std::io::Error),
-    Badge(String),
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Error::Git(e) => write!(fmt, "Git({})", e),
-            Error::Io(e) => write!(fmt, "Io({})", e),
-            Error::Badge(s) => write!(fmt, "Badge({})", s),
-        }
-    }
-}
-
-impl ResponseError for Error {
-    fn error_response(&self) -> HttpResponse {
-        HttpResponse::InternalServerError().finish()
-    }
-}
-
-impl std::error::Error for Error {}
-
-impl From<String> for Error {
-    fn from(s: String) -> Self {
-        Error::Badge(s)
-    }
-}
-
-impl From<git2::Error> for Error {
-    fn from(err: git2::Error) -> Self {
-        Error::Git(err)
-    }
-}
-
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Self {
-        Error::Io(err)
-    }
+#[derive(Debug, Deserialize)]
+struct BadgeQuery {
+    color: Option<String>,
 }
 
 fn pull(path: impl AsRef<Path>) -> Result<(), Error> {
