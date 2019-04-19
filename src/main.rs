@@ -12,8 +12,9 @@ use actix_web::{
 use badge::{Badge, BadgeOptions};
 use bytes::Bytes;
 use futures::{unsync::mpsc, Stream};
-use git2::{Repository, ResetType};
+use git2::Repository;
 use std::{
+    fs::create_dir_all,
     path::{Path, PathBuf},
     process::Command,
     sync::Arc,
@@ -49,7 +50,6 @@ enum Error {
     Git(git2::Error),
     Io(std::io::Error),
     Badge(String),
-    Internal,
 }
 
 impl std::fmt::Display for Error {
@@ -58,7 +58,6 @@ impl std::fmt::Display for Error {
             Error::Git(e) => write!(fmt, "Git({})", e),
             Error::Io(e) => write!(fmt, "Io({})", e),
             Error::Badge(s) => write!(fmt, "Badge({})", s),
-            Error::Internal => write!(fmt, "Internal"),
         }
     }
 }
@@ -90,12 +89,10 @@ impl From<std::io::Error> for Error {
 }
 
 fn pull(path: impl AsRef<Path>) -> Result<(), Error> {
-    let repo = Repository::open(path)?;
+    let repo = Repository::open_bare(path)?;
     let mut origin = repo.find_remote("origin")?;
     origin.fetch(&["refs/heads/*:refs/heads/*"], None, None)?;
-    let head = repo.head()?.target().ok_or(Error::Internal)?;
-    let obj = repo.find_object(head, None)?;
-    Ok(repo.reset(&obj, ResetType::Hard, None)?)
+    Ok(())
 }
 
 fn hoc(repo: &str) -> Result<u64, Error> {
@@ -139,10 +136,12 @@ fn calculate_hoc(
     let path = format!("{}/{}", *state, service_path);
     let file = Path::new(&path);
     if !file.exists() {
-        Repository::clone(&format!("https://{}", service_path), file)?;
-    } else {
-        pull(&path)?;
+        create_dir_all(file)?;
+        let repo = Repository::init_bare(file)?;
+        repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
+        repo.remote_set_url("origin", &format!("https://{}", service_path))?;
     }
+    pull(&path)?;
     let hoc = hoc(&path)?;
     let badge_opt = BadgeOptions {
         subject: "Hits-of-Code".to_string(),
