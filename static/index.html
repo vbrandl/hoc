@@ -32,56 +32,62 @@ gives an overview about the amount of work put into a codebase.
 There is a <a href="https://github.com/yegor256/hoc/">command-line tool</a> to calculate the HoC of a repository, but
 some people might want a nice badge to put in their README, that's why I implemented this API. Currently the API can be
 used for GitHub, GitLab and Bitbucket repositories. Just put the following code in your README:
+</p>
 
 <pre>
 [![Hits-of-Code](https://hitsofcode.com/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)](https://hitsofcode.com/view/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
 </pre>
 
+<p>
 where <code>&lt;service&gt;</code> is one of <code>github</code>, <code>gitlab</code> or <code>bitbucket</code>. So the
 following Markdown
+</p>
 
 <pre>
 [![Hits-of-Code](https://hitsofcode.com/github/vbrandl/hoc)](https://hitsofcode.com/view/github/vbrandl/hoc)
 </pre>
 
+<p>
 would render this badge:
+</p>
 
 <pre>
-<a href="https://hitsofcode.com/view/github/vbrandl/hoc"><img src="https://hitsofcode.com/github/vbrandl/hoc" /></a>
+<a href="https://hitsofcode.com/view/github/vbrandl/hoc"><img src="https://hitsofcode.com/github/vbrandl/hoc"
+alt="example badge" /></a>
 </pre>
-</p>
 
 <h2>Colors</h2>
 
 <p>
 You can generate badges with custom colors via the <code>color</code> query parameter. The following predefined colors
 are supported:
+</p>
 
 <pre>
-<img src="/badge?color=brightgreen" />
-<img src="/badge?color=green" />
-<img src="/badge?color=yellowgreen" />
-<img src="/badge?color=yellow" />
-<img src="/badge?color=orange" />
-<img src="/badge?color=red" />
-<img src="/badge?color=blue" />
-<img src="/badge?color=lightgrey" />
+<img src="/badge?color=brightgreen" alt="brightgreen example badge" />
+<img src="/badge?color=green" alt="green example badge" />
+<img src="/badge?color=yellowgreen" alt="yellowgreen example badge" />
+<img src="/badge?color=yellow" alt="yellow example badge" />
+<img src="/badge?color=orange" alt="orange example badge" />
+<img src="/badge?color=red" alt="red example badge" />
+<img src="/badge?color=blue" alt="blue example badge" />
+<img src="/badge?color=lightgrey" alt="lightgrey example badge" />
 
-<img src="/badge?color=success" />
-<img src="/badge?color=important" />
-<img src="/badge?color=critical" />
-<img src="/badge?color=informational" />
-<img src="/badge?color=inactive" />
+<img src="/badge?color=success" alt="success example badge" />
+<img src="/badge?color=important" alt="important example badge" />
+<img src="/badge?color=critical" alt="critical example badge" />
+<img src="/badge?color=informational" alt="informational example badge" />
+<img src="/badge?color=inactive" alt="inactive example badge" />
 </pre>
-</p>
 
 <p>
 You can also pass HTML color codes:
+</p>
 
 <pre>
-<img src="/badge?color=ff69b4" /> <img src="/badge?color=9cf" />
+<img src="/badge?color=ff69b4" alt="long HTML color code example badge" /> <img src="/badge?color=9cf" alt="short HTML
+color code example badge" />
 </pre>
-</p>
 
 <h2>Source Code</h2>
 
