@@ -37,3 +37,6 @@ after_success: |
   bash <(curl -s https://codecov.io/bash) &&
   echo "Uploaded code coverage"
 
+notifications:
+  email:
+    on_failure: always
