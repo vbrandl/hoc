@@ -6,7 +6,6 @@ pub(crate) enum Error {
     Git(git2::Error),
     Internal,
     Io(std::io::Error),
-    ParseColor,
     Serial(serde_json::Error),
 }
 
@@ -17,7 +16,6 @@ impl std::fmt::Display for Error {
             Error::Git(e) => write!(fmt, "Git({})", e),
             Error::Internal => write!(fmt, "Internal Error"),
             Error::Io(e) => write!(fmt, "Io({})", e),
-            Error::ParseColor => write!(fmt, "Parse error"),
             Error::Serial(e) => write!(fmt, "Serial({})", e),
         }
     }
