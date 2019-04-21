@@ -30,6 +30,12 @@ impl ResponseError for Error {
             .content_type("text/html")
             .body(P500)
     }
+
+    fn render_response(&self) -> HttpResponse {
+        HttpResponse::InternalServerError()
+            .content_type("text/html")
+            .body(P500)
+    }
 }
 
 impl std::error::Error for Error {}
