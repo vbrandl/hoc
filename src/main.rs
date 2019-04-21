@@ -1,5 +1,8 @@
 #[macro_use]
 extern crate actix_web;
+#[macro_use]
+extern crate lazy_static;
+extern crate reqwest;
 extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
@@ -28,6 +31,10 @@ use std::{
     time::{Duration, SystemTime},
 };
 use structopt::StructOpt;
+
+lazy_static! {
+    static ref CLIENT: reqwest::Client = reqwest::Client::new();
+}
 
 struct State {
     repos: String,
@@ -128,6 +135,10 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<u64, Error> {
     Ok(cache.count)
 }
 
+fn remote_exists(url: &str) -> Result<bool, Error> {
+    Ok(CLIENT.head(url).send()?.status() == reqwest::StatusCode::OK)
+}
+
 fn calculate_hoc(
     service: &str,
     state: web::Data<Arc<State>>,
@@ -137,10 +148,14 @@ fn calculate_hoc(
     let path = format!("{}/{}", state.repos, service_path);
     let file = Path::new(&path);
     if !file.exists() {
+        let url = format!("https://{}", service_path);
+        if !remote_exists(&url)? {
+            return Ok(p404());
+        }
         create_dir_all(file)?;
         let repo = Repository::init_bare(file)?;
         repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
-        repo.remote_set_url("origin", &format!("https://{}", service_path))?;
+        repo.remote_set_url("origin", &url)?;
     }
     pull(&path)?;
     let hoc = hoc(&service_path, &state.repos, &state.cache)?;
@@ -211,7 +226,7 @@ fn css() -> HttpResponse {
 }
 
 fn main() -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "actix_web=info");
+    std::env::set_var("RUST_LOG", "actix_web=warn");
     pretty_env_logger::init();
     openssl_probe::init_ssl_cert_env_vars();
     let opt = Opt::from_args();
