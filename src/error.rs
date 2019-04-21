@@ -1,4 +1,6 @@
+use crate::P500;
 use actix_web::{HttpResponse, ResponseError};
+use std::fmt;
 
 #[derive(Debug)]
 pub(crate) enum Error {
@@ -9,8 +11,9 @@ pub(crate) enum Error {
     Serial(serde_json::Error),
 }
 
-impl std::fmt::Display for Error {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl fmt::Display for Error {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        // write!(fmt, "{}", P500)
         match self {
             Error::Badge(s) => write!(fmt, "Badge({})", s),
             Error::Git(e) => write!(fmt, "Git({})", e),
@@ -23,7 +26,9 @@ impl std::fmt::Display for Error {
 
 impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse {
-        HttpResponse::InternalServerError().finish()
+        HttpResponse::InternalServerError()
+            .content_type("text/html")
+            .body(P500)
     }
 }
 

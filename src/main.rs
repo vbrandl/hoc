@@ -35,6 +35,8 @@ struct State {
 }
 
 const INDEX: &str = include_str!("../static/index.html");
+const P404: &str = include_str!("../static/404.html");
+const P500: &str = include_str!("../static/500.html");
 const CSS: &str = include_str!("../static/tacit-css.min.css");
 
 #[derive(StructOpt, Debug)]
@@ -194,22 +196,18 @@ fn overview(_: web::Path<(String, String)>) -> HttpResponse {
 
 #[get("/")]
 fn index() -> HttpResponse {
-    let (tx, rx_body) = mpsc::unbounded();
-    let _ = tx.unbounded_send(Bytes::from(INDEX.as_bytes()));
+    HttpResponse::Ok().content_type("text/html").body(INDEX)
+}
 
-    HttpResponse::Ok()
+fn p404() -> HttpResponse {
+    HttpResponse::NotFound()
         .content_type("text/html")
-        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request")))
+        .body(P404)
 }
 
 #[get("/tacit-css.min.css")]
 fn css() -> HttpResponse {
-    let (tx, rx_body) = mpsc::unbounded();
-    let _ = tx.unbounded_send(Bytes::from(CSS.as_bytes()));
-
-    HttpResponse::Ok()
-        .content_type("text/css")
-        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request")))
+    HttpResponse::Ok().content_type("text/css").body(CSS)
 }
 
 fn main() -> std::io::Result<()> {
@@ -234,6 +232,7 @@ fn main() -> std::io::Result<()> {
             .service(web::resource("/view/github/{user}/{repo}").to(overview))
             .service(web::resource("/view/gitlab/{user}/{repo}").to(overview))
             .service(web::resource("/view/github/{user}/{repo}").to(overview))
+            .default_service(web::resource("").route(web::get().to(p404)))
     })
     .bind(interface)?
     .run()
