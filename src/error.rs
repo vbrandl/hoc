@@ -5,6 +5,7 @@ use std::fmt;
 #[derive(Debug)]
 pub(crate) enum Error {
     Badge(String),
+    Client(reqwest::Error),
     Git(git2::Error),
     Internal,
     Io(std::io::Error),
@@ -13,9 +14,9 @@ pub(crate) enum Error {
 
 impl fmt::Display for Error {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        // write!(fmt, "{}", P500)
         match self {
             Error::Badge(s) => write!(fmt, "Badge({})", s),
+            Error::Client(e) => write!(fmt, "Client({})", e),
             Error::Git(e) => write!(fmt, "Git({})", e),
             Error::Internal => write!(fmt, "Internal Error"),
             Error::Io(e) => write!(fmt, "Io({})", e),
@@ -61,5 +62,11 @@ impl From<std::io::Error> for Error {
 impl From<serde_json::Error> for Error {
     fn from(err: serde_json::Error) -> Self {
         Error::Serial(err)
+    }
+}
+
+impl From<reqwest::Error> for Error {
+    fn from(err: reqwest::Error) -> Self {
+        Error::Client(err)
     }
 }
