@@ -32,8 +32,28 @@ use std::{
 };
 use structopt::StructOpt;
 
+include!(concat!(env!("OUT_DIR"), "/templates.rs"));
+
+const COMMIT: &str = env!("VERGEN_SHA_SHORT");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 lazy_static! {
     static ref CLIENT: reqwest::Client = reqwest::Client::new();
+    static ref INDEX: Vec<u8> = {
+        let mut buf = Vec::new();
+        templates::index(&mut buf, COMMIT, VERSION).unwrap();
+        buf
+    };
+    static ref P404: Vec<u8> = {
+        let mut buf = Vec::new();
+        templates::p404(&mut buf, COMMIT, VERSION).unwrap();
+        buf
+    };
+    static ref P500: Vec<u8> = {
+        let mut buf = Vec::new();
+        templates::p500(&mut buf, COMMIT, VERSION).unwrap();
+        buf
+    };
 }
 
 struct State {
@@ -41,9 +61,6 @@ struct State {
     cache: String,
 }
 
-const INDEX: &str = include_str!("../static/index.html");
-const P404: &str = include_str!("../static/404.html");
-const P500: &str = include_str!("../static/500.html");
 const CSS: &str = include_str!("../static/tacit-css.min.css");
 
 #[derive(StructOpt, Debug)]
@@ -211,13 +228,15 @@ fn overview(_: web::Path<(String, String)>) -> HttpResponse {
 
 #[get("/")]
 fn index() -> HttpResponse {
-    HttpResponse::Ok().content_type("text/html").body(INDEX)
+    HttpResponse::Ok()
+        .content_type("text/html")
+        .body(INDEX.as_slice())
 }
 
 fn p404() -> HttpResponse {
     HttpResponse::NotFound()
         .content_type("text/html")
-        .body(P404)
+        .body(P404.as_slice())
 }
 
 #[get("/tacit-css.min.css")]

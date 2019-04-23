@@ -29,13 +29,13 @@ impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse {
         HttpResponse::InternalServerError()
             .content_type("text/html")
-            .body(P500)
+            .body(P500.as_slice())
     }
 
     fn render_response(&self) -> HttpResponse {
         HttpResponse::InternalServerError()
             .content_type("text/html")
-            .body(P500)
+            .body(P500.as_slice())
     }
 }
 
