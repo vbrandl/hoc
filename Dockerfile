@@ -28,6 +28,11 @@ RUN cargo build --release
 FROM alpine:latest
 
 RUN apk --no-cache add --update git
+
+# once we don't need a git binary anymore, this should be enough
+# FROM scratch
+# COPY --from=linuxkit/ca-certificates:v0.7 / /
+
 COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/hoc /hoc
 
 ENTRYPOINT ["/hoc"]
