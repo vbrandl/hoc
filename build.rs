@@ -9,5 +9,6 @@ fn main() {
     generate_cargo_keys(flags).expect("Unable to generate the cargo keys!");
     Ructe::from_env()
         .expect("ructe")
-        .compile_templates("templates");
+        .compile_templates("templates")
+        .unwrap();
 }
