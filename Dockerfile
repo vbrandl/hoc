@@ -14,6 +14,7 @@ RUN rm -r ./target/x86_64-unknown-linux-musl/release/.fingerprint/hoc-*
 COPY ./.git ./.git
 COPY ./static ./static
 COPY ./templates ./templates
+COPY ./build.rs ./build.rs
 COPY ./src ./src
 # build source code
 RUN cargo build --release
