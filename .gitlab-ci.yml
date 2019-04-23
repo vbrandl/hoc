@@ -39,6 +39,6 @@ release-tag:
     - docker push $CONTAINER_TAG_IMAGE
   only:
     - /^v\d+\.\d+\.\d+/
-  excect:
+  except:
     - branch
 
