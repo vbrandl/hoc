@@ -39,9 +39,10 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 lazy_static! {
     static ref CLIENT: reqwest::Client = reqwest::Client::new();
+    static ref OPT: Opt = Opt::from_args();
     static ref INDEX: Vec<u8> = {
         let mut buf = Vec::new();
-        templates::index(&mut buf, COMMIT, VERSION).unwrap();
+        templates::index(&mut buf, COMMIT, VERSION, &OPT.domain).unwrap();
         buf
     };
     static ref P404: Vec<u8> = {
@@ -87,6 +88,9 @@ struct Opt {
     #[structopt(short = "h", long = "host", default_value = "0.0.0.0")]
     /// Interface to listen on
     host: String,
+    #[structopt(short = "d", long = "domain", default_value = "hitsofcode.com")]
+    /// Interface to listen on
+    domain: String,
 }
 
 fn pull(path: impl AsRef<Path>) -> Result<(), Error> {
@@ -248,11 +252,10 @@ fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=warn");
     pretty_env_logger::init();
     openssl_probe::init_ssl_cert_env_vars();
-    let opt = Opt::from_args();
-    let interface = format!("{}:{}", opt.host, opt.port);
+    let interface = format!("{}:{}", OPT.host, OPT.port);
     let state = Arc::new(State {
-        repos: opt.outdir.display().to_string(),
-        cache: opt.cachedir.display().to_string(),
+        repos: OPT.outdir.display().to_string(),
+        cache: OPT.cachedir.display().to_string(),
     });
     HttpServer::new(move || {
         App::new()
