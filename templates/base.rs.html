@@ -1,0 +1,49 @@
+@(title: &str, header: &str, content: Content, commit: &str, version: &str)
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="Hits-of-Code, GitHub, Badge" />
+    <meta name="description" content="Hits-of-Code Badges for Git repositories" />
+    <link rel="stylesheet" href="tacit-css.min.css" />
+    <title>@title</title>
+</head>
+<body>
+
+<section>
+<header>
+    <h1>@header</h1>
+</header>
+
+<article>
+    @:content()
+</article>
+
+<footer>
+<nav>
+    <ul>
+        <li>
+            <small>Created by <a href="https://www.vbrandl.net">Valentin Brandl</a>.</small>
+        </li>
+    </ul>
+</nav>
+<nav>
+    <ul>
+        <li>
+            <small>HoC v@version - <a href="https://github.com/vbrandl/hoc/commit/@commit">@commit</a></small>
+        </li>
+    </ul>
+</nav>
+<nav>
+    <ul>
+        <li><small><a href="https://github.com/vbrandl/hoc">GitHub</a></small></li>
+        <li><small><a href="https://opensource.org/licenses/MIT">MIT License</a></small></li>
+    </ul>
+</nav>
+</footer>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+@use super::base;
+
+@(commit: &str, version: &str)
+
+@:base("Hits-of-Code Badges", "Hits-of-Code Badges", {
+
+<p>
+This API offers badges for the Hits-of-Code metric for your repositories. This metric was proposed by
+<a href="https://www.yegor256.com/">Yegor Bugayenko</a> as an
+<a href="https://www.yegor256.com/2014/11/14/hits-of-code.html">alternative to Lines-of-Code</a>.
+</p>
+
+<p>
+Instead of counting the number of existing lines in a codebase, the number of modified lines is counted. That way, the
+metric can only grow and never shrink. While this metric still cannot give any information about the code quality, it
+gives an overview about the amount of work put into a codebase.
+</p>
+
+<p>
+There is a <a href="https://github.com/yegor256/hoc/">command-line tool</a> to calculate the HoC of a repository, but
+some people might want a nice badge to put in their README, that's why I implemented this API. Currently the API can be
+used for GitHub, GitLab and Bitbucket repositories. Just put the following code in your README:
+</p>
+
+<pre>
+[![Hits-of-Code](https://hitsofcode.com/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)](https://hitsofcode.com/view/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
+</pre>
+
+<p>
+where <code>&lt;service&gt;</code> is one of <code>github</code>, <code>gitlab</code> or <code>bitbucket</code>. So the
+following Markdown
+</p>
+
+<pre>
+[![Hits-of-Code](https://hitsofcode.com/github/vbrandl/hoc)](https://hitsofcode.com/view/github/vbrandl/hoc)
+</pre>
+
+<p>
+would render this badge:
+</p>
+
+<pre>
+<a href="https://hitsofcode.com/view/github/vbrandl/hoc"><img src="https://hitsofcode.com/github/vbrandl/hoc"
+alt="example badge" /></a>
+</pre>
+
+<h2>Source Code</h2>
+
+<p>
+The whole service is licensed under the <a href="https://opensource.org/licenses/MIT">MIT license</a> and the source
+code <a href="https://github.com/vbrandl/hoc">can be found on GitHub</a>. Feature proposals or pull requests are
+welcome.
+</p>
+
+<h2>Contact</h2>
+
+<p>
+    You can reach me via mail: <a href="mailto:mail+hoc@@vbrandl.net">mail+hoc@@vbrandl.net</a> preferably using
+my <a href="https://mirror.oldsql.cc/key.asc">GPG key</a>
+(<a href="http://pool.sks-keyservers.net/pks/lookup?op=get&amp;search=0x1FFE431282F4B8CC0A7579167FB009175885FC76">from a
+    keyserver</a>), or by using any other UID from my key.
+</p>
+}, commit, version)

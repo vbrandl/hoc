@@ -1,0 +1,13 @@
+@use super::base;
+
+@(commit: &str, version: &str)
+
+@:base("Internal Server Error - Hits-of-Code Badges", "500 - Internal Server Error", {
+<p>
+<big>Oops</big>. Looks like a made a mistake. Please go <a href="/">back to the homepage</a> and try again.
+</p>
+
+<p>
+If you think, this is a bug, please <a href="mailto:mail+hoc@@vbrandl.net">drop me a mail</a>.
+</p>
+}, commit, version)
