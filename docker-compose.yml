@@ -2,8 +2,9 @@ version: "2"
 
 services:
   hoc:
-    build: .
-    image: local/hoc:latest
+    # build: .
+    # image: local/hoc:latest
+    image: registry.gitlab.com/vbrandl/hoc:latest
     volumes:
       - ./repos:/repos
       - ./cache:/cache
