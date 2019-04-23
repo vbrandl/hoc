@@ -19,6 +19,9 @@ before_script:
 build:
   stage: build
   script:
+    - docker pull $CONTAINER_TEST_IMAGE || true
+    - docker pull $CONTAINER_RELEASE_IMAGE || true
+    - docker pull $CONTAINER_TAG_IMAGE || true
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
