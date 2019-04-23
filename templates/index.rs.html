@@ -1,6 +1,6 @@
 @use super::base;
 
-@(commit: &str, version: &str)
+@(commit: &str, version: &str, domain: &str)
 
 @:base("Hits-of-Code Badges", "Hits-of-Code Badges", {
 
@@ -23,7 +23,7 @@ used for GitHub, GitLab and Bitbucket repositories. Just put the following code 
 </p>
 
 <pre>
-[![Hits-of-Code](https://hitsofcode.com/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)](https://hitsofcode.com/view/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
+[![Hits-of-Code](https://@domain/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)](https://@domain/view/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
 </pre>
 
 <p>
@@ -32,7 +32,7 @@ following Markdown
 </p>
 
 <pre>
-[![Hits-of-Code](https://hitsofcode.com/github/vbrandl/hoc)](https://hitsofcode.com/view/github/vbrandl/hoc)
+[![Hits-of-Code](https://@domain/github/vbrandl/hoc)](https://@domain/view/github/vbrandl/hoc)
 </pre>
 
 <p>
@@ -40,7 +40,7 @@ would render this badge:
 </p>
 
 <pre>
-<a href="https://hitsofcode.com/view/github/vbrandl/hoc"><img src="https://hitsofcode.com/github/vbrandl/hoc"
+<a href="https://@domain/view/github/vbrandl/hoc"><img src="https://@domain/github/vbrandl/hoc"
 alt="example badge" /></a>
 </pre>
 
