@@ -1,0 +1,50 @@
+image: docker:stable
+services:
+  - docker:dind
+
+stages:
+  - build
+  - release
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  CONTAINER_BUILDER_IMAGE: $CI_REGISTRY_IMAGE:builder-latest
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  CONTAINER_TAG_IMAGE: $CI_REGISTRY_IMAGE:${CI_COMMIT_TAG:1}
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+build:
+  stage: build
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE || true
+    - docker pull $CONTAINER_RELEASE_IMAGE || true
+    - docker pull $CONTAINER_TAG_IMAGE || true
+    - docker pull $CONTAINER_BUILDER_IMAGE || true
+    - docker build --pull -t $CONTAINER_BUILDER_IMAGE --target builder .
+    - docker build --pull -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
+
+release-image:
+  stage: release
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+  only:
+    - master
+
+release-tag:
+  stage: release
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_TAG_IMAGE
+  only:
+    - /^v\d+\.\d+\.\d+/
+  except:
+    - branch
+
