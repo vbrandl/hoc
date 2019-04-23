@@ -26,6 +26,7 @@ build:
     - docker pull $CONTAINER_BUILDER_IMAGE || true
     - docker build --pull -t $CONTAINER_BUILDER_IMAGE --target builder .
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_BUILDER_IMAGE
     - docker push $CONTAINER_TEST_IMAGE
 
 release-image:
