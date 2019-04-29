@@ -1,0 +1,18 @@
+@use super::base;
+
+@(commit: &str, version: &str, domain: &str, path: &str, url: &str, hoc: u64, head: &str, commit_url: &str)
+
+@:base("Hits-of-Code Badges", "Overview", {
+
+<p>
+The project at <a href="@url">@url</a> has <strong>@hoc</strong> hits of code at <a href="@commit_url">@head</a>.
+</p>
+
+<p>
+To include the badge in your readme, use the following markdown:
+</p>
+
+<pre>
+[![Hits-of-Code](https://@domain/@path)](https://@domain/view/@path)
+</pre>
+}, commit, version)
