@@ -9,14 +9,16 @@ extern crate serde_derive;
 
 mod cache;
 mod error;
+mod service;
 
-use crate::{cache::CacheState, error::Error};
+use crate::{
+    cache::CacheState,
+    error::Error,
+    service::{Bitbucket, GitHub, Gitlab, Service},
+};
 use actix_web::{
     error::ErrorBadRequest,
-    http::{
-        self,
-        header::{CacheControl, CacheDirective, Expires},
-    },
+    http::header::{CacheControl, CacheDirective, Expires},
     middleware, web, App, HttpResponse, HttpServer,
 };
 use badge::{Badge, BadgeOptions};
@@ -100,7 +102,7 @@ fn pull(path: impl AsRef<Path>) -> Result<(), Error> {
     Ok(())
 }
 
-fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<u64, Error> {
+fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String), Error> {
     let repo_dir = format!("{}/{}", repo_dir, repo);
     let cache_dir = format!("{}/{}.json", cache_dir, repo);
     let cache_dir = Path::new(&cache_dir);
@@ -125,7 +127,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<u64, Error> {
     ];
     let cache = CacheState::read_from_file(&cache_dir, &head)?;
     match &cache {
-        CacheState::Current(res) => return Ok(*res),
+        CacheState::Current(res) => return Ok((*res, head)),
         CacheState::Old(cache) => {
             arg.push(format!("{}..HEAD", cache.head));
         }
@@ -150,22 +152,21 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<u64, Error> {
         })
         .sum();
 
-    let cache = cache.calculate_new_cache(count, head);
+    let cache = cache.calculate_new_cache(count, (&head).into());
     cache.write_to_file(cache_dir)?;
 
-    Ok(cache.count)
+    Ok((cache.count, head))
 }
 
 fn remote_exists(url: &str) -> Result<bool, Error> {
     Ok(CLIENT.head(url).send()?.status() == reqwest::StatusCode::OK)
 }
 
-fn calculate_hoc(
-    service: &str,
+fn calculate_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
 ) -> Result<HttpResponse, Error> {
-    let service_path = format!("{}/{}/{}", service, data.0, data.1);
+    let service_path = format!("{}/{}/{}", T::domain(), data.0, data.1);
     let path = format!("{}/{}", state.repos, service_path);
     let file = Path::new(&path);
     if !file.exists() {
@@ -179,7 +180,7 @@ fn calculate_hoc(
         repo.remote_set_url("origin", &url)?;
     }
     pull(&path)?;
-    let hoc = hoc(&service_path, &state.repos, &state.cache)?;
+    let (hoc, _) = hoc(&service_path, &state.repos, &state.cache)?;
     let badge_opt = BadgeOptions {
         subject: "Hits-of-Code".to_string(),
         color: "#007ec6".to_string(),
@@ -203,31 +204,46 @@ fn calculate_hoc(
         .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
 }
 
-fn github(
+fn overview<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
 ) -> Result<HttpResponse, Error> {
-    calculate_hoc("github.com", state, data)
-}
+    let repo = format!("{}/{}", data.0, data.1);
+    let service_path = format!("{}/{}", T::domain(), repo);
+    let path = format!("{}/{}", state.repos, service_path);
+    let file = Path::new(&path);
+    let url = format!("https://{}", service_path);
+    if !file.exists() {
+        if !remote_exists(&url)? {
+            return Ok(p404());
+        }
+        create_dir_all(file)?;
+        let repo = Repository::init_bare(file)?;
+        repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
+        repo.remote_set_url("origin", &url)?;
+    }
+    pull(&path)?;
+    let (hoc, head) = hoc(&service_path, &state.repos, &state.cache)?;
+    let mut buf = Vec::new();
+    let req_path = format!("{}/{}/{}", T::url_path(), data.0, data.1);
+    templates::overview(
+        &mut buf,
+        COMMIT,
+        VERSION,
+        &OPT.domain,
+        &req_path,
+        &url,
+        hoc,
+        &head,
+        &T::commit_url(&repo, &head),
+    )?;
 
-fn gitlab(
-    state: web::Data<Arc<State>>,
-    data: web::Path<(String, String)>,
-) -> Result<HttpResponse, Error> {
-    calculate_hoc("gitlab.com", state, data)
-}
+    let (tx, rx_body) = mpsc::unbounded();
+    let _ = tx.unbounded_send(Bytes::from(buf));
 
-fn bitbucket(
-    state: web::Data<Arc<State>>,
-    data: web::Path<(String, String)>,
-) -> Result<HttpResponse, Error> {
-    calculate_hoc("bitbucket.org", state, data)
-}
-
-fn overview(_: web::Path<(String, String)>) -> HttpResponse {
-    HttpResponse::TemporaryRedirect()
-        .header(http::header::LOCATION, "/")
-        .finish()
+    Ok(HttpResponse::Ok()
+        .content_type("text/html")
+        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
 }
 
 #[get("/")]
@@ -263,12 +279,12 @@ fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .service(index)
             .service(css)
-            .service(web::resource("/github/{user}/{repo}").to(github))
-            .service(web::resource("/gitlab/{user}/{repo}").to(gitlab))
-            .service(web::resource("/bitbucket/{user}/{repo}").to(bitbucket))
-            .service(web::resource("/view/github/{user}/{repo}").to(overview))
-            .service(web::resource("/view/gitlab/{user}/{repo}").to(overview))
-            .service(web::resource("/view/github/{user}/{repo}").to(overview))
+            .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
+            .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
+            .service(web::resource("/bitbucket/{user}/{repo}").to(calculate_hoc::<Bitbucket>))
+            .service(web::resource("/view/github/{user}/{repo}").to(overview::<GitHub>))
+            .service(web::resource("/view/gitlab/{user}/{repo}").to(overview::<Gitlab>))
+            .service(web::resource("/view/bitbucket/{user}/{repo}").to(overview::<Bitbucket>))
             .default_service(web::resource("").route(web::get().to(p404)))
     })
     .bind(interface)?
