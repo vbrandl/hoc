@@ -9,6 +9,7 @@ extern crate serde_derive;
 
 mod cache;
 mod error;
+mod service;
 
 use crate::{cache::CacheState, error::Error};
 use actix_web::{
@@ -160,12 +161,11 @@ fn remote_exists(url: &str) -> Result<bool, Error> {
     Ok(CLIENT.head(url).send()?.status() == reqwest::StatusCode::OK)
 }
 
-fn calculate_hoc(
-    service: &str,
+fn calculate_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
 ) -> Result<HttpResponse, Error> {
-    let service_path = format!("{}/{}/{}", service, data.0, data.1);
+    let service_path = format!("{}/{}/{}", T::domain(), data.0, data.1);
     let path = format!("{}/{}", state.repos, service_path);
     let file = Path::new(&path);
     if !file.exists() {
@@ -263,12 +263,12 @@ fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .service(index)
             .service(css)
-            .service(web::resource("/github/{user}/{repo}").to(github))
-            .service(web::resource("/gitlab/{user}/{repo}").to(gitlab))
-            .service(web::resource("/bitbucket/{user}/{repo}").to(bitbucket))
-            .service(web::resource("/view/github/{user}/{repo}").to(overview))
-            .service(web::resource("/view/gitlab/{user}/{repo}").to(overview))
-            .service(web::resource("/view/github/{user}/{repo}").to(overview))
+            .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
+            .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
+            .service(web::resource("/bitbucket/{user}/{repo}").to(calculate_hoc::<Bitbucket>))
+            .service(web::resource("/view/github/{user}/{repo}").to(overview::<GitHub>))
+            .service(web::resource("/view/gitlab/{user}/{repo}").to(overview::<Gitlab>))
+            .service(web::resource("/view/bitbucket/{user}/{repo}").to(overview::<Bitbucket>))
             .default_service(web::resource("").route(web::get().to(p404)))
     })
     .bind(interface)?
