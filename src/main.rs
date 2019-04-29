@@ -100,7 +100,7 @@ fn pull(path: impl AsRef<Path>) -> Result<(), Error> {
     Ok(())
 }
 
-fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<u64, Error> {
+fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String), Error> {
     let repo_dir = format!("{}/{}", repo_dir, repo);
     let cache_dir = format!("{}/{}.json", cache_dir, repo);
     let cache_dir = Path::new(&cache_dir);
@@ -125,7 +125,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<u64, Error> {
     ];
     let cache = CacheState::read_from_file(&cache_dir, &head)?;
     match &cache {
-        CacheState::Current(res) => return Ok(*res),
+        CacheState::Current(res) => return Ok((*res, head)),
         CacheState::Old(cache) => {
             arg.push(format!("{}..HEAD", cache.head));
         }
@@ -150,10 +150,10 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<u64, Error> {
         })
         .sum();
 
-    let cache = cache.calculate_new_cache(count, head);
+    let cache = cache.calculate_new_cache(count, (&head).into());
     cache.write_to_file(cache_dir)?;
 
-    Ok(cache.count)
+    Ok((cache.count, head))
 }
 
 fn remote_exists(url: &str) -> Result<bool, Error> {
@@ -179,7 +179,7 @@ fn calculate_hoc(
         repo.remote_set_url("origin", &url)?;
     }
     pull(&path)?;
-    let hoc = hoc(&service_path, &state.repos, &state.cache)?;
+    let (hoc, _) = hoc(&service_path, &state.repos, &state.cache)?;
     let badge_opt = BadgeOptions {
         subject: "Hits-of-Code".to_string(),
         color: "#007ec6".to_string(),
