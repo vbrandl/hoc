@@ -36,25 +36,32 @@ use structopt::StructOpt;
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
-const COMMIT: &str = env!("VERGEN_SHA_SHORT");
-const VERSION: &str = env!("CARGO_PKG_VERSION");
+pub struct VersionInfo<'a> {
+    pub commit: &'a str,
+    pub version: &'a str,
+}
+
+const VERSION_INFO: VersionInfo = VersionInfo {
+    commit: env!("VERGEN_SHA_SHORT"),
+    version: env!("CARGO_PKG_VERSION"),
+};
 
 lazy_static! {
     static ref CLIENT: reqwest::Client = reqwest::Client::new();
     static ref OPT: Opt = Opt::from_args();
     static ref INDEX: Vec<u8> = {
         let mut buf = Vec::new();
-        templates::index(&mut buf, COMMIT, VERSION, &OPT.domain).unwrap();
+        templates::index(&mut buf, VERSION_INFO, &OPT.domain).unwrap();
         buf
     };
     static ref P404: Vec<u8> = {
         let mut buf = Vec::new();
-        templates::p404(&mut buf, COMMIT, VERSION).unwrap();
+        templates::p404(&mut buf, VERSION_INFO).unwrap();
         buf
     };
     static ref P500: Vec<u8> = {
         let mut buf = Vec::new();
-        templates::p500(&mut buf, COMMIT, VERSION).unwrap();
+        templates::p500(&mut buf, VERSION_INFO).unwrap();
         buf
     };
 }
@@ -228,8 +235,7 @@ fn overview<T: Service>(
     let req_path = format!("{}/{}/{}", T::url_path(), data.0, data.1);
     templates::overview(
         &mut buf,
-        COMMIT,
-        VERSION,
+        VERSION_INFO,
         &OPT.domain,
         &req_path,
         &url,
