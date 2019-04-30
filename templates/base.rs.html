@@ -1,4 +1,6 @@
-@(title: &str, header: &str, content: Content, commit: &str, version: &str)
+@use crate::VersionInfo;
+
+@(title: &str, header: &str, content: Content, version_info: VersionInfo)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +34,7 @@
 <nav>
     <ul>
         <li>
-            <small>HoC v@version - <a href="https://github.com/vbrandl/hoc/commit/@commit">@commit</a></small>
+            <small>HoC v@version_info.version - <a href="https://github.com/vbrandl/hoc/commit/@version_info.commit">@version_info.commit</a></small>
         </li>
     </ul>
 </nav>

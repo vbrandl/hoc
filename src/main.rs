@@ -2,8 +2,6 @@
 extern crate actix_web;
 #[macro_use]
 extern crate lazy_static;
-extern crate reqwest;
-extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
 
@@ -25,6 +23,7 @@ use badge::{Badge, BadgeOptions};
 use bytes::Bytes;
 use futures::{unsync::mpsc, Stream};
 use git2::Repository;
+use number_prefix::{NumberPrefix, Prefixed, Standalone};
 use std::{
     fs::create_dir_all,
     path::{Path, PathBuf},
@@ -36,25 +35,32 @@ use structopt::StructOpt;
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
-const COMMIT: &str = env!("VERGEN_SHA_SHORT");
-const VERSION: &str = env!("CARGO_PKG_VERSION");
+pub struct VersionInfo<'a> {
+    pub commit: &'a str,
+    pub version: &'a str,
+}
+
+const VERSION_INFO: VersionInfo = VersionInfo {
+    commit: env!("VERGEN_SHA_SHORT"),
+    version: env!("CARGO_PKG_VERSION"),
+};
 
 lazy_static! {
     static ref CLIENT: reqwest::Client = reqwest::Client::new();
     static ref OPT: Opt = Opt::from_args();
     static ref INDEX: Vec<u8> = {
         let mut buf = Vec::new();
-        templates::index(&mut buf, COMMIT, VERSION, &OPT.domain).unwrap();
+        templates::index(&mut buf, VERSION_INFO, &OPT.domain).unwrap();
         buf
     };
     static ref P404: Vec<u8> = {
         let mut buf = Vec::new();
-        templates::p404(&mut buf, COMMIT, VERSION).unwrap();
+        templates::p404(&mut buf, VERSION_INFO).unwrap();
         buf
     };
     static ref P500: Vec<u8> = {
         let mut buf = Vec::new();
-        templates::p500(&mut buf, COMMIT, VERSION).unwrap();
+        templates::p500(&mut buf, VERSION_INFO).unwrap();
         buf
     };
 }
@@ -181,10 +187,14 @@ fn calculate_hoc<T: Service>(
     }
     pull(&path)?;
     let (hoc, _) = hoc(&service_path, &state.repos, &state.cache)?;
+    let hoc = match NumberPrefix::decimal(hoc as f64) {
+        Standalone(hoc) => hoc.to_string(),
+        Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+    };
     let badge_opt = BadgeOptions {
         subject: "Hits-of-Code".to_string(),
         color: "#007ec6".to_string(),
-        status: hoc.to_string(),
+        status: hoc,
     };
     let badge = Badge::new(badge_opt)?;
 
@@ -224,16 +234,20 @@ fn overview<T: Service>(
     }
     pull(&path)?;
     let (hoc, head) = hoc(&service_path, &state.repos, &state.cache)?;
+    let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
+        Standalone(hoc) => hoc.to_string(),
+        Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+    };
     let mut buf = Vec::new();
     let req_path = format!("{}/{}/{}", T::url_path(), data.0, data.1);
     templates::overview(
         &mut buf,
-        COMMIT,
-        VERSION,
+        VERSION_INFO,
         &OPT.domain,
         &req_path,
         &url,
         hoc,
+        &hoc_pretty,
         &head,
         &T::commit_url(&repo, &head),
     )?;
