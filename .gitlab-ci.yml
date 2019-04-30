@@ -42,7 +42,7 @@ release-tag:
   stage: release
   script:
     - docker pull $CONTAINER_TEST_IMAGE
-    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_TAG_IMAGE
     - docker push $CONTAINER_TAG_IMAGE
   only:
     - /^v\d+\.\d+\.\d+/
