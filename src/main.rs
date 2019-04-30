@@ -3,6 +3,8 @@ extern crate actix_web;
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
+extern crate log;
+#[macro_use]
 extern crate serde_derive;
 
 mod cache;
@@ -133,11 +135,17 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String), Err
     ];
     let cache = CacheState::read_from_file(&cache_dir, &head)?;
     match &cache {
-        CacheState::Current(res) => return Ok((*res, head)),
+        CacheState::Current(res) => {
+            info!("Using cache for {}", repo_dir);
+            return Ok((*res, head));
+        }
         CacheState::Old(cache) => {
+            info!("Updating cache for {}", repo_dir);
             arg.push(format!("{}..HEAD", cache.head));
         }
-        CacheState::No => {}
+        CacheState::No => {
+            info!("Creating cache for {}", repo_dir);
+        }
     };
     arg.push("--".to_string());
     arg.push(".".to_string());
@@ -168,56 +176,34 @@ fn remote_exists(url: &str) -> Result<bool, Error> {
     Ok(CLIENT.head(url).send()?.status() == reqwest::StatusCode::OK)
 }
 
-fn calculate_hoc<T: Service>(
-    state: web::Data<Arc<State>>,
-    data: web::Path<(String, String)>,
-) -> Result<HttpResponse, Error> {
-    let service_path = format!("{}/{}/{}", T::domain(), data.0, data.1);
-    let path = format!("{}/{}", state.repos, service_path);
-    let file = Path::new(&path);
-    if !file.exists() {
-        let url = format!("https://{}", service_path);
-        if !remote_exists(&url)? {
-            return Ok(p404());
-        }
-        create_dir_all(file)?;
-        let repo = Repository::init_bare(file)?;
-        repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
-        repo.remote_set_url("origin", &url)?;
-    }
-    pull(&path)?;
-    let (hoc, _) = hoc(&service_path, &state.repos, &state.cache)?;
-    let hoc = match NumberPrefix::decimal(hoc as f64) {
-        Standalone(hoc) => hoc.to_string(),
-        Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
-    };
-    let badge_opt = BadgeOptions {
-        subject: "Hits-of-Code".to_string(),
-        color: "#007ec6".to_string(),
-        status: hoc,
-    };
-    let badge = Badge::new(badge_opt)?;
-
-    let (tx, rx_body) = mpsc::unbounded();
-    let _ = tx.unbounded_send(Bytes::from(badge.to_svg().as_bytes()));
-
-    let expiration = SystemTime::now() + Duration::from_secs(30);
-    Ok(HttpResponse::Ok()
-        .content_type("image/svg+xml")
-        .set(Expires(expiration.into()))
-        .set(CacheControl(vec![
-            CacheDirective::MaxAge(0u32),
-            CacheDirective::MustRevalidate,
-            CacheDirective::NoCache,
-            CacheDirective::NoStore,
-        ]))
-        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
+enum HocResult {
+    Hoc {
+        hoc: u64,
+        hoc_pretty: String,
+        head: String,
+        url: String,
+        repo: String,
+        service_path: String,
+    },
+    NotFound,
 }
 
-fn overview<T: Service>(
+fn handle_hoc_request<T, F>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> Result<HttpResponse, Error> {
+    mapper: F,
+) -> Result<HttpResponse, Error>
+where
+    T: Service,
+    F: Fn(HocResult) -> Result<HttpResponse, Error>,
+{
+    hoc_request::<T>(state, data).and_then(mapper)
+}
+
+fn hoc_request<T: Service>(
+    state: web::Data<Arc<State>>,
+    data: web::Path<(String, String)>,
+) -> Result<HocResult, Error> {
     let repo = format!("{}/{}", data.0, data.1);
     let service_path = format!("{}/{}", T::domain(), repo);
     let path = format!("{}/{}", state.repos, service_path);
@@ -225,8 +211,10 @@ fn overview<T: Service>(
     let url = format!("https://{}", service_path);
     if !file.exists() {
         if !remote_exists(&url)? {
-            return Ok(p404());
+            warn!("Repository does not exist: {}", url);
+            return Ok(HocResult::NotFound);
         }
+        info!("Cloning {} for the first time", url);
         create_dir_all(file)?;
         let repo = Repository::init_bare(file)?;
         repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
@@ -238,26 +226,85 @@ fn overview<T: Service>(
         Standalone(hoc) => hoc.to_string(),
         Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
     };
-    let mut buf = Vec::new();
-    let req_path = format!("{}/{}/{}", T::url_path(), data.0, data.1);
-    templates::overview(
-        &mut buf,
-        VERSION_INFO,
-        &OPT.domain,
-        &req_path,
-        &url,
+    Ok(HocResult::Hoc {
         hoc,
-        &hoc_pretty,
-        &head,
-        &T::commit_url(&repo, &head),
-    )?;
+        hoc_pretty,
+        head,
+        url,
+        repo,
+        service_path,
+    })
+}
 
-    let (tx, rx_body) = mpsc::unbounded();
-    let _ = tx.unbounded_send(Bytes::from(buf));
+fn calculate_hoc<T: Service>(
+    state: web::Data<Arc<State>>,
+    data: web::Path<(String, String)>,
+) -> Result<HttpResponse, Error> {
+    let mapper = |r| match r {
+        HocResult::NotFound => Ok(p404()),
+        HocResult::Hoc { hoc_pretty, .. } => {
+            let badge_opt = BadgeOptions {
+                subject: "Hits-of-Code".to_string(),
+                color: "#007ec6".to_string(),
+                status: hoc_pretty,
+            };
+            let badge = Badge::new(badge_opt)?;
 
-    Ok(HttpResponse::Ok()
-        .content_type("text/html")
-        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
+            let (tx, rx_body) = mpsc::unbounded();
+            let _ = tx.unbounded_send(Bytes::from(badge.to_svg().as_bytes()));
+
+            let expiration = SystemTime::now() + Duration::from_secs(30);
+            Ok(HttpResponse::Ok()
+                .content_type("image/svg+xml")
+                .set(Expires(expiration.into()))
+                .set(CacheControl(vec![
+                    CacheDirective::MaxAge(0u32),
+                    CacheDirective::MustRevalidate,
+                    CacheDirective::NoCache,
+                    CacheDirective::NoStore,
+                ]))
+                .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
+        }
+    };
+    handle_hoc_request::<T, _>(state, data, mapper)
+}
+
+fn overview<T: Service>(
+    state: web::Data<Arc<State>>,
+    data: web::Path<(String, String)>,
+) -> Result<HttpResponse, Error> {
+    let mapper = |r| match r {
+        HocResult::NotFound => Ok(p404()),
+        HocResult::Hoc {
+            hoc,
+            hoc_pretty,
+            url,
+            head,
+            repo,
+            service_path,
+        } => {
+            let mut buf = Vec::new();
+            templates::overview(
+                &mut buf,
+                VERSION_INFO,
+                &OPT.domain,
+                &service_path,
+                &url,
+                hoc,
+                &hoc_pretty,
+                &head,
+                &T::commit_url(&repo, &head),
+            )?;
+
+            let (tx, rx_body) = mpsc::unbounded();
+            let _ = tx.unbounded_send(Bytes::from(buf));
+
+            Ok(HttpResponse::Ok()
+                .content_type("text/html")
+                .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
+        }
+    };
+    handle_hoc_request::<T, _>(state, data, mapper)
 }
 
 #[get("/")]
@@ -279,7 +326,7 @@ fn css() -> HttpResponse {
 }
 
 fn main() -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "actix_web=warn");
+    std::env::set_var("RUST_LOG", "actix_web=info,hoc=info");
     pretty_env_logger::init();
     openssl_probe::init_ssl_cert_env_vars();
     let interface = format!("{}:{}", OPT.host, OPT.port);
