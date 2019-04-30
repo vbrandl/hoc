@@ -1,6 +1,7 @@
 @use super::base;
+@use crate::VersionInfo;
 
-@(commit: &str, version: &str)
+@(version_info: VersionInfo)
 
 @:base("Page not Found - Hits-of-Code Badges", "404 - Page not Found", {
 <p>
@@ -10,4 +11,4 @@
 <p>
 If you think, this is a mistake on my side, please <a href="mailto:mail+hoc@@vbrandl.net">drop me a mail</a>.
 </p>
-}, commit, version)
+}, version_info)

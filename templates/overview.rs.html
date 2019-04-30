@@ -1,11 +1,12 @@
 @use super::base;
+@use crate::VersionInfo;
 
-@(commit: &str, version: &str, domain: &str, path: &str, url: &str, hoc: u64, head: &str, commit_url: &str)
+@(version_info: VersionInfo, domain: &str, path: &str, url: &str, hoc: u64, hoc_pretty: &str, head: &str, commit_url: &str)
 
 @:base("Hits-of-Code Badges", "Overview", {
 
 <p>
-The project at <a href="@url">@url</a> has <strong>@hoc</strong> hits of code at <a href="@commit_url">@head</a>.
+The project <a href="@url">@url</a> has <strong>@hoc_pretty</strong> (exactly @hoc) hits of code at <a href="@commit_url">@head</a>.
 </p>
 
 <p>
@@ -15,4 +16,4 @@ To include the badge in your readme, use the following markdown:
 <pre>
 [![Hits-of-Code](https://@domain/@path)](https://@domain/view/@path)
 </pre>
-}, commit, version)
+}, version_info)

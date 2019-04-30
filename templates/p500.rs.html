@@ -1,6 +1,7 @@
 @use super::base;
+@use crate::VersionInfo;
 
-@(commit: &str, version: &str)
+@(version_info: VersionInfo)
 
 @:base("Internal Server Error - Hits-of-Code Badges", "500 - Internal Server Error", {
 <p>
@@ -10,4 +11,4 @@
 <p>
 If you think, this is a bug, please <a href="mailto:mail+hoc@@vbrandl.net">drop me a mail</a>.
 </p>
-}, commit, version)
+}, version_info)
