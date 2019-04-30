@@ -204,7 +204,7 @@ fn hoc_request<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
 ) -> Result<HocResult, Error> {
-    let repo = format!("{}/{}", data.0, data.1);
+    let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
     let service_path = format!("{}/{}", T::domain(), repo);
     let path = format!("{}/{}", state.repos, service_path);
     let file = Path::new(&path);
