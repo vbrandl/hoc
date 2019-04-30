@@ -25,6 +25,7 @@ use badge::{Badge, BadgeOptions};
 use bytes::Bytes;
 use futures::{unsync::mpsc, Stream};
 use git2::Repository;
+use number_prefix::{NumberPrefix, Prefixed, Standalone};
 use std::{
     fs::create_dir_all,
     path::{Path, PathBuf},
@@ -188,10 +189,14 @@ fn calculate_hoc<T: Service>(
     }
     pull(&path)?;
     let (hoc, _) = hoc(&service_path, &state.repos, &state.cache)?;
+    let hoc = match NumberPrefix::decimal(hoc as f64) {
+        Standalone(hoc) => hoc.to_string(),
+        Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+    };
     let badge_opt = BadgeOptions {
         subject: "Hits-of-Code".to_string(),
         color: "#007ec6".to_string(),
-        status: hoc.to_string(),
+        status: hoc,
     };
     let badge = Badge::new(badge_opt)?;
 
@@ -231,6 +236,10 @@ fn overview<T: Service>(
     }
     pull(&path)?;
     let (hoc, head) = hoc(&service_path, &state.repos, &state.cache)?;
+    let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
+        Standalone(hoc) => hoc.to_string(),
+        Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+    };
     let mut buf = Vec::new();
     let req_path = format!("{}/{}/{}", T::url_path(), data.0, data.1);
     templates::overview(
@@ -240,6 +249,7 @@ fn overview<T: Service>(
         &req_path,
         &url,
         hoc,
+        &hoc_pretty,
         &head,
         &T::commit_url(&repo, &head),
     )?;
