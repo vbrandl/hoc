@@ -6,5 +6,5 @@ steps:
     image: ekidd/rust-musl-builder
     commands:
       - sudo chown -R rust .
-      - cargo test
-      - cargo build
+      - cargo test --release
+      - cargo build --release
