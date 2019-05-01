@@ -7,3 +7,4 @@ steps:
     commands:
       - cargo test
       - cargo build
+
