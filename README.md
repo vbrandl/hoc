@@ -48,12 +48,6 @@ $ docker run -it --rm vbrandl/hits-of-code --help
 ```
 
 
-## TODO
-
-* [x] Customization of badges (e.g. colors)
-* [x] Support other platforms beside GitHub (GitLab and Bitbucket)
-* [ ] Allow exclusion of certain files/globs from the HoC count
-
 ## License
 
 `hoc` is licensed under the MIT License ([LICENSE](LICENSE) or http://opensource.org/licenses/MIT)
