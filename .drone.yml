@@ -6,13 +6,8 @@ steps:
     image: plugins/docker
     settings:
       repo: vbrandl/hits-of-code
+      auto_tag: true
       username:
         from_secret: docker_username
       password:
         from_secret: docker_password
-  # - name: build
-  #   image: ekidd/rust-musl-builder
-  #   commands:
-  #     - sudo chown -R rust .
-  #     - cargo test --release
-  #     - cargo build --release
