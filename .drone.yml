@@ -1,3 +1,4 @@
+---
 kind: pipeline
 name: build
 
@@ -14,3 +15,8 @@ steps:
     ref:
       - refs/heads/master
       - refs/tags/v*
+---
+kind: signature
+hmac: 36c14cd35c5abe274025760c9ca34f198d392be0c31435ad58cb9ecaa0abef2a
+
+...
