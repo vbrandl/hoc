@@ -3,6 +3,7 @@
 [![Hits-of-Code](https://hitsofcode.com/github/vbrandl/hoc)](https://hitsofcode.com/view/github/vbrandl/hoc)
 [![Docker build](https://img.shields.io/docker/cloud/build/vbrandl/hits-of-code.svg)](https://hub.docker.com/r/vbrandl/hits-of-code)
 [![Gitlab build](https://gitlab.com/vbrandl/hoc/badges/master/pipeline.svg)](https://gitlab.com/vbrandl/hoc/pipelines)
+[![Travis build](https://travis-ci.org/vbrandl/hoc.svg?branch=master)](https://travis-ci.org/vbrandl/hoc)
 
 Small webservice, that returns a badge of the Hits-of-Code of a git repository, as described by [Yegor
 Bugayenko](https://www.yegor256.com/2014/11/14/hits-of-code.html). It is implemented in
