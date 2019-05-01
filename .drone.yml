@@ -2,9 +2,13 @@ kind: pipeline
 name: build
 
 steps:
-  - name: build
-    image: ekidd/rust-musl-builder
-    commands:
-      - sudo chown -R rust .
-      - cargo test --release
-      - cargo build --release
+  - name: docker
+    image: plugins/docker
+    settings:
+      repo: vbrandl/hoc
+  # - name: build
+  #   image: ekidd/rust-musl-builder
+  #   commands:
+  #     - sudo chown -R rust .
+  #     - cargo test --release
+  #     - cargo build --release
