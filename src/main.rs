@@ -348,6 +348,7 @@ fn main() -> std::io::Result<()> {
             .service(web::resource("/view/bitbucket/{user}/{repo}").to(overview::<Bitbucket>))
             .default_service(web::resource("").route(web::get().to(p404)))
     })
+    .workers(4)
     .bind(interface)?
     .run()
 }
