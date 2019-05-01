@@ -1,0 +1,13 @@
+kind: pipeline
+name: build
+
+steps:
+  - name: docker
+    image: plugins/docker
+    settings:
+      repo: vbrandl/hits-of-code
+      auto_tag: true
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
