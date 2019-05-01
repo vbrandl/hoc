@@ -101,6 +101,9 @@ struct Opt {
     #[structopt(short = "d", long = "domain", default_value = "hitsofcode.com")]
     /// Interface to listen on
     domain: String,
+    #[structopt(short = "w", long = "workers", default_value = "4")]
+    /// Number of worker threads
+    workers: usize,
 }
 
 fn pull(path: impl AsRef<Path>) -> Result<(), Error> {
@@ -348,7 +351,7 @@ fn main() -> std::io::Result<()> {
             .service(web::resource("/view/bitbucket/{user}/{repo}").to(overview::<Bitbucket>))
             .default_service(web::resource("").route(web::get().to(p404)))
     })
-    .workers(4)
+    .workers(OPT.workers)
     .bind(interface)?
     .run()
 }
