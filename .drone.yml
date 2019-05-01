@@ -1,0 +1,9 @@
+kind: pipeline
+name: build
+
+steps:
+  - name: build
+    image: ekidd/rust-musl-builder
+    commands:
+      - cargo test
+      - cargo build
