@@ -45,6 +45,21 @@ would render this badge:
 alt="example badge" /></a>
 </pre>
 
+<h2>Badge Generator</h2>
+
+<form method="post" action="/generate">
+    <select name="service" id="service">
+        <option value="github">GitHub</option>
+        <option value="gitlab">Gitlab</option>
+        <option value="bitbucket">Bitbucket</option>
+    </select>
+    <label>/</label>
+    <input name="user" id="user" type="text" placeholder="user" />
+    <label>/</label>
+    <input name="repo" id="repo" type="text" placeholder="repository" />
+    <button type="submit">Generate</button>
+</form>
+
 <h2>Source Code</h2>
 
 <p>

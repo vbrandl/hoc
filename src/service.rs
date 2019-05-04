@@ -4,6 +4,34 @@ pub(crate) trait Service {
     fn commit_url(repo: &str, commit_ref: &str) -> String;
 }
 
+#[derive(Deserialize, Serialize)]
+pub(crate) enum FormService {
+    #[serde(rename = "github")]
+    GitHub,
+    #[serde(rename = "gitlab")]
+    Gitlab,
+    #[serde(rename = "bitbucket")]
+    Bitbucket,
+}
+
+impl FormService {
+    pub(crate) fn url(&self) -> &str {
+        match self {
+            FormService::GitHub => "github.com",
+            FormService::Gitlab => "gitlab.com",
+            FormService::Bitbucket => "bitbucket.org",
+        }
+    }
+
+    pub(crate) fn service(&self) -> &str {
+        match self {
+            FormService::GitHub => "github",
+            FormService::Gitlab => "gitlab",
+            FormService::Bitbucket => "bitbucket",
+        }
+    }
+}
+
 pub(crate) struct GitHub;
 
 impl Service for GitHub {

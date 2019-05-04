@@ -1,0 +1,23 @@
+@use super::base;
+@use crate::VersionInfo;
+
+@(version_info: VersionInfo, domain: &str, url: &str, service: &str, path: &str)
+
+@:base("Hits-of-Code Badges", "Badge Generator", {
+
+<p>
+Here is the markdown for the badge for <a href="https://@url/@path">@url/@path</a>
+</p>
+
+<pre>
+[![Hits-of-Code](https://@domain/@service/@path)](https://@domain/view/@service/@path)
+</pre>
+
+<p>
+It will be rendered like this
+</p>
+
+<pre>
+<a href="https://@domain/view/@service/@path"><img src="https://@domain/@service/@path" alt="example badge" /></a>
+</pre>
+}, version_info)

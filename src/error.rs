@@ -2,6 +2,8 @@ use crate::P500;
 use actix_web::{HttpResponse, ResponseError};
 use std::fmt;
 
+pub(crate) type Result<T> = std::result::Result<T, Error>;
+
 #[derive(Debug)]
 pub(crate) enum Error {
     Badge(String),
