@@ -13,8 +13,8 @@ mod service;
 
 use crate::{
     cache::CacheState,
-    error::Error,
-    service::{Bitbucket, GitHub, Gitlab, Service},
+    error::{Error, Result},
+    service::{Bitbucket, FormService, GitHub, Gitlab, Service},
 };
 use actix_web::{
     error::ErrorBadRequest,
@@ -27,6 +27,7 @@ use futures::{unsync::mpsc, Stream};
 use git2::Repository;
 use number_prefix::{NumberPrefix, Prefixed, Standalone};
 use std::{
+    borrow::Cow,
     fs::create_dir_all,
     path::{Path, PathBuf},
     process::Command,
@@ -40,6 +41,13 @@ include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 pub struct VersionInfo<'a> {
     pub commit: &'a str,
     pub version: &'a str,
+}
+
+#[derive(Deserialize, Serialize)]
+struct GeneratorForm<'a> {
+    service: FormService,
+    user: Cow<'a, str>,
+    repo: Cow<'a, str>,
 }
 
 const VERSION_INFO: VersionInfo = VersionInfo {
@@ -106,14 +114,14 @@ struct Opt {
     workers: usize,
 }
 
-fn pull(path: impl AsRef<Path>) -> Result<(), Error> {
+fn pull(path: impl AsRef<Path>) -> Result<()> {
     let repo = Repository::open_bare(path)?;
     let mut origin = repo.find_remote("origin")?;
     origin.fetch(&["refs/heads/*:refs/heads/*"], None, None)?;
     Ok(())
 }
 
-fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String), Error> {
+fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String)> {
     let repo_dir = format!("{}/{}", repo_dir, repo);
     let cache_dir = format!("{}/{}.json", cache_dir, repo);
     let cache_dir = Path::new(&cache_dir);
@@ -164,7 +172,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String), Err
             s.split_whitespace()
                 .take(2)
                 .map(str::parse::<u64>)
-                .filter_map(Result::ok)
+                .filter_map(std::result::Result::ok)
                 .sum::<u64>()
         })
         .sum();
@@ -175,7 +183,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String), Err
     Ok((cache.count, head))
 }
 
-fn remote_exists(url: &str) -> Result<bool, Error> {
+fn remote_exists(url: &str) -> Result<bool> {
     Ok(CLIENT.head(url).send()?.status() == reqwest::StatusCode::OK)
 }
 
@@ -195,10 +203,10 @@ fn handle_hoc_request<T, F>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
     mapper: F,
-) -> Result<HttpResponse, Error>
+) -> Result<HttpResponse>
 where
     T: Service,
-    F: Fn(HocResult) -> Result<HttpResponse, Error>,
+    F: Fn(HocResult) -> Result<HttpResponse>,
 {
     hoc_request::<T>(state, data).and_then(mapper)
 }
@@ -206,7 +214,7 @@ where
 fn hoc_request<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> Result<HocResult, Error> {
+) -> Result<HocResult> {
     let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
     let service_path = format!("{}/{}", T::domain(), repo);
     let path = format!("{}/{}", state.repos, service_path);
@@ -242,7 +250,7 @@ fn hoc_request<T: Service>(
 fn calculate_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> Result<HttpResponse, Error> {
+) -> Result<HttpResponse> {
     let mapper = |r| match r {
         HocResult::NotFound => Ok(p404()),
         HocResult::Hoc { hoc_pretty, .. } => {
@@ -275,7 +283,7 @@ fn calculate_hoc<T: Service>(
 fn overview<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> Result<HttpResponse, Error> {
+) -> Result<HttpResponse> {
     let mapper = |r| match r {
         HocResult::NotFound => Ok(p404()),
         HocResult::Hoc {
@@ -317,6 +325,26 @@ fn index() -> HttpResponse {
         .body(INDEX.as_slice())
 }
 
+#[post("/generate")]
+fn generate(params: web::Form<GeneratorForm>) -> Result<HttpResponse> {
+    let repo = format!("{}/{}", params.user, params.repo);
+    let mut buf = Vec::new();
+    templates::generate(
+        &mut buf,
+        VERSION_INFO,
+        &OPT.domain,
+        params.service.url(),
+        params.service.service(),
+        &repo,
+    )?;
+    let (tx, rx_body) = mpsc::unbounded();
+    let _ = tx.unbounded_send(Bytes::from(buf));
+
+    Ok(HttpResponse::Ok()
+        .content_type("text/html")
+        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
+}
+
 fn p404() -> HttpResponse {
     HttpResponse::NotFound()
         .content_type("text/html")
@@ -343,6 +371,7 @@ fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .service(index)
             .service(css)
+            .service(generate)
             .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
             .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
             .service(web::resource("/bitbucket/{user}/{repo}").to(calculate_hoc::<Bitbucket>))
