@@ -81,6 +81,7 @@ struct State {
 }
 
 const CSS: &str = include_str!("../static/tacit-css.min.css");
+const FAVICON: &[u8] = include_bytes!("../static/favicon32.png");
 
 #[derive(StructOpt, Debug)]
 struct Opt {
@@ -356,6 +357,11 @@ fn css() -> HttpResponse {
     HttpResponse::Ok().content_type("text/css").body(CSS)
 }
 
+#[get("/favicon.ico")]
+fn favicon32() -> HttpResponse {
+    HttpResponse::Ok().content_type("image/png").body(FAVICON)
+}
+
 fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info,hoc=info");
     pretty_env_logger::init();
@@ -371,6 +377,7 @@ fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .service(index)
             .service(css)
+            .service(favicon32)
             .service(generate)
             .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
             .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
