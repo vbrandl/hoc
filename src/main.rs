@@ -8,13 +8,16 @@ extern crate log;
 extern crate serde_derive;
 
 mod cache;
+mod config;
 mod error;
 mod service;
+mod statics;
 
 use crate::{
     cache::CacheState,
     error::{Error, Result},
     service::{Bitbucket, FormService, GitHub, Gitlab, Service},
+    statics::{CLIENT, CSS, FAVICON, INDEX, OPT, P404, P500, VERSION_INFO},
 };
 use actix_web::{
     error::ErrorBadRequest,
@@ -29,19 +32,13 @@ use number_prefix::{NumberPrefix, Prefixed, Standalone};
 use std::{
     borrow::Cow,
     fs::create_dir_all,
-    path::{Path, PathBuf},
+    path::Path,
     process::Command,
     sync::Arc,
     time::{Duration, SystemTime},
 };
-use structopt::StructOpt;
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
-
-pub struct VersionInfo<'a> {
-    pub commit: &'a str,
-    pub version: &'a str,
-}
 
 #[derive(Deserialize, Serialize)]
 struct GeneratorForm<'a> {
@@ -50,69 +47,9 @@ struct GeneratorForm<'a> {
     repo: Cow<'a, str>,
 }
 
-const VERSION_INFO: VersionInfo = VersionInfo {
-    commit: env!("VERGEN_SHA_SHORT"),
-    version: env!("CARGO_PKG_VERSION"),
-};
-
-lazy_static! {
-    static ref CLIENT: reqwest::Client = reqwest::Client::new();
-    static ref OPT: Opt = Opt::from_args();
-    static ref INDEX: Vec<u8> = {
-        let mut buf = Vec::new();
-        templates::index(&mut buf, VERSION_INFO, &OPT.domain).unwrap();
-        buf
-    };
-    static ref P404: Vec<u8> = {
-        let mut buf = Vec::new();
-        templates::p404(&mut buf, VERSION_INFO).unwrap();
-        buf
-    };
-    static ref P500: Vec<u8> = {
-        let mut buf = Vec::new();
-        templates::p500(&mut buf, VERSION_INFO).unwrap();
-        buf
-    };
-}
-
 struct State {
     repos: String,
     cache: String,
-}
-
-const CSS: &str = include_str!("../static/tacit-css.min.css");
-const FAVICON: &[u8] = include_bytes!("../static/favicon32.png");
-
-#[derive(StructOpt, Debug)]
-struct Opt {
-    #[structopt(
-        short = "o",
-        long = "outdir",
-        parse(from_os_str),
-        default_value = "./repos"
-    )]
-    /// Path to store cloned repositories
-    outdir: PathBuf,
-    #[structopt(
-        short = "c",
-        long = "cachedir",
-        parse(from_os_str),
-        default_value = "./cache"
-    )]
-    /// Path to store cache
-    cachedir: PathBuf,
-    #[structopt(short = "p", long = "port", default_value = "8080")]
-    /// Port to listen on
-    port: u16,
-    #[structopt(short = "h", long = "host", default_value = "0.0.0.0")]
-    /// Interface to listen on
-    host: String,
-    #[structopt(short = "d", long = "domain", default_value = "hitsofcode.com")]
-    /// Interface to listen on
-    domain: String,
-    #[structopt(short = "w", long = "workers", default_value = "4")]
-    /// Number of worker threads
-    workers: usize,
 }
 
 fn pull(path: impl AsRef<Path>) -> Result<()> {
@@ -362,16 +299,14 @@ fn favicon32() -> HttpResponse {
     HttpResponse::Ok().content_type("image/png").body(FAVICON)
 }
 
-fn main() -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "actix_web=info,hoc=info");
-    pretty_env_logger::init();
-    openssl_probe::init_ssl_cert_env_vars();
+fn main() -> Result<()> {
+    config::init()?;
     let interface = format!("{}:{}", OPT.host, OPT.port);
     let state = Arc::new(State {
         repos: OPT.outdir.display().to_string(),
         cache: OPT.cachedir.display().to_string(),
     });
-    HttpServer::new(move || {
+    Ok(HttpServer::new(move || {
         App::new()
             .data(state.clone())
             .wrap(middleware::Logger::default())
@@ -389,5 +324,5 @@ fn main() -> std::io::Result<()> {
     })
     .workers(OPT.workers)
     .bind(interface)?
-    .run()
+    .run()?)
 }
