@@ -2,3 +2,4 @@
 **/*.rs.bk
 repos
 cache
+hoc.log
