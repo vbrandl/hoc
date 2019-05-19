@@ -26,7 +26,7 @@ use actix_web::{
 };
 use badge::{Badge, BadgeOptions};
 use bytes::Bytes;
-use futures::{unsync::mpsc, Stream};
+use futures::{unsync::mpsc, Future, Stream};
 use git2::Repository;
 use number_prefix::{NumberPrefix, Prefixed, Standalone};
 use std::{
@@ -141,7 +141,7 @@ fn handle_hoc_request<T, F>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
     mapper: F,
-) -> Result<HttpResponse>
+) -> impl Future<Item = HttpResponse, Error = Error>
 where
     T: Service,
     F: Fn(HocResult) -> Result<HttpResponse>,
@@ -152,43 +152,45 @@ where
 fn hoc_request<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> Result<HocResult> {
-    let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
-    let service_path = format!("{}/{}", T::domain(), repo);
-    let path = format!("{}/{}", state.repos, service_path);
-    let file = Path::new(&path);
-    let url = format!("https://{}", service_path);
-    if !file.exists() {
-        if !remote_exists(&url)? {
-            warn!("Repository does not exist: {}", url);
-            return Ok(HocResult::NotFound);
+) -> impl Future<Item = HocResult, Error = Error> {
+    futures::future::result(Ok(())).and_then(move |_| {
+        let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
+        let service_path = format!("{}/{}", T::domain(), repo);
+        let path = format!("{}/{}", state.repos, service_path);
+        let file = Path::new(&path);
+        let url = format!("https://{}", service_path);
+        if !file.exists() {
+            if !remote_exists(&url)? {
+                warn!("Repository does not exist: {}", url);
+                return Ok(HocResult::NotFound);
+            }
+            info!("Cloning {} for the first time", url);
+            create_dir_all(file)?;
+            let repo = Repository::init_bare(file)?;
+            repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
+            repo.remote_set_url("origin", &url)?;
         }
-        info!("Cloning {} for the first time", url);
-        create_dir_all(file)?;
-        let repo = Repository::init_bare(file)?;
-        repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
-        repo.remote_set_url("origin", &url)?;
-    }
-    pull(&path)?;
-    let (hoc, head) = hoc(&service_path, &state.repos, &state.cache)?;
-    let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
-        Standalone(hoc) => hoc.to_string(),
-        Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
-    };
-    Ok(HocResult::Hoc {
-        hoc,
-        hoc_pretty,
-        head,
-        url,
-        repo,
-        service_path,
+        pull(&path)?;
+        let (hoc, head) = hoc(&service_path, &state.repos, &state.cache)?;
+        let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
+            Standalone(hoc) => hoc.to_string(),
+            Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+        };
+        Ok(HocResult::Hoc {
+            hoc,
+            hoc_pretty,
+            head,
+            url,
+            repo,
+            service_path,
+        })
     })
 }
 
 fn calculate_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> Result<HttpResponse> {
+) -> impl Future<Item = HttpResponse, Error = Error> {
     let mapper = |r| match r {
         HocResult::NotFound => Ok(p404()),
         HocResult::Hoc { hoc_pretty, .. } => {
@@ -221,7 +223,7 @@ fn calculate_hoc<T: Service>(
 fn overview<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> Result<HttpResponse> {
+) -> impl Future<Item = HttpResponse, Error = Error> {
     let mapper = |r| match r {
         HocResult::NotFound => Ok(p404()),
         HocResult::Hoc {
@@ -314,13 +316,13 @@ fn main() -> Result<()> {
             .service(css)
             .service(favicon32)
             .service(generate)
-            .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
-            .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
-            .service(web::resource("/bitbucket/{user}/{repo}").to(calculate_hoc::<Bitbucket>))
-            .service(web::resource("/view/github/{user}/{repo}").to(overview::<GitHub>))
-            .service(web::resource("/view/gitlab/{user}/{repo}").to(overview::<Gitlab>))
-            .service(web::resource("/view/bitbucket/{user}/{repo}").to(overview::<Bitbucket>))
-            .default_service(web::resource("").route(web::get().to(p404)))
+            .service(web::resource("/github/{user}/{repo}").to_async(calculate_hoc::<GitHub>))
+            .service(web::resource("/gitlab/{user}/{repo}").to_async(calculate_hoc::<Gitlab>))
+            .service(web::resource("/bitbucket/{user}/{repo}").to_async(calculate_hoc::<Bitbucket>))
+            .service(web::resource("/view/github/{user}/{repo}").to_async(overview::<GitHub>))
+            .service(web::resource("/view/gitlab/{user}/{repo}").to_async(overview::<Gitlab>))
+            .service(web::resource("/view/bitbucket/{user}/{repo}").to_async(overview::<Bitbucket>))
+            .default_service(web::resource("").route(web::get().to_async(p404)))
     })
     .workers(OPT.workers)
     .bind(interface)?
