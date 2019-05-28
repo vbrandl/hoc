@@ -29,7 +29,7 @@ FROM alpine:latest
 
 RUN apk --no-cache add --update git
 
-RUN useradd --create-home hoc
+RUN adduser -D hoc
 WORKDIR /home/hoc
 
 # once we don't need a git binary anymore, this should be enough
