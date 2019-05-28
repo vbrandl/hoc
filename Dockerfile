@@ -31,6 +31,7 @@ RUN apk --no-cache add --update git
 
 RUN adduser -D hoc
 WORKDIR /home/hoc
+USER hoc
 
 # once we don't need a git binary anymore, this should be enough
 # FROM scratch
