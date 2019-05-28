@@ -6,7 +6,7 @@ services:
     # image: local/hoc:latest
     image: registry.gitlab.com/vbrandl/hoc:latest
     volumes:
-      - ./repos:/repos
-      - ./cache:/cache
+      - ./repos:/home/hoc/repos
+      - ./cache:/home/hoc/cache
     ports:
       - "127.0.0.1:8080:8080"

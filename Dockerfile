@@ -29,10 +29,13 @@ FROM alpine:latest
 
 RUN apk --no-cache add --update git
 
+RUN useradd --create-home hoc
+WORKDIR /home/hoc
+
 # once we don't need a git binary anymore, this should be enough
 # FROM scratch
 # COPY --from=linuxkit/ca-certificates:v0.7 / /
 
-COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/hoc /hoc
+COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/hoc .
 
-ENTRYPOINT ["/hoc"]
+ENTRYPOINT ["/home/hoc/hoc"]
