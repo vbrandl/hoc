@@ -20,7 +20,7 @@ reqwest = "0.9.17"
 serde = "1.0.91"
 serde_derive = "1.0.91"
 serde_json = "1.0.39"
-structopt = "0.2.15"
+structopt = "0.2.16"
 
 [build-dependencies]
 ructe = "0.6.2"
