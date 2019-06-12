@@ -1,3 +1,5 @@
+use crate::{config::Opt, count::count_repositories};
+use std::sync::atomic::AtomicUsize;
 use structopt::StructOpt;
 
 pub struct VersionInfo<'a> {
@@ -15,4 +17,6 @@ pub(crate) const FAVICON: &[u8] = include_bytes!("../static/favicon32.png");
 lazy_static! {
     pub(crate) static ref CLIENT: reqwest::Client = reqwest::Client::new();
     pub(crate) static ref OPT: Opt = Opt::from_args();
+    pub(crate) static ref REPO_COUNT: AtomicUsize =
+        AtomicUsize::new(count_repositories(&OPT.outdir).unwrap());
 }

@@ -1,3 +1,5 @@
+#![type_length_limit = "2257138"]
+
 #[macro_use]
 extern crate actix_web;
 #[macro_use]
@@ -9,6 +11,7 @@ extern crate serde_derive;
 
 mod cache;
 mod config;
+mod count;
 mod error;
 mod service;
 mod statics;
@@ -34,6 +37,7 @@ use std::{
     fs::create_dir_all,
     path::Path,
     process::Command,
+    sync::atomic::Ordering,
     sync::Arc,
     time::{Duration, SystemTime},
 };
@@ -169,6 +173,7 @@ fn hoc_request<T: Service>(
             let repo = Repository::init_bare(file)?;
             repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
             repo.remote_set_url("origin", &url)?;
+            REPO_COUNT.fetch_add(1, Ordering::Relaxed);
         }
         pull(&path)?;
         let (hoc, head) = hoc(&service_path, &state.repos, &state.cache)?;
