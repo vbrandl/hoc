@@ -1,6 +1,9 @@
-use crate::P500;
+use crate::{
+    statics::{REPO_COUNT, VERSION_INFO},
+    templates,
+};
 use actix_web::{HttpResponse, ResponseError};
-use std::fmt;
+use std::{fmt, sync::atomic::Ordering};
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;
 
@@ -33,15 +36,15 @@ impl fmt::Display for Error {
 
 impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse {
+        let mut buf = Vec::new();
+        templates::p500(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed)).unwrap();
         HttpResponse::InternalServerError()
             .content_type("text/html")
-            .body(P500.as_slice())
+            .body(buf)
     }
 
     fn render_response(&self) -> HttpResponse {
-        HttpResponse::InternalServerError()
-            .content_type("text/html")
-            .body(P500.as_slice())
+        self.error_response()
     }
 }
 
