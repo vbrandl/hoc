@@ -1,6 +1,6 @@
 @use crate::statics::VersionInfo;
 
-@(title: &str, header: &str, content: Content, version_info: VersionInfo)
+@(title: &str, header: &str, content: Content, version_info: VersionInfo, repo_count: usize)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,6 +35,9 @@
     <ul>
         <li>
             <small>HoC v@version_info.version - <a href="https://github.com/vbrandl/hoc/commit/@version_info.commit">@version_info.commit</a></small>
+        </li>
+        <li>
+            <small>Currently serving @repo_count repositories</small>
         </li>
     </ul>
 </nav>

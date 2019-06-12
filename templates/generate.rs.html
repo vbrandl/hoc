@@ -1,7 +1,7 @@
 @use super::base;
 @use crate::statics::VersionInfo;
 
-@(version_info: VersionInfo, domain: &str, url: &str, service: &str, path: &str)
+@(version_info: VersionInfo, repo_count: usize, domain: &str, url: &str, service: &str, path: &str)
 
 @:base("Hits-of-Code Badges", "Badge Generator", {
 
@@ -20,4 +20,4 @@ It will be rendered like this
 <pre>
 <a href="https://@domain/view/@service/@path"><img src="https://@domain/@service/@path" alt="example badge" /></a>
 </pre>
-}, version_info)
+}, version_info, repo_count)

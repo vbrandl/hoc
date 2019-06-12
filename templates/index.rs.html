@@ -1,7 +1,7 @@
 @use super::base;
 @use crate::statics::VersionInfo;
 
-@(version_info: VersionInfo, domain: &str)
+@(version_info: VersionInfo, repo_count: usize, domain: &str)
 
 @:base("Hits-of-Code Badges", "Hits-of-Code Badges", {
 
@@ -76,4 +76,4 @@ my <a href="https://mirror.oldsql.cc/key.asc">GPG key</a>
 (<a href="http://pool.sks-keyservers.net/pks/lookup?op=get&amp;search=0x1FFE431282F4B8CC0A7579167FB009175885FC76">from a
     keyserver</a>), or by using any other UID from my key.
 </p>
-}, version_info)
+}, version_info, repo_count)

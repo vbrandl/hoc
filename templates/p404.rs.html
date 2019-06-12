@@ -1,7 +1,7 @@
 @use super::base;
 @use crate::statics::VersionInfo;
 
-@(version_info: VersionInfo)
+@(version_info: VersionInfo, repo_count: usize)
 
 @:base("Page not Found - Hits-of-Code Badges", "404 - Page not Found", {
 <p>
@@ -11,4 +11,4 @@
 <p>
 If you think, this is a mistake on my side, please <a href="mailto:mail+hoc@@vbrandl.net">drop me a mail</a>.
 </p>
-}, version_info)
+}, version_info, repo_count)

@@ -1,7 +1,7 @@
 @use super::base;
 @use crate::statics::VersionInfo;
 
-@(version_info: VersionInfo, domain: &str, path: &str, url: &str, hoc: u64, hoc_pretty: &str, head: &str, commit_url: &str)
+@(version_info: VersionInfo, repo_count: usize, domain: &str, path: &str, url: &str, hoc: u64, hoc_pretty: &str, head: &str, commit_url: &str)
 
 @:base("Hits-of-Code Badges", "Overview", {
 
@@ -16,4 +16,4 @@ To include the badge in your readme, use the following markdown:
 <pre>
 [![Hits-of-Code](https://@domain/@path)](https://@domain/view/@path)
 </pre>
-}, version_info)
+}, version_info, repo_count)

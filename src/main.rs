@@ -17,7 +17,7 @@ use crate::{
     cache::CacheState,
     error::{Error, Result},
     service::{Bitbucket, FormService, GitHub, Gitlab, Service},
-    statics::{CLIENT, CSS, FAVICON, INDEX, OPT, P404, P500, VERSION_INFO},
+    statics::{CLIENT, CSS, FAVICON, OPT, REPO_COUNT, VERSION_INFO},
 };
 use actix_web::{
     error::ErrorBadRequest,
@@ -192,7 +192,7 @@ fn calculate_hoc<T: Service>(
     data: web::Path<(String, String)>,
 ) -> impl Future<Item = HttpResponse, Error = Error> {
     let mapper = |r| match r {
-        HocResult::NotFound => Ok(p404()),
+        HocResult::NotFound => p404(),
         HocResult::Hoc { hoc_pretty, .. } => {
             let badge_opt = BadgeOptions {
                 subject: "Hits-of-Code".to_string(),
@@ -225,7 +225,7 @@ fn overview<T: Service>(
     data: web::Path<(String, String)>,
 ) -> impl Future<Item = HttpResponse, Error = Error> {
     let mapper = |r| match r {
-        HocResult::NotFound => Ok(p404()),
+        HocResult::NotFound => p404(),
         HocResult::Hoc {
             hoc,
             hoc_pretty,
@@ -238,6 +238,7 @@ fn overview<T: Service>(
             templates::overview(
                 &mut buf,
                 VERSION_INFO,
+                REPO_COUNT.load(Ordering::Relaxed),
                 &OPT.domain,
                 &service_path,
                 &url,
@@ -259,10 +260,15 @@ fn overview<T: Service>(
 }
 
 #[get("/")]
-fn index() -> HttpResponse {
-    HttpResponse::Ok()
-        .content_type("text/html")
-        .body(INDEX.as_slice())
+fn index() -> Result<HttpResponse> {
+    let mut buf = Vec::new();
+    templates::index(
+        &mut buf,
+        VERSION_INFO,
+        REPO_COUNT.load(Ordering::Relaxed),
+        &OPT.domain,
+    )?;
+    Ok(HttpResponse::Ok().content_type("text/html").body(buf))
 }
 
 #[post("/generate")]
@@ -272,6 +278,7 @@ fn generate(params: web::Form<GeneratorForm>) -> Result<HttpResponse> {
     templates::generate(
         &mut buf,
         VERSION_INFO,
+        REPO_COUNT.load(Ordering::Relaxed),
         &OPT.domain,
         params.service.url(),
         params.service.service(),
@@ -285,10 +292,10 @@ fn generate(params: web::Form<GeneratorForm>) -> Result<HttpResponse> {
         .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
 }
 
-fn p404() -> HttpResponse {
-    HttpResponse::NotFound()
-        .content_type("text/html")
-        .body(P404.as_slice())
+fn p404() -> Result<HttpResponse> {
+    let mut buf = Vec::new();
+    templates::p404(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed))?;
+    Ok(HttpResponse::NotFound().content_type("text/html").body(buf))
 }
 
 #[get("/tacit-css.min.css")]

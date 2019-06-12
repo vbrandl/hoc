@@ -1,7 +1,7 @@
 @use super::base;
 @use crate::statics::VersionInfo;
 
-@(version_info: VersionInfo)
+@(version_info: VersionInfo, repo_count: usize)
 
 @:base("Internal Server Error - Hits-of-Code Badges", "500 - Internal Server Error", {
 <p>
@@ -11,4 +11,4 @@
 <p>
 If you think, this is a bug, please <a href="mailto:mail+hoc@@vbrandl.net">drop me a mail</a>.
 </p>
-}, version_info)
+}, version_info, repo_count)
