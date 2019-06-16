@@ -45,6 +45,21 @@ would render this badge:
 alt="example badge" /></a>
 </pre>
 
+<p>
+You can also request the HoC as JSON by appending <code>/json</code> to the request path. This will return a JSON
+object with two fields: <code>count</code> and <code>head</code> with count being the HoC value and head being the
+commit ref of <code>HEAD</code>. Requesting
+<a href="https://@domain/github/vbrandl/hoc/json">https://@domain/github/vbrandl/hoc/json</a> might return something
+along the lines of
+</p>
+
+<pre>
+&#123;
+    "head" : "05736ee3ba256ec9a7227c436aef2bf43db109ab",
+    "count": 7582
+&#125;
+</pre>
+
 <h2>Badge Generator</h2>
 
 <form method="post" action="/generate">
