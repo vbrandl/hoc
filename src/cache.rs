@@ -1,4 +1,4 @@
-use crate::Error;
+use crate::error::{Error, Result};
 use std::{
     borrow::Cow,
     fs::{create_dir_all, File, OpenOptions},
@@ -17,7 +17,7 @@ pub(crate) enum CacheState<'a> {
 }
 
 impl<'a> CacheState<'a> {
-    pub(crate) fn read_from_file(path: impl AsRef<Path>, head: &str) -> Result<CacheState, Error> {
+    pub(crate) fn read_from_file(path: impl AsRef<Path>, head: &str) -> Result<CacheState> {
         if path.as_ref().exists() {
             let cache: Cache = serde_json::from_reader(BufReader::new(File::open(path)?))?;
             if cache.head == head {
@@ -49,7 +49,7 @@ pub(crate) struct Cache<'a> {
 }
 
 impl<'a> Cache<'a> {
-    pub(crate) fn write_to_file(&self, path: impl AsRef<Path>) -> Result<(), Error> {
+    pub(crate) fn write_to_file(&self, path: impl AsRef<Path>) -> Result<()> {
         create_dir_all(path.as_ref().parent().ok_or(Error::Internal)?)?;
         serde_json::to_writer(
             OpenOptions::new()
