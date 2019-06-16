@@ -17,7 +17,7 @@ mod service;
 mod statics;
 
 use crate::{
-    cache::{Cache, CacheState},
+    cache::CacheState,
     error::{Error, Result},
     service::{Bitbucket, FormService, GitHub, Gitlab, Service},
     statics::{CLIENT, CSS, FAVICON, OPT, REPO_COUNT, VERSION_INFO},
@@ -54,6 +54,12 @@ struct GeneratorForm<'a> {
 struct State {
     repos: String,
     cache: String,
+}
+
+#[derive(Serialize)]
+struct JsonResponse<'a> {
+    head: &'a str,
+    count: u64,
 }
 
 fn pull(path: impl AsRef<Path>) -> Result<()> {
@@ -193,8 +199,8 @@ fn json_hoc<T: Service>(
 ) -> impl Future<Item = HttpResponse, Error = Error> {
     let mapper = |r| match r {
         HocResult::NotFound => p404(),
-        HocResult::Hoc { hoc, head, .. } => Ok(HttpResponse::Ok().json(Cache {
-            head: head.into(),
+        HocResult::Hoc { hoc, head, .. } => Ok(HttpResponse::Ok().json(JsonResponse {
+            head: &head,
             count: hoc,
         })),
     };
