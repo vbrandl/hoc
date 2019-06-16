@@ -17,7 +17,7 @@ mod service;
 mod statics;
 
 use crate::{
-    cache::CacheState,
+    cache::{Cache, CacheState},
     error::{Error, Result},
     service::{Bitbucket, FormService, GitHub, Gitlab, Service},
     statics::{CLIENT, CSS, FAVICON, OPT, REPO_COUNT, VERSION_INFO},
@@ -150,46 +150,55 @@ where
     T: Service,
     F: Fn(HocResult) -> Result<HttpResponse>,
 {
-    hoc_request::<T>(state, data).and_then(mapper)
+    futures::future::result(Ok(()))
+        .and_then(move |_| {
+            let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
+            let service_path = format!("{}/{}", T::domain(), repo);
+            let path = format!("{}/{}", state.repos, service_path);
+            let file = Path::new(&path);
+            let url = format!("https://{}", service_path);
+            if !file.exists() {
+                if !remote_exists(&url)? {
+                    warn!("Repository does not exist: {}", url);
+                    return Ok(HocResult::NotFound);
+                }
+                info!("Cloning {} for the first time", url);
+                create_dir_all(file)?;
+                let repo = Repository::init_bare(file)?;
+                repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
+                repo.remote_set_url("origin", &url)?;
+                REPO_COUNT.fetch_add(1, Ordering::Relaxed);
+            }
+            pull(&path)?;
+            let (hoc, head) = hoc(&service_path, &state.repos, &state.cache)?;
+            let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
+                Standalone(hoc) => hoc.to_string(),
+                Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+            };
+            Ok(HocResult::Hoc {
+                hoc,
+                hoc_pretty,
+                head,
+                url,
+                repo,
+                service_path,
+            })
+        })
+        .and_then(mapper)
 }
 
-fn hoc_request<T: Service>(
+fn json_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> impl Future<Item = HocResult, Error = Error> {
-    futures::future::result(Ok(())).and_then(move |_| {
-        let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
-        let service_path = format!("{}/{}", T::domain(), repo);
-        let path = format!("{}/{}", state.repos, service_path);
-        let file = Path::new(&path);
-        let url = format!("https://{}", service_path);
-        if !file.exists() {
-            if !remote_exists(&url)? {
-                warn!("Repository does not exist: {}", url);
-                return Ok(HocResult::NotFound);
-            }
-            info!("Cloning {} for the first time", url);
-            create_dir_all(file)?;
-            let repo = Repository::init_bare(file)?;
-            repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
-            repo.remote_set_url("origin", &url)?;
-            REPO_COUNT.fetch_add(1, Ordering::Relaxed);
-        }
-        pull(&path)?;
-        let (hoc, head) = hoc(&service_path, &state.repos, &state.cache)?;
-        let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
-            Standalone(hoc) => hoc.to_string(),
-            Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
-        };
-        Ok(HocResult::Hoc {
-            hoc,
-            hoc_pretty,
-            head,
-            url,
-            repo,
-            service_path,
-        })
-    })
+) -> impl Future<Item = HttpResponse, Error = Error> {
+    let mapper = |r| match r {
+        HocResult::NotFound => p404(),
+        HocResult::Hoc { hoc, head, .. } => Ok(HttpResponse::Ok().json(Cache {
+            head: head.into(),
+            count: hoc,
+        })),
+    };
+    handle_hoc_request::<T, _>(state, data, mapper)
 }
 
 fn calculate_hoc<T: Service>(
@@ -331,6 +340,9 @@ fn main() -> Result<()> {
             .service(web::resource("/github/{user}/{repo}").to_async(calculate_hoc::<GitHub>))
             .service(web::resource("/gitlab/{user}/{repo}").to_async(calculate_hoc::<Gitlab>))
             .service(web::resource("/bitbucket/{user}/{repo}").to_async(calculate_hoc::<Bitbucket>))
+            .service(web::resource("/github/{user}/{repo}/json").to_async(json_hoc::<GitHub>))
+            .service(web::resource("/gitlab/{user}/{repo}/json").to_async(json_hoc::<Gitlab>))
+            .service(web::resource("/bitbucket/{user}/{repo}/json").to_async(json_hoc::<Bitbucket>))
             .service(web::resource("/view/github/{user}/{repo}").to_async(overview::<GitHub>))
             .service(web::resource("/view/gitlab/{user}/{repo}").to_async(overview::<Gitlab>))
             .service(web::resource("/view/bitbucket/{user}/{repo}").to_async(overview::<Bitbucket>))
