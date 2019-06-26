@@ -23,5 +23,5 @@ serde_json = "1.0.39"
 structopt = "0.2.16"
 
 [build-dependencies]
-ructe = "0.6.2"
+ructe = "0.6.4"
 vergen = "3.0.4"
