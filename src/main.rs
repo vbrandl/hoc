@@ -60,6 +60,7 @@ struct State {
 struct JsonResponse<'a> {
     head: &'a str,
     count: u64,
+    commits: u64,
 }
 
 fn pull(path: impl AsRef<Path>) -> Result<()> {
@@ -69,17 +70,13 @@ fn pull(path: impl AsRef<Path>) -> Result<()> {
     Ok(())
 }
 
-fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String)> {
+fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String, u64)> {
     let repo_dir = format!("{}/{}", repo_dir, repo);
     let cache_dir = format!("{}/{}.json", cache_dir, repo);
     let cache_dir = Path::new(&cache_dir);
-    let head = format!(
-        "{}",
-        Repository::open_bare(&repo_dir)?
-            .head()?
-            .target()
-            .ok_or(Error::Internal)?
-    );
+    let repo = Repository::open_bare(&repo_dir)?;
+    let head = format!("{}", repo.head()?.target().ok_or(Error::Internal)?);
+    let mut arg_commit_count = vec!["rev-list".to_string(), "--count".to_string()];
     let mut arg = vec![
         "log".to_string(),
         "--pretty=tformat:".to_string(),
@@ -94,16 +91,18 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String)> {
     ];
     let cache = CacheState::read_from_file(&cache_dir, &head)?;
     match &cache {
-        CacheState::Current(res) => {
+        CacheState::Current { count, commits } => {
             info!("Using cache for {}", repo_dir);
-            return Ok((*res, head));
+            return Ok((*count, head, *commits));
         }
         CacheState::Old(cache) => {
             info!("Updating cache for {}", repo_dir);
             arg.push(format!("{}..HEAD", cache.head));
+            arg_commit_count.push(format!("{}..HEAD", cache.head));
         }
         CacheState::No => {
             info!("Creating cache for {}", repo_dir);
+            arg_commit_count.push("HEAD".to_string());
         }
     };
     arg.push("--".to_string());
@@ -114,6 +113,13 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String)> {
         .output()?
         .stdout;
     let output = String::from_utf8_lossy(&output);
+    let output_commits = Command::new("git")
+        .args(&arg_commit_count)
+        .current_dir(&repo_dir)
+        .output()?
+        .stdout;
+    let output_commits = String::from_utf8_lossy(&output_commits);
+    let commits: u64 = output_commits.trim().parse()?;
     let count: u64 = output
         .lines()
         .map(|s| {
@@ -125,10 +131,10 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String)> {
         })
         .sum();
 
-    let cache = cache.calculate_new_cache(count, (&head).into());
+    let cache = cache.calculate_new_cache(count, commits, (&head).into());
     cache.write_to_file(cache_dir)?;
 
-    Ok((cache.count, head))
+    Ok((cache.count, head, commits))
 }
 
 fn remote_exists(url: &str) -> Result<bool> {
@@ -138,6 +144,7 @@ fn remote_exists(url: &str) -> Result<bool> {
 enum HocResult {
     Hoc {
         hoc: u64,
+        commits: u64,
         hoc_pretty: String,
         head: String,
         url: String,
@@ -176,15 +183,16 @@ where
                 REPO_COUNT.fetch_add(1, Ordering::Relaxed);
             }
             pull(&path)?;
-            let (hoc, head) = hoc(&service_path, &state.repos, &state.cache)?;
+            let (hoc, head, commits) = hoc(&service_path, &state.repos, &state.cache)?;
             let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
                 Standalone(hoc) => hoc.to_string(),
                 Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
             };
             Ok(HocResult::Hoc {
                 hoc,
+                commits,
                 hoc_pretty,
-                head,
+                head: head.to_string(),
                 url,
                 repo,
                 service_path,
@@ -199,9 +207,12 @@ fn json_hoc<T: Service>(
 ) -> impl Future<Item = HttpResponse, Error = Error> {
     let mapper = |r| match r {
         HocResult::NotFound => p404(),
-        HocResult::Hoc { hoc, head, .. } => Ok(HttpResponse::Ok().json(JsonResponse {
+        HocResult::Hoc {
+            hoc, head, commits, ..
+        } => Ok(HttpResponse::Ok().json(JsonResponse {
             head: &head,
             count: hoc,
+            commits,
         })),
     };
     handle_hoc_request::<T, _>(state, data, mapper)
@@ -248,6 +259,7 @@ fn overview<T: Service>(
         HocResult::NotFound => p404(),
         HocResult::Hoc {
             hoc,
+            commits,
             hoc_pretty,
             url,
             head,
@@ -266,6 +278,7 @@ fn overview<T: Service>(
                 &hoc_pretty,
                 &head,
                 &T::commit_url(&repo, &head),
+                commits,
             )?;
 
             let (tx, rx_body) = mpsc::unbounded();
