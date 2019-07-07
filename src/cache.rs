@@ -9,7 +9,7 @@ use std::{
 /// Enum to indicate the state of the cache
 pub(crate) enum CacheState<'a> {
     /// Current head and cached head are the same
-    Current(u64),
+    Current { count: u64, commits: u64 },
     /// Cached head is older than current head
     Old(Cache<'a>),
     /// No cache was found
@@ -21,7 +21,10 @@ impl<'a> CacheState<'a> {
         if path.as_ref().exists() {
             let cache: Cache = serde_json::from_reader(BufReader::new(File::open(path)?))?;
             if cache.head == head {
-                Ok(CacheState::Current(cache.count))
+                Ok(CacheState::Current {
+                    count: cache.count,
+                    commits: cache.commits,
+                })
             } else {
                 Ok(CacheState::Old(cache))
             }
@@ -30,22 +33,31 @@ impl<'a> CacheState<'a> {
         }
     }
 
-    pub(crate) fn calculate_new_cache(self, count: u64, head: Cow<'a, str>) -> Cache {
+    pub(crate) fn calculate_new_cache(self, count: u64, commits: u64, head: Cow<'a, str>) -> Cache {
         match self {
             CacheState::Old(mut cache) => {
                 cache.head = head;
                 cache.count += count;
+                cache.commits += commits;
                 cache
             }
-            CacheState::No | CacheState::Current(_) => Cache { head, count },
+            CacheState::No | CacheState::Current { .. } => Cache {
+                head,
+                count,
+                commits,
+            },
         }
     }
 }
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Cache<'a> {
+    /// HEAD commit ref
     pub head: Cow<'a, str>,
+    /// HoC value
     pub count: u64,
+    /// Number of commits
+    pub commits: u64,
 }
 
 impl<'a> Cache<'a> {
