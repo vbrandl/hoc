@@ -46,17 +46,18 @@ alt="example badge" /></a>
 </pre>
 
 <p>
-You can also request the HoC as JSON by appending <code>/json</code> to the request path. This will return a JSON
-object with two fields: <code>count</code> and <code>head</code> with count being the HoC value and head being the
-commit ref of <code>HEAD</code>. Requesting
-<a href="https://@domain/github/vbrandl/hoc/json">https://@domain/github/vbrandl/hoc/json</a> might return something
-along the lines of
+You can also request the HoC as JSON by appending <code>/json</code> to the request path. This will return a JSON object
+with three fields: <code>count</code> (the HoC value), <code>commits</code> (the number of commits) and
+<code>head</code> (the commit ref of HEAD). Requesting <a
+href="https://@domain/github/vbrandl/hoc/json">https://@domain/github/vbrandl/hoc/json</a> might return something along
+the lines of
 </p>
 
 <pre>
 &#123;
-    "head" : "05736ee3ba256ec9a7227c436aef2bf43db109ab",
-    "count": 7582
+    "head": "1f01c3b964b018fb0c0c2c5b572bf4ace2968546",
+    "count": 8324,
+    "commits": 223
 &#125;
 </pre>
 

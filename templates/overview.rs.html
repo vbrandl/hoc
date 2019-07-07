@@ -1,12 +1,13 @@
 @use super::base;
 @use crate::statics::VersionInfo;
 
-@(version_info: VersionInfo, repo_count: usize, domain: &str, path: &str, url: &str, hoc: u64, hoc_pretty: &str, head: &str, commit_url: &str)
+@(version_info: VersionInfo, repo_count: usize, domain: &str, path: &str, url: &str, hoc: u64, hoc_pretty: &str, head: &str, commit_url: &str, commits: u64)
 
 @:base("Hits-of-Code Badges", "Overview", {
 
 <p>
-The project <a href="@url">@url</a> has <strong>@hoc_pretty</strong> (exactly @hoc) hits of code at <a href="@commit_url">@head</a>.
+The project <a href="@url">@url</a> has <strong>@hoc_pretty</strong> (exactly @hoc) hits of code at
+<a href="@commit_url">@head</a>. The repository contains <strong>@commits</strong> commits.
 </p>
 
 <p>

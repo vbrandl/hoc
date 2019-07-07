@@ -16,6 +16,7 @@ pub(crate) enum Error {
     Io(std::io::Error),
     Log(log::SetLoggerError),
     LogBuilder(log4rs::config::Errors),
+    Parse(std::num::ParseIntError),
     Serial(serde_json::Error),
 }
 
@@ -29,6 +30,7 @@ impl fmt::Display for Error {
             Error::Io(e) => write!(fmt, "Io({})", e),
             Error::Log(e) => write!(fmt, "Log({})", e),
             Error::LogBuilder(e) => write!(fmt, "LogBuilder({})", e),
+            Error::Parse(e) => write!(fmt, "Parse({})", e),
             Error::Serial(e) => write!(fmt, "Serial({})", e),
         }
     }
@@ -89,5 +91,11 @@ impl From<reqwest::Error> for Error {
 impl From<log4rs::config::Errors> for Error {
     fn from(err: log4rs::config::Errors) -> Self {
         Error::LogBuilder(err)
+    }
+}
+
+impl From<std::num::ParseIntError> for Error {
+    fn from(err: std::num::ParseIntError) -> Self {
+        Error::Parse(err)
     }
 }
