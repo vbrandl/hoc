@@ -46,14 +46,6 @@ pub(crate) struct Opt {
     )]
     /// The logfile
     pub(crate) logfile: PathBuf,
-    #[structopt(subcommand)]
-    pub(crate) migrate: Option<Migration>,
-}
-
-#[derive(StructOpt, Debug, Clone, Copy)]
-pub(crate) enum Migration {
-    #[structopt(name = "migrate-commit-count")]
-    CacheCommitCount,
 }
 
 pub(crate) fn init() -> Result<()> {
