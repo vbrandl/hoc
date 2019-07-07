@@ -18,6 +18,7 @@ mod statics;
 
 use crate::{
     cache::CacheState,
+    config::Migration,
     error::{Error, Result},
     service::{Bitbucket, FormService, GitHub, Gitlab, Service},
     statics::{CLIENT, CSS, FAVICON, OPT, REPO_COUNT, VERSION_INFO},
@@ -34,7 +35,7 @@ use git2::Repository;
 use number_prefix::{NumberPrefix, Prefixed, Standalone};
 use std::{
     borrow::Cow,
-    fs::create_dir_all,
+    fs::{create_dir_all, read_dir, rename},
     path::Path,
     process::Command,
     sync::atomic::Ordering,
@@ -341,8 +342,7 @@ fn favicon32() -> HttpResponse {
     HttpResponse::Ok().content_type("image/png").body(FAVICON)
 }
 
-fn main() -> Result<()> {
-    config::init()?;
+fn start_server() -> Result<()> {
     let interface = format!("{}:{}", OPT.host, OPT.port);
     let state = Arc::new(State {
         repos: OPT.outdir.display().to_string(),
@@ -370,4 +370,41 @@ fn main() -> Result<()> {
     .workers(OPT.workers)
     .bind(interface)?
     .run()?)
+}
+
+fn migrate_cache() -> Result<()> {
+    let mut backup_cache = OPT.cachedir.clone();
+    backup_cache.set_extension("bak");
+    rename(&OPT.cachedir, backup_cache)?;
+    let outdir = OPT.outdir.display().to_string();
+    let cachedir = OPT.cachedir.display().to_string();
+    for service in read_dir(&OPT.outdir)? {
+        let service = service?;
+        for namespace in read_dir(service.path())? {
+            let namespace = namespace?;
+            for repo in read_dir(namespace.path())? {
+                let repo_path = repo?.path().display().to_string();
+                let repo_path: String =
+                    repo_path
+                        .split(&outdir)
+                        .fold(String::new(), |mut acc, next| {
+                            acc.push_str(next);
+                            acc
+                        });
+                println!("{}", repo_path);
+                hoc(&repo_path, &outdir, &cachedir)?;
+            }
+        }
+    }
+    Ok(())
+}
+
+fn main() -> Result<()> {
+    config::init()?;
+    match &OPT.migrate {
+        None => start_server(),
+        Some(migration) => match migration {
+            Migration::CacheCommitCount => migrate_cache(),
+        },
+    }
 }
