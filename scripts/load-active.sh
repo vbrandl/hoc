@@ -16,6 +16,6 @@ do
     [ -z "${imgs}" ] || echo "${url}"
     for img in ${imgs}
     do
-        curl "$img" --silent > /dev/null
+        curl "$img" --silent > /dev/null &
     done
 done < "${ACTIVE}"
