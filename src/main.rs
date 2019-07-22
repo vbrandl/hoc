@@ -137,8 +137,12 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String, u64)
     Ok((cache.count, head, commits))
 }
 
-fn remote_exists(url: &str) -> Result<bool> {
-    Ok(CLIENT.head(url).send()?.status() == reqwest::StatusCode::OK)
+fn remote_exists(url: &str) -> impl Future<Item = bool, Error = Error> {
+    CLIENT
+        .head(url)
+        .send()
+        .map(|resp| resp.status() == reqwest::StatusCode::OK)
+        .from_err()
 }
 
 enum HocResult {
@@ -163,15 +167,15 @@ where
     T: Service,
     F: Fn(HocResult) -> Result<HttpResponse>,
 {
-    futures::future::result(Ok(()))
-        .and_then(move |_| {
-            let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
-            let service_path = format!("{}/{}", T::domain(), repo);
-            let path = format!("{}/{}", state.repos, service_path);
+    let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
+    let service_path = format!("{}/{}", T::domain(), repo);
+    let path = format!("{}/{}", state.repos, service_path);
+    let url = format!("https://{}", service_path);
+    remote_exists(&url)
+        .and_then(move |remote_exists| {
             let file = Path::new(&path);
-            let url = format!("https://{}", service_path);
             if !file.exists() {
-                if !remote_exists(&url)? {
+                if !remote_exists {
                     warn!("Repository does not exist: {}", url);
                     return Ok(HocResult::NotFound);
                 }
