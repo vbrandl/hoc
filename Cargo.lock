@@ -792,7 +792,7 @@ dependencies = [
 
 [[package]]
 name = "hoc"
-version = "0.10.1"
+version = "0.11.0"
 dependencies = [
  "actix-web 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "badge 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
