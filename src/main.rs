@@ -355,6 +355,7 @@ fn start_server() -> Result<()> {
         App::new()
             .data(state.clone())
             .wrap(middleware::Logger::default())
+            .wrap(middleware::NormalizePath)
             .service(index)
             .service(css)
             .service(favicon32)
