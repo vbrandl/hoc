@@ -274,8 +274,7 @@ fn overview<T: Service>(
         } => {
             let mut buf = Vec::new();
             let repo_info = RepoInfo {
-                commit_url: 
-                &T::commit_url(&repo, &head),
+                commit_url: &T::commit_url(&repo, &head),
                 commits,
                 domain: &OPT.domain,
                 head: &head,
