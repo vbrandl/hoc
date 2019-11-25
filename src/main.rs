@@ -15,12 +15,14 @@ mod count;
 mod error;
 mod service;
 mod statics;
+mod template;
 
 use crate::{
     cache::CacheState,
     error::{Error, Result},
     service::{Bitbucket, FormService, GitHub, Gitlab, Service},
     statics::{CLIENT, CSS, FAVICON, OPT, REPO_COUNT, VERSION_INFO},
+    template::RepoInfo,
 };
 use actix_web::{
     error::ErrorBadRequest,
@@ -271,18 +273,30 @@ fn overview<T: Service>(
             service_path,
         } => {
             let mut buf = Vec::new();
+            let repo_info = RepoInfo {
+                commit_url: 
+                &T::commit_url(&repo, &head),
+                commits,
+                domain: &OPT.domain,
+                head: &head,
+                hoc,
+                hoc_pretty: &hoc_pretty,
+                path: &service_path,
+                url: &url,
+            };
             templates::overview(
                 &mut buf,
                 VERSION_INFO,
                 REPO_COUNT.load(Ordering::Relaxed),
-                &OPT.domain,
-                &service_path,
-                &url,
-                hoc,
-                &hoc_pretty,
-                &head,
-                &T::commit_url(&repo, &head),
-                commits,
+                repo_info
+                // &OPT.domain,
+                // &service_path,
+                // &url,
+                // hoc,
+                // &hoc_pretty,
+                // &head,
+                // &T::commit_url(&repo, &head),
+                // commits,
             )?;
 
             let (tx, rx_body) = mpsc::unbounded();
