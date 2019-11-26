@@ -8,7 +8,7 @@ build = "build.rs"
 [dependencies]
 actix-web = "1.0.9"
 badge = "0.2.0"
-bytes = "0.4.12"
+bytes = "0.5.0"
 futures = "0.1.29"
 git2 = "0.9.1"
 lazy_static = "1.4.0"
