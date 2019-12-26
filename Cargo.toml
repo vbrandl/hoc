@@ -6,7 +6,7 @@ edition = "2018"
 build = "build.rs"
 
 [dependencies]
-actix-web = "1.0.9"
+actix-web = "2.0.0"
 badge = "0.2.0"
 bytes = "0.4.12"
 futures = "0.1.29"
