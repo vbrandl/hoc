@@ -198,7 +198,7 @@ where
                 hoc,
                 commits,
                 hoc_pretty,
-                head: head,
+                head,
                 url,
                 repo,
                 service_path,
