@@ -18,6 +18,7 @@ pub(crate) enum Error {
     LogBuilder(log4rs::config::Errors),
     Parse(std::num::ParseIntError),
     Serial(serde_json::Error),
+    GitNoMaster,
 }
 
 impl fmt::Display for Error {
@@ -32,6 +33,7 @@ impl fmt::Display for Error {
             Error::LogBuilder(e) => write!(fmt, "LogBuilder({})", e),
             Error::Parse(e) => write!(fmt, "Parse({})", e),
             Error::Serial(e) => write!(fmt, "Serial({})", e),
+            Error::GitNoMaster => write!(fmt, "Repo doesn't have master branch"),
         }
     }
 }
@@ -39,10 +41,20 @@ impl fmt::Display for Error {
 impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse {
         let mut buf = Vec::new();
-        templates::p500(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed)).unwrap();
-        HttpResponse::InternalServerError()
-            .content_type("text/html")
-            .body(buf)
+        match self {
+            Error::GitNoMaster => {
+                templates::p404_no_master(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed)).unwrap();
+                HttpResponse::NotFound()
+                    .content_type("text/html")
+                    .body(buf)
+            },
+            _ => {
+                templates::p500(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed)).unwrap();
+                HttpResponse::InternalServerError()
+                    .content_type("text/html")
+                    .body(buf)
+            }
+        }
     }
 }
 

@@ -75,7 +75,12 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String, u64)
     let cache_dir = format!("{}/{}.json", cache_dir, repo);
     let cache_dir = Path::new(&cache_dir);
     let repo = Repository::open_bare(&repo_dir)?;
-    let head = format!("{}", repo.head()?.target().ok_or(Error::Internal)?);
+    // TODO: do better...
+    let head = match repo.head() {
+        Ok(v) => v,
+        Err(_) => return Err(Error::GitNoMaster),
+    };
+    let head = format!("{}", head.target().ok_or(Error::Internal)?);
     let mut arg_commit_count = vec!["rev-list".to_string(), "--count".to_string()];
     let mut arg = vec![
         "log".to_string(),
