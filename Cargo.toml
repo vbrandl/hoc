@@ -6,7 +6,7 @@ edition = "2018"
 build = "build.rs"
 
 [dependencies]
-actix-web = "1.0.9"
+actix-web = "2.0.0"
 badge = "0.2.0"
 bytes = "0.4.12"
 futures = "0.3.1"
@@ -17,9 +17,9 @@ log4rs = "0.8.3"
 number_prefix = "0.3.0"
 openssl-probe = "0.1.2"
 reqwest = "0.9.22"
-serde = "1.0.101"
-serde_derive = "1.0.101"
-serde_json = "1.0.41"
+serde = "1.0.103"
+serde_derive = "1.0.103"
+serde_json = "1.0.42"
 structopt = "0.3.5"
 
 [build-dependencies]
