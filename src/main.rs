@@ -195,7 +195,7 @@ where
         hoc,
         commits,
         hoc_pretty,
-        head: head.to_string(),
+        head,
         url,
         repo,
         service_path,
