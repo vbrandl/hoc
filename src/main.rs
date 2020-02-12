@@ -25,13 +25,11 @@ use crate::{
     template::RepoInfo,
 };
 use actix_web::{
-    error::ErrorBadRequest,
     http::header::{CacheControl, CacheDirective, Expires},
     middleware, web, App, HttpResponse, HttpServer,
 };
 use badge::{Badge, BadgeOptions};
-use bytes::Bytes;
-use futures::{unsync::mpsc, Future, Stream};
+use futures::future::Future;
 use git2::Repository;
 use number_prefix::{NumberPrefix, Prefixed, Standalone};
 use std::{
@@ -139,12 +137,12 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String, u64)
     Ok((cache.count, head, commits))
 }
 
-fn remote_exists(url: &str) -> impl Future<Item = bool, Error = Error> {
-    CLIENT
-        .head(url)
-        .send()
-        .map(|resp| resp.status() == reqwest::StatusCode::OK)
-        .from_err()
+async fn remote_exists(url: &str) -> Result<bool> {
+    let resp = CLIENT.head(url).send().await?;
+    Ok(resp.status() == reqwest::StatusCode::OK)
+
+    // .map(|resp| resp.status() == reqwest::StatusCode::OK)
+    // .from_err()
 }
 
 enum HocResult {
@@ -160,11 +158,11 @@ enum HocResult {
     NotFound,
 }
 
-fn handle_hoc_request<T, F>(
+async fn handle_hoc_request<T, F>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
     mapper: F,
-) -> impl Future<Item = HttpResponse, Error = Error>
+) -> Result<HttpResponse>
 where
     T: Service,
     F: Fn(HocResult) -> Result<HttpResponse>,
@@ -173,44 +171,42 @@ where
     let service_path = format!("{}/{}", T::domain(), repo);
     let path = format!("{}/{}", state.repos, service_path);
     let url = format!("https://{}", service_path);
-    remote_exists(&url)
-        .and_then(move |remote_exists| {
-            let file = Path::new(&path);
-            if !file.exists() {
-                if !remote_exists {
-                    warn!("Repository does not exist: {}", url);
-                    return Ok(HocResult::NotFound);
-                }
-                info!("Cloning {} for the first time", url);
-                create_dir_all(file)?;
-                let repo = Repository::init_bare(file)?;
-                repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
-                repo.remote_set_url("origin", &url)?;
-                REPO_COUNT.fetch_add(1, Ordering::Relaxed);
-            }
-            pull(&path)?;
-            let (hoc, head, commits) = hoc(&service_path, &state.repos, &state.cache)?;
-            let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
-                Standalone(hoc) => hoc.to_string(),
-                Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
-            };
-            Ok(HocResult::Hoc {
-                hoc,
-                commits,
-                hoc_pretty,
-                head,
-                url,
-                repo,
-                service_path,
-            })
-        })
-        .and_then(mapper)
+    let remote_exists = remote_exists(&url).await?;
+    let file = Path::new(&path);
+    if !file.exists() {
+        if !remote_exists {
+            warn!("Repository does not exist: {}", url);
+            return mapper(HocResult::NotFound);
+        }
+        info!("Cloning {} for the first time", url);
+        create_dir_all(file)?;
+        let repo = Repository::init_bare(file)?;
+        repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
+        repo.remote_set_url("origin", &url)?;
+        REPO_COUNT.fetch_add(1, Ordering::Relaxed);
+    }
+    pull(&path)?;
+    let (hoc, head, commits) = hoc(&service_path, &state.repos, &state.cache)?;
+    let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
+        Standalone(hoc) => hoc.to_string(),
+        Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+    };
+    let res = HocResult::Hoc {
+        hoc,
+        commits,
+        hoc_pretty,
+        head: head.to_string(),
+        url,
+        repo,
+        service_path,
+    };
+    mapper(res)
 }
 
 fn json_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> impl Future<Item = HttpResponse, Error = Error> {
+) -> impl Future<Output = Result<HttpResponse>> {
     let mapper = |r| match r {
         HocResult::NotFound => p404(),
         HocResult::Hoc {
@@ -227,8 +223,8 @@ fn json_hoc<T: Service>(
 fn calculate_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> impl Future<Item = HttpResponse, Error = Error> {
-    let mapper = |r| match r {
+) -> impl Future<Output = Result<HttpResponse>> {
+    let mapper = move |r| match r {
         HocResult::NotFound => p404(),
         HocResult::Hoc { hoc_pretty, .. } => {
             let badge_opt = BadgeOptions {
@@ -237,9 +233,8 @@ fn calculate_hoc<T: Service>(
                 status: hoc_pretty,
             };
             let badge = Badge::new(badge_opt)?;
-
-            let (tx, rx_body) = mpsc::unbounded();
-            let _ = tx.unbounded_send(Bytes::from(badge.to_svg().as_bytes()));
+            // TODO: remove clone
+            let body = badge.to_svg().as_bytes().to_vec();
 
             let expiration = SystemTime::now() + Duration::from_secs(30);
             Ok(HttpResponse::Ok()
@@ -251,7 +246,7 @@ fn calculate_hoc<T: Service>(
                     CacheDirective::NoCache,
                     CacheDirective::NoStore,
                 ]))
-                .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
+                .body(body))
         }
     };
     handle_hoc_request::<T, _>(state, data, mapper)
@@ -260,7 +255,7 @@ fn calculate_hoc<T: Service>(
 fn overview<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> impl Future<Item = HttpResponse, Error = Error> {
+) -> impl Future<Output = Result<HttpResponse>> {
     let mapper = |r| match r {
         HocResult::NotFound => p404(),
         HocResult::Hoc {
@@ -287,30 +282,17 @@ fn overview<T: Service>(
                 &mut buf,
                 VERSION_INFO,
                 REPO_COUNT.load(Ordering::Relaxed),
-                repo_info
-                // &OPT.domain,
-                // &service_path,
-                // &url,
-                // hoc,
-                // &hoc_pretty,
-                // &head,
-                // &T::commit_url(&repo, &head),
-                // commits,
+                repo_info,
             )?;
 
-            let (tx, rx_body) = mpsc::unbounded();
-            let _ = tx.unbounded_send(Bytes::from(buf));
-
-            Ok(HttpResponse::Ok()
-                .content_type("text/html")
-                .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
+            Ok(HttpResponse::Ok().content_type("text/html").body(buf))
         }
     };
     handle_hoc_request::<T, _>(state, data, mapper)
 }
 
 #[get("/")]
-fn index() -> Result<HttpResponse> {
+async fn index() -> Result<HttpResponse> {
     let mut buf = Vec::new();
     templates::index(
         &mut buf,
@@ -322,7 +304,7 @@ fn index() -> Result<HttpResponse> {
 }
 
 #[post("/generate")]
-fn generate(params: web::Form<GeneratorForm>) -> Result<HttpResponse> {
+async fn generate(params: web::Form<GeneratorForm<'_>>) -> Result<HttpResponse> {
     let repo = format!("{}/{}", params.user, params.repo);
     let mut buf = Vec::new();
     templates::generate(
@@ -334,18 +316,18 @@ fn generate(params: web::Form<GeneratorForm>) -> Result<HttpResponse> {
         params.service.service(),
         &repo,
     )?;
-    let (tx, rx_body) = mpsc::unbounded();
-    let _ = tx.unbounded_send(Bytes::from(buf));
 
-    Ok(HttpResponse::Ok()
-        .content_type("text/html")
-        .streaming(rx_body.map_err(|_| ErrorBadRequest("bad request"))))
+    Ok(HttpResponse::Ok().content_type("text/html").body(buf))
 }
 
 fn p404() -> Result<HttpResponse> {
     let mut buf = Vec::new();
     templates::p404(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed))?;
     Ok(HttpResponse::NotFound().content_type("text/html").body(buf))
+}
+
+async fn async_p404() -> Result<HttpResponse> {
+    p404()
 }
 
 #[get("/tacit-css.min.css")]
@@ -358,13 +340,13 @@ fn favicon32() -> HttpResponse {
     HttpResponse::Ok().content_type("image/png").body(FAVICON)
 }
 
-fn start_server() -> Result<()> {
+async fn start_server() -> std::io::Result<()> {
     let interface = format!("{}:{}", OPT.host, OPT.port);
     let state = Arc::new(State {
         repos: OPT.outdir.display().to_string(),
         cache: OPT.cachedir.display().to_string(),
     });
-    Ok(HttpServer::new(move || {
+    HttpServer::new(move || {
         App::new()
             .data(state.clone())
             .wrap(middleware::Logger::default())
@@ -373,23 +355,25 @@ fn start_server() -> Result<()> {
             .service(css)
             .service(favicon32)
             .service(generate)
-            .service(web::resource("/github/{user}/{repo}").to_async(calculate_hoc::<GitHub>))
-            .service(web::resource("/gitlab/{user}/{repo}").to_async(calculate_hoc::<Gitlab>))
-            .service(web::resource("/bitbucket/{user}/{repo}").to_async(calculate_hoc::<Bitbucket>))
-            .service(web::resource("/github/{user}/{repo}/json").to_async(json_hoc::<GitHub>))
-            .service(web::resource("/gitlab/{user}/{repo}/json").to_async(json_hoc::<Gitlab>))
-            .service(web::resource("/bitbucket/{user}/{repo}/json").to_async(json_hoc::<Bitbucket>))
-            .service(web::resource("/view/github/{user}/{repo}").to_async(overview::<GitHub>))
-            .service(web::resource("/view/gitlab/{user}/{repo}").to_async(overview::<Gitlab>))
-            .service(web::resource("/view/bitbucket/{user}/{repo}").to_async(overview::<Bitbucket>))
-            .default_service(web::resource("").route(web::get().to_async(p404)))
+            .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
+            .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
+            .service(web::resource("/bitbucket/{user}/{repo}").to(calculate_hoc::<Bitbucket>))
+            .service(web::resource("/github/{user}/{repo}/json").to(json_hoc::<GitHub>))
+            .service(web::resource("/gitlab/{user}/{repo}/json").to(json_hoc::<Gitlab>))
+            .service(web::resource("/bitbucket/{user}/{repo}/json").to(json_hoc::<Bitbucket>))
+            .service(web::resource("/view/github/{user}/{repo}").to(overview::<GitHub>))
+            .service(web::resource("/view/gitlab/{user}/{repo}").to(overview::<Gitlab>))
+            .service(web::resource("/view/bitbucket/{user}/{repo}").to(overview::<Bitbucket>))
+            .default_service(web::resource("").route(web::get().to(async_p404)))
     })
     .workers(OPT.workers)
     .bind(interface)?
-    .run()?)
+    .run()
+    .await
 }
 
-fn main() -> Result<()> {
-    config::init()?;
-    start_server()
+#[actix_rt::main]
+async fn main() -> std::io::Result<()> {
+    config::init().await.unwrap();
+    start_server().await
 }
