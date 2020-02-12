@@ -44,10 +44,6 @@ impl ResponseError for Error {
             .content_type("text/html")
             .body(buf)
     }
-
-    fn render_response(&self) -> HttpResponse {
-        self.error_response()
-    }
 }
 
 impl std::error::Error for Error {}
