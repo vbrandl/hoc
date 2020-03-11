@@ -25,4 +25,4 @@ actix-rt = "1.0.0"
 
 [build-dependencies]
 ructe = "0.9.2"
-vergen = "3.0.4"
+vergen = "3.1.0"
