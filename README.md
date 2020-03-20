@@ -45,6 +45,10 @@ $ docker build .
 
 inside the repository.
 
+I'm currently working on migrating to [nix](https://nixos.org/nix). To get a
+development shell, run `nix-shell`, to build the package run `nix-build --attr
+package` and to build the Docker image, run `nix-build --attr dockerImage`.
+
 
 ## Running
 
