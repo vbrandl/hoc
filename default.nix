@@ -27,6 +27,25 @@ let
     # packageOverrides
   };
 in
-  (rustPkgs.workspace.hoc {}).overrideAttrs (drv: {
+rec {
+  inherit rustPkgs;
+  shell = pkgs.mkShell {
+    inputsFrom = pkgs.lib.mapAttrsToList (_: pkg: pkg { }) rustPkgs.noBuild.workspace;
+    nativeBuildInputs = with rustPkgs; [ cargo rustc ];
+  };
+  package = (rustPkgs.workspace.hoc {}).overrideAttrs (drv: {
       buildInputs = drv.buildInputs or [ ] ++ [ pkgs.git ];
-  })
+  });
+  dockerImage =
+    pkgs.dockerTools.buildImage {
+      name = "vbrandl/hits-of-code";
+      tag = "1";
+
+      contents = [ package ];
+
+      config = {
+        Cmd = [ "/bin/hoc" ];
+        WorkingDir = "/";
+      };
+    };
+}
