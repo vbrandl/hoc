@@ -43,13 +43,17 @@ impl ResponseError for Error {
         let mut buf = Vec::new();
         match self {
             Error::GitNoMaster => {
-                templates::p404_no_master(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed)).unwrap();
-                HttpResponse::NotFound()
-                    .content_type("text/html")
-                    .body(buf)
-            },
+                templates::p404_no_master(
+                    &mut buf,
+                    VERSION_INFO,
+                    REPO_COUNT.load(Ordering::Relaxed),
+                )
+                .unwrap();
+                HttpResponse::NotFound().content_type("text/html").body(buf)
+            }
             _ => {
-                templates::p500(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed)).unwrap();
+                templates::p500(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed))
+                    .unwrap();
                 HttpResponse::InternalServerError()
                     .content_type("text/html")
                     .body(buf)
