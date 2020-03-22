@@ -39,7 +39,7 @@ rec {
   dockerImage =
     pkgs.dockerTools.buildImage {
       name = "vbrandl/hits-of-code";
-      tag = "1";
+      tag = package.version;
 
       contents = [ package ];
 
