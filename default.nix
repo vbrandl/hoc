@@ -41,7 +41,12 @@ rec {
       name = "vbrandl/hits-of-code";
       tag = package.version;
 
-      contents = [ package ];
+      contents =
+        [
+          package
+          pkgs.cacert
+          pkgs.gitMinimal
+        ];
 
       config = {
         Cmd = [ "/bin/hoc" ];
