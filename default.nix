@@ -45,7 +45,7 @@ rec {
 
       config = {
         Cmd = [ "/bin/hoc" ];
-        WorkingDir = "/";
+        WorkingDir = "/home/hoc";
       };
     };
 }
