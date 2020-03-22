@@ -27,7 +27,7 @@ in
 {
   cargo2nixVersion = "0.8.2";
   workspace = {
-    hoc = rustPackages.unknown.hoc."0.11.5";
+    hoc = rustPackages.unknown.hoc."0.11.6";
   };
   "registry+https://github.com/rust-lang/crates.io-index".actix-codec."0.2.0" = overridableMkRustCrate (profileName: rec {
     name = "actix-codec";
@@ -1144,9 +1144,9 @@ in
     };
   });
   
-  "unknown".hoc."0.11.5" = overridableMkRustCrate (profileName: rec {
+  "unknown".hoc."0.11.6" = overridableMkRustCrate (profileName: rec {
     name = "hoc";
-    version = "0.11.5";
+    version = "0.11.6";
     registry = "unknown";
     src = fetchCrateLocal ./.;
     dependencies = {
