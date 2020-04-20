@@ -24,5 +24,5 @@ structopt = "0.3.12"
 actix-rt = "1.0.0"
 
 [build-dependencies]
-ructe = "0.9.2"
+ructe = "0.10.0"
 vergen = "3.1.0"
