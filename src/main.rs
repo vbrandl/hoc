@@ -31,7 +31,7 @@ use actix_web::{
 use badge::{Badge, BadgeOptions};
 use futures::future::Future;
 use git2::Repository;
-use number_prefix::{NumberPrefix, Prefixed, Standalone};
+use number_prefix::NumberPrefix;
 use std::{
     borrow::Cow,
     fs::create_dir_all,
@@ -193,8 +193,8 @@ where
     pull(&path)?;
     let (hoc, head, commits) = hoc(&service_path, &state.repos, &state.cache)?;
     let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
-        Standalone(hoc) => hoc.to_string(),
-        Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+        NumberPrefix::Standalone(hoc) => hoc.to_string(),
+        NumberPrefix::Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
     };
     let res = HocResult::Hoc {
         hoc,
