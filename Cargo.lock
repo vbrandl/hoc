@@ -857,6 +857,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "structopt",
+ "tempfile",
  "vergen",
 ]
 
