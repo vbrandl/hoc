@@ -17,6 +17,9 @@ mod service;
 mod statics;
 mod template;
 
+#[cfg(test)]
+mod tests;
+
 use crate::{
     cache::CacheState,
     error::{Error, Result},
@@ -29,7 +32,6 @@ use actix_web::{
     middleware, web, App, HttpResponse, HttpServer,
 };
 use badge::{Badge, BadgeOptions};
-use futures::future::Future;
 use git2::Repository;
 use number_prefix::NumberPrefix;
 use std::{
@@ -51,7 +53,8 @@ struct GeneratorForm<'a> {
     repo: Cow<'a, str>,
 }
 
-struct State {
+#[derive(Debug)]
+pub(crate) struct State {
     repos: String,
     cache: String,
 }
@@ -176,6 +179,7 @@ where
     let service_path = format!("{}/{}", T::domain(), repo);
     let path = format!("{}/{}", state.repos, service_path);
     let url = format!("https://{}", service_path);
+    error!("{}", url);
     let remote_exists = remote_exists(&url).await?;
     let file = Path::new(&path);
     if !file.exists() {
@@ -208,10 +212,10 @@ where
     mapper(res)
 }
 
-fn json_hoc<T: Service>(
+pub(crate) async fn json_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> impl Future<Output = Result<HttpResponse>> {
+) -> Result<HttpResponse> {
     let mapper = |r| match r {
         HocResult::NotFound => p404(),
         HocResult::Hoc {
@@ -222,13 +226,13 @@ fn json_hoc<T: Service>(
             commits,
         })),
     };
-    handle_hoc_request::<T, _>(state, data, mapper)
+    handle_hoc_request::<T, _>(state, data, mapper).await
 }
 
-fn calculate_hoc<T: Service>(
+pub(crate) async fn calculate_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> impl Future<Output = Result<HttpResponse>> {
+) -> Result<HttpResponse> {
     let mapper = move |r| match r {
         HocResult::NotFound => p404(),
         HocResult::Hoc { hoc_pretty, .. } => {
@@ -254,13 +258,13 @@ fn calculate_hoc<T: Service>(
                 .body(body))
         }
     };
-    handle_hoc_request::<T, _>(state, data, mapper)
+    handle_hoc_request::<T, _>(state, data, mapper).await
 }
 
-fn overview<T: Service>(
+async fn overview<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
-) -> impl Future<Output = Result<HttpResponse>> {
+) -> Result<HttpResponse> {
     let mapper = |r| match r {
         HocResult::NotFound => p404(),
         HocResult::Hoc {
@@ -293,7 +297,7 @@ fn overview<T: Service>(
             Ok(HttpResponse::Ok().content_type("text/html").body(buf))
         }
     };
-    handle_hoc_request::<T, _>(state, data, mapper)
+    handle_hoc_request::<T, _>(state, data, mapper).await
 }
 
 #[get("/")]
