@@ -28,8 +28,8 @@ use crate::{
     template::RepoInfo,
 };
 use actix_web::{
-    http::header::{CacheControl, CacheDirective, Expires},
-    middleware, web, App, HttpResponse, HttpServer,
+    http::header::{CacheControl, CacheDirective, Expires, LOCATION},
+    middleware, web, App, HttpResponse, HttpServer, Responder,
 };
 use badge::{Badge, BadgeOptions};
 use git2::Repository;
@@ -37,6 +37,7 @@ use number_prefix::NumberPrefix;
 use std::{
     borrow::Cow,
     fs::create_dir_all,
+    io,
     path::Path,
     process::Command,
     sync::atomic::Ordering,
@@ -148,9 +149,6 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String, u64)
 async fn remote_exists(url: &str) -> Result<bool> {
     let resp = CLIENT.head(url).send().await?;
     Ok(resp.status() == reqwest::StatusCode::OK)
-
-    // .map(|resp| resp.status() == reqwest::StatusCode::OK)
-    // .from_err()
 }
 
 enum HocResult {
@@ -166,6 +164,45 @@ enum HocResult {
     NotFound,
 }
 
+async fn delete_repo_and_cache<T>(
+    state: web::Data<Arc<State>>,
+    data: web::Path<(String, String)>,
+) -> Result<impl Responder>
+where
+    T: Service,
+{
+    let repo = format!(
+        "{}/{}/{}",
+        T::domain(),
+        data.0.to_lowercase(),
+        data.1.to_lowercase()
+    );
+    info!("Deleting cache and repository for {}", repo);
+    let cache_dir = dbg!(format!("{}/{}.json", &state.cache, repo));
+    let repo_dir = dbg!(format!("{}/{}", &state.repos, repo));
+    std::fs::remove_file(&cache_dir).or_else(|e| {
+        if e.kind() == io::ErrorKind::NotFound {
+            Ok(())
+        } else {
+            Err(e)
+        }
+    })?;
+    std::fs::remove_dir_all(&repo_dir).or_else(|e| {
+        if e.kind() == io::ErrorKind::NotFound {
+            Ok(())
+        } else {
+            Err(e)
+        }
+    })?;
+    REPO_COUNT.fetch_sub(1, Ordering::Relaxed);
+    Ok(HttpResponse::TemporaryRedirect()
+        .header(
+            LOCATION,
+            format!("/view/{}/{}/{}", T::url_path(), data.0, data.1),
+        )
+        .finish())
+}
+
 async fn handle_hoc_request<T, F>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
@@ -176,9 +213,10 @@ where
     F: Fn(HocResult) -> Result<HttpResponse>,
 {
     let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
-    let service_path = format!("{}/{}", T::domain(), repo);
-    let path = format!("{}/{}", state.repos, service_path);
-    let url = format!("https://{}", service_path);
+    let service_path = format!("{}/{}", T::url_path(), repo);
+    let service_url = format!("{}/{}", T::domain(), repo);
+    let path = format!("{}/{}", state.repos, service_url);
+    let url = format!("https://{}", service_url);
     error!("{}", url);
     let remote_exists = remote_exists(&url).await?;
     let file = Path::new(&path);
@@ -195,7 +233,7 @@ where
         REPO_COUNT.fetch_add(1, Ordering::Relaxed);
     }
     pull(&path)?;
-    let (hoc, head, commits) = hoc(&service_path, &state.repos, &state.cache)?;
+    let (hoc, head, commits) = hoc(&service_url, &state.repos, &state.cache)?;
     let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
         NumberPrefix::Standalone(hoc) => hoc.to_string(),
         NumberPrefix::Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
@@ -367,6 +405,18 @@ async fn start_server() -> std::io::Result<()> {
             .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
             .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
             .service(web::resource("/bitbucket/{user}/{repo}").to(calculate_hoc::<Bitbucket>))
+            .service(
+                web::resource("/github/{user}/{repo}/delete")
+                    .route(web::post().to(delete_repo_and_cache::<GitHub>)),
+            )
+            .service(
+                web::resource("/gitlab/{user}/{repo}/delete")
+                    .route(web::post().to(delete_repo_and_cache::<Gitlab>)),
+            )
+            .service(
+                web::resource("/bitbucket/{user}/{repo}/delete")
+                    .route(web::post().to(delete_repo_and_cache::<Bitbucket>)),
+            )
             .service(web::resource("/github/{user}/{repo}/json").to(json_hoc::<GitHub>))
             .service(web::resource("/gitlab/{user}/{repo}/json").to(json_hoc::<Gitlab>))
             .service(web::resource("/bitbucket/{user}/{repo}/json").to(json_hoc::<Bitbucket>))
