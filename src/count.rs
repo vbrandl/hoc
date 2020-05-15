@@ -5,6 +5,7 @@ pub(crate) fn count_repositories<P>(repo_path: P) -> Result<usize>
 where
     P: AsRef<Path>,
 {
+    std::fs::create_dir_all(&repo_path)?;
     Ok(read_dir(repo_path)?
         .filter_map(StdResult::ok)
         .filter(|entry| entry.file_type().map(|ft| ft.is_dir()).unwrap_or(false))
