@@ -7,4 +7,5 @@ pub struct RepoInfo<'a> {
     pub hoc_pretty: &'a str,
     pub path: &'a str,
     pub url: &'a str,
+    pub branch: &'a str,
 }

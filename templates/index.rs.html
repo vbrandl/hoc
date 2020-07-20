@@ -46,6 +46,12 @@ alt="example badge" /></a>
 </pre>
 
 <p>
+By default, this service assumes the existence of a branch named <code>master</code>. If no branch with that name exists
+in your repository or you want a badge for another branch of your repository, just append
+<code>?branch=&lt;branch-name&gt;</code> to the URL.
+</p>
+
+<p>
 You can also request the HoC as JSON by appending <code>/json</code> to the request path. This will return a JSON object
 with three fields: <code>count</code> (the HoC value), <code>commits</code> (the number of commits) and
 <code>head</code> (the commit ref of HEAD). Requesting <a

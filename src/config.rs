@@ -50,7 +50,6 @@ pub(crate) struct Opt {
 
 pub(crate) async fn init() -> Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info,hoc=info");
-    // pretty_env_logger::init();
     openssl_probe::init_ssl_cert_env_vars();
     let stdout = ConsoleAppender::builder().build();
     let file = FileAppender::builder()

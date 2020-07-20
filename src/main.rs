@@ -32,7 +32,7 @@ use actix_web::{
     middleware, web, App, HttpResponse, HttpServer, Responder,
 };
 use badge::{Badge, BadgeOptions};
-use git2::Repository;
+use git2::{BranchType, Repository};
 use number_prefix::NumberPrefix;
 use std::{
     borrow::Cow,
@@ -63,8 +63,14 @@ pub(crate) struct State {
 #[derive(Serialize)]
 struct JsonResponse<'a> {
     head: &'a str,
+    branch: &'a str,
     count: u64,
     commits: u64,
+}
+
+#[derive(Deserialize, Debug)]
+struct BranchQuery {
+    branch: Option<String>,
 }
 
 fn pull(path: impl AsRef<Path>) -> Result<()> {
@@ -74,17 +80,17 @@ fn pull(path: impl AsRef<Path>) -> Result<()> {
     Ok(())
 }
 
-fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String, u64)> {
+fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64, String, u64)> {
     let repo_dir = format!("{}/{}", repo_dir, repo);
     let cache_dir = format!("{}/{}.json", cache_dir, repo);
     let cache_dir = Path::new(&cache_dir);
     let repo = Repository::open_bare(&repo_dir)?;
     // TODO: do better...
-    let head = match repo.head() {
-        Ok(v) => v,
-        Err(_) => return Err(Error::GitNoMaster),
-    };
-    let head = format!("{}", head.target().ok_or(Error::Internal)?);
+    let head = repo
+        .find_branch(branch, BranchType::Local)
+        .map_err(|_| Error::BranchNotFound)?
+        .into_reference();
+    let head = format!("{}", head.target().ok_or(Error::BranchNotFound)?);
     let mut arg_commit_count = vec!["rev-list".to_string(), "--count".to_string()];
     let mut arg = vec![
         "log".to_string(),
@@ -98,26 +104,27 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String, u64)
         "-M".to_string(),
         "--diff-filter=ACDM".to_string(),
     ];
-    let cache = CacheState::read_from_file(&cache_dir, &head)?;
+    let cache = CacheState::read_from_file(&cache_dir, branch, &head)?;
     match &cache {
-        CacheState::Current { count, commits } => {
+        CacheState::Current { count, commits, .. } => {
             info!("Using cache for {}", repo_dir);
             return Ok((*count, head, *commits));
         }
-        CacheState::Old(cache) => {
+        CacheState::Old { head, .. } => {
             info!("Updating cache for {}", repo_dir);
-            arg.push(format!("{}..HEAD", cache.head));
-            arg_commit_count.push(format!("{}..HEAD", cache.head));
+            arg.push(format!("{}..{}", head, branch));
+            arg_commit_count.push(format!("{}..{}", head, branch));
         }
-        CacheState::No => {
+        CacheState::No | CacheState::NoneForBranch(..) => {
             info!("Creating cache for {}", repo_dir);
-            arg_commit_count.push("HEAD".to_string());
+            arg.push(branch.to_string());
+            arg_commit_count.push(branch.to_string());
         }
     };
     arg.push("--".to_string());
     arg.push(".".to_string());
     let output = Command::new("git")
-        .args(&arg)
+        .args(&dbg!(arg))
         .current_dir(&repo_dir)
         .output()?
         .stdout;
@@ -140,10 +147,10 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str) -> Result<(u64, String, u64)
         })
         .sum();
 
-    let cache = cache.calculate_new_cache(count, commits, (&head).into());
+    let cache = cache.calculate_new_cache(count, commits, (&head).into(), branch);
     cache.write_to_file(cache_dir)?;
 
-    Ok((cache.count, head, commits))
+    Ok((count, head, commits))
 }
 
 async fn remote_exists(url: &str) -> Result<bool> {
@@ -206,6 +213,7 @@ where
 async fn handle_hoc_request<T, F>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
+    branch: &str,
     mapper: F,
 ) -> Result<HttpResponse>
 where
@@ -217,7 +225,6 @@ where
     let service_url = format!("{}/{}", T::domain(), repo);
     let path = format!("{}/{}", state.repos, service_url);
     let url = format!("https://{}", service_url);
-    error!("{}", url);
     let remote_exists = remote_exists(&url).await?;
     let file = Path::new(&path);
     if !file.exists() {
@@ -233,7 +240,7 @@ where
         REPO_COUNT.fetch_add(1, Ordering::Relaxed);
     }
     pull(&path)?;
-    let (hoc, head, commits) = hoc(&service_url, &state.repos, &state.cache)?;
+    let (hoc, head, commits) = hoc(&service_url, &state.repos, &state.cache, branch)?;
     let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
         NumberPrefix::Standalone(hoc) => hoc.to_string(),
         NumberPrefix::Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
@@ -253,23 +260,27 @@ where
 pub(crate) async fn json_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
+    branch: web::Query<BranchQuery>,
 ) -> Result<HttpResponse> {
+    let branch = branch.branch.as_deref().unwrap_or("master");
     let mapper = |r| match r {
         HocResult::NotFound => p404(),
         HocResult::Hoc {
             hoc, head, commits, ..
         } => Ok(HttpResponse::Ok().json(JsonResponse {
+            branch,
             head: &head,
             count: hoc,
             commits,
         })),
     };
-    handle_hoc_request::<T, _>(state, data, mapper).await
+    handle_hoc_request::<T, _>(state, data, branch, mapper).await
 }
 
 pub(crate) async fn calculate_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
+    branch: web::Query<BranchQuery>,
 ) -> Result<HttpResponse> {
     let mapper = move |r| match r {
         HocResult::NotFound => p404(),
@@ -296,13 +307,16 @@ pub(crate) async fn calculate_hoc<T: Service>(
                 .body(body))
         }
     };
-    handle_hoc_request::<T, _>(state, data, mapper).await
+    let branch = branch.branch.as_deref().unwrap_or("master");
+    handle_hoc_request::<T, _>(state, data, branch, mapper).await
 }
 
 async fn overview<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
+    branch: web::Query<BranchQuery>,
 ) -> Result<HttpResponse> {
+    let branch = branch.branch.as_deref().unwrap_or("master");
     let mapper = |r| match r {
         HocResult::NotFound => p404(),
         HocResult::Hoc {
@@ -324,6 +338,7 @@ async fn overview<T: Service>(
                 hoc_pretty: &hoc_pretty,
                 path: &service_path,
                 url: &url,
+                branch,
             };
             templates::overview(
                 &mut buf,
@@ -335,7 +350,7 @@ async fn overview<T: Service>(
             Ok(HttpResponse::Ok().content_type("text/html").body(buf))
         }
     };
-    handle_hoc_request::<T, _>(state, data, mapper).await
+    handle_hoc_request::<T, _>(state, data, branch, mapper).await
 }
 
 #[get("/")]

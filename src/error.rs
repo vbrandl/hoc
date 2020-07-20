@@ -18,7 +18,7 @@ pub(crate) enum Error {
     LogBuilder(log4rs::config::Errors),
     Parse(std::num::ParseIntError),
     Serial(serde_json::Error),
-    GitNoMaster,
+    BranchNotFound,
 }
 
 impl fmt::Display for Error {
@@ -33,7 +33,7 @@ impl fmt::Display for Error {
             Error::LogBuilder(e) => write!(fmt, "LogBuilder({})", e),
             Error::Parse(e) => write!(fmt, "Parse({})", e),
             Error::Serial(e) => write!(fmt, "Serial({})", e),
-            Error::GitNoMaster => write!(fmt, "Repo doesn't have master branch"),
+            Error::BranchNotFound => write!(fmt, "Repo doesn't have master branch"),
         }
     }
 }
@@ -42,7 +42,7 @@ impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse {
         let mut buf = Vec::new();
         match self {
-            Error::GitNoMaster => {
+            Error::BranchNotFound => {
                 templates::p404_no_master(
                     &mut buf,
                     VERSION_INFO,
