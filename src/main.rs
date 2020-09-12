@@ -178,6 +178,7 @@ async fn delete_repo_and_cache<T>(
 where
     T: Service,
 {
+    let data = data.into_inner();
     let repo = format!(
         "{}/{}/{}",
         T::domain(),
@@ -220,6 +221,7 @@ where
     T: Service,
     F: Fn(HocResult) -> Result<HttpResponse>,
 {
+    let data = data.into_inner();
     let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
     let service_path = format!("{}/{}", T::url_path(), repo);
     let service_url = format!("{}/{}", T::domain(), repo);
@@ -412,7 +414,7 @@ async fn start_server() -> std::io::Result<()> {
         App::new()
             .data(state.clone())
             .wrap(middleware::Logger::default())
-            .wrap(middleware::NormalizePath)
+            .wrap(middleware::NormalizePath::default())
             .service(index)
             .service(css)
             .service(favicon32)
