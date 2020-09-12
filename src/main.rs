@@ -394,12 +394,10 @@ async fn async_p404() -> Result<HttpResponse> {
     p404()
 }
 
-#[get("/tacit-css.min.css")]
 fn css() -> HttpResponse {
     HttpResponse::Ok().content_type("text/css").body(CSS)
 }
 
-#[get("/favicon.ico")]
 fn favicon32() -> HttpResponse {
     HttpResponse::Ok().content_type("image/png").body(FAVICON)
 }
@@ -414,10 +412,11 @@ async fn start_server() -> std::io::Result<()> {
         App::new()
             .data(state.clone())
             .wrap(middleware::Logger::default())
-            .wrap(middleware::NormalizePath::default())
+            // .wrap(middleware::NormalizePath::default())
             .service(index)
-            .service(css)
-            .service(favicon32)
+            .service(web::resource("/tacit-css.min.css").route(web::get().to(css)))
+            // TODO
+            .service(web::resource("/favicon.ico").route(web::get().to(favicon32)))
             .service(generate)
             .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
             .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
