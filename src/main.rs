@@ -29,7 +29,8 @@ use crate::{
 };
 use actix_web::{
     http::header::{CacheControl, CacheDirective, Expires, LOCATION},
-    middleware, web, App, HttpResponse, HttpServer, Responder,
+    middleware::{self, normalize::TrailingSlash},
+    web, App, HttpResponse, HttpServer, Responder,
 };
 use badge::{Badge, BadgeOptions};
 use git2::{BranchType, Repository};
@@ -124,7 +125,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
     arg.push("--".to_string());
     arg.push(".".to_string());
     let output = Command::new("git")
-        .args(&dbg!(arg))
+        .args(&arg)
         .current_dir(&repo_dir)
         .output()?
         .stdout;
@@ -186,8 +187,8 @@ where
         data.1.to_lowercase()
     );
     info!("Deleting cache and repository for {}", repo);
-    let cache_dir = dbg!(format!("{}/{}.json", &state.cache, repo));
-    let repo_dir = dbg!(format!("{}/{}", &state.repos, repo));
+    let cache_dir = format!("{}/{}.json", &state.cache, repo);
+    let repo_dir = format!("{}/{}", &state.repos, repo);
     std::fs::remove_file(&cache_dir).or_else(|e| {
         if e.kind() == io::ErrorKind::NotFound {
             Ok(())
@@ -412,7 +413,7 @@ async fn start_server() -> std::io::Result<()> {
         App::new()
             .data(state.clone())
             .wrap(middleware::Logger::default())
-            // .wrap(middleware::NormalizePath::default())
+            .wrap(middleware::NormalizePath::new(TrailingSlash::Trim))
             .service(index)
             .service(web::resource("/tacit-css.min.css").route(web::get().to(css)))
             // TODO
