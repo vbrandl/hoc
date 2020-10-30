@@ -8,6 +8,7 @@ use std::{
 };
 
 /// Enum to indicate the state of the cache
+#[derive(Debug)]
 pub(crate) enum CacheState<'a> {
     /// Current head and cached head are the same
     Current {
@@ -26,11 +27,13 @@ pub(crate) enum CacheState<'a> {
 }
 
 impl<'a> CacheState<'a> {
+    #[instrument]
     pub(crate) fn read_from_file(
-        path: impl AsRef<Path>,
+        path: impl AsRef<Path> + std::fmt::Debug,
         branch: &str,
         head: &str,
     ) -> Result<CacheState<'a>> {
+        trace!("Reading cache");
         if path.as_ref().exists() {
             let cache: Cache = serde_json::from_reader(BufReader::new(File::open(path)?))?;
             Ok(cache
@@ -38,6 +41,7 @@ impl<'a> CacheState<'a> {
                 .get(branch)
                 .map(|c| {
                     if c.head == head {
+                        trace!("Cache is up to date");
                         CacheState::Current {
                             count: c.count,
                             commits: c.commits,
@@ -45,6 +49,7 @@ impl<'a> CacheState<'a> {
                             cache: cache.clone(),
                         }
                     } else {
+                        trace!("Cache is out of date");
                         CacheState::Old {
                             head: c.head.to_string(),
                             // TODO: get rid of clone
@@ -59,6 +64,7 @@ impl<'a> CacheState<'a> {
         }
     }
 
+    #[instrument]
     pub(crate) fn calculate_new_cache(
         self,
         count: u64,
@@ -66,6 +72,7 @@ impl<'a> CacheState<'a> {
         head: Cow<'a, str>,
         branch: &'a str,
     ) -> Cache<'a> {
+        trace!("Calculating new cache");
         match self {
             CacheState::Old { mut cache, .. } => {
                 if let Some(mut cache) = cache.entries.get_mut(branch) {
@@ -77,6 +84,7 @@ impl<'a> CacheState<'a> {
             }
             CacheState::Current { cache, .. } => cache,
             CacheState::NoneForBranch(mut cache) => {
+                trace!("Creating new cache for branch");
                 cache.entries.insert(
                     branch.into(),
                     CacheEntry {
@@ -88,6 +96,7 @@ impl<'a> CacheState<'a> {
                 cache
             }
             CacheState::No => {
+                trace!("Creating new cache file");
                 let mut entries = HashMap::with_capacity(1);
                 entries.insert(
                     branch.into(),
@@ -103,12 +112,12 @@ impl<'a> CacheState<'a> {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub(crate) struct Cache<'a> {
     pub entries: HashMap<Cow<'a, str>, CacheEntry<'a>>,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub(crate) struct CacheEntry<'a> {
     /// HEAD commit ref
     pub head: Cow<'a, str>,
@@ -119,7 +128,9 @@ pub(crate) struct CacheEntry<'a> {
 }
 
 impl<'a> Cache<'a> {
-    pub(crate) fn write_to_file(&self, path: impl AsRef<Path>) -> Result<()> {
+    #[instrument]
+    pub(crate) fn write_to_file(&self, path: impl AsRef<Path> + std::fmt::Debug) -> Result<()> {
+        trace!("Persisting cache to disk");
         create_dir_all(path.as_ref().parent().ok_or(Error::Internal)?)?;
         serde_json::to_writer(
             OpenOptions::new()

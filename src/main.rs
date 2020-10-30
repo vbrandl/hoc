@@ -4,12 +4,10 @@
 extern crate actix_web;
 #[macro_use]
 extern crate lazy_static;
-// #[macro_use]
-// extern crate log;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
-extern crate slog;
+extern crate tracing;
 
 mod cache;
 mod config;
@@ -37,7 +35,6 @@ use actix_web::{
 use badge::{Badge, BadgeOptions};
 use git2::{BranchType, Repository};
 use number_prefix::NumberPrefix;
-use slog::Logger;
 use std::{
     borrow::Cow,
     fs::create_dir_all,
@@ -48,6 +45,7 @@ use std::{
     sync::Arc,
     time::{Duration, SystemTime},
 };
+use tracing::Instrument;
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
@@ -62,7 +60,6 @@ struct GeneratorForm<'a> {
 pub(crate) struct State {
     repos: String,
     cache: String,
-    logger: Logger,
 }
 
 #[derive(Serialize)]
@@ -85,13 +82,7 @@ fn pull(path: impl AsRef<Path>) -> Result<()> {
     Ok(())
 }
 
-fn hoc(
-    repo: &str,
-    repo_dir: &str,
-    cache_dir: &str,
-    branch: &str,
-    logger: &Logger,
-) -> Result<(u64, String, u64)> {
+fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64, String, u64)> {
     let repo_dir = format!("{}/{}", repo_dir, repo);
     let cache_dir = format!("{}/{}.json", cache_dir, repo);
     let cache_dir = Path::new(&cache_dir);
@@ -118,16 +109,16 @@ fn hoc(
     let cache = CacheState::read_from_file(&cache_dir, branch, &head)?;
     match &cache {
         CacheState::Current { count, commits, .. } => {
-            info!(logger, "Using cache");
+            info!("Using cache");
             return Ok((*count, head, *commits));
         }
         CacheState::Old { head, .. } => {
-            info!(logger, "Updating cache");
+            info!("Updating cache");
             arg.push(format!("{}..{}", head, branch));
             arg_commit_count.push(format!("{}..{}", head, branch));
         }
         CacheState::No | CacheState::NoneForBranch(..) => {
-            info!(logger, "Creating cache");
+            info!("Creating cache");
             arg.push(branch.to_string());
             arg_commit_count.push(branch.to_string());
         }
@@ -190,39 +181,45 @@ where
     T: Service,
 {
     let data = data.into_inner();
-    let logger = state
-        .logger
-        .new(o!("service" => T::domain(), "user" => data.0.clone(), "repo" => data.1.clone()));
-    let repo = format!(
-        "{}/{}/{}",
-        T::domain(),
-        data.0.to_lowercase(),
-        data.1.to_lowercase()
+    let span = info_span!(
+        "deleting repository and cache",
+        service = T::domain(),
+        user = data.0.as_str(),
+        repo = data.1.as_str()
     );
-    info!(logger, "Deleting cache and repository");
-    let cache_dir = format!("{}/{}.json", &state.cache, repo);
-    let repo_dir = format!("{}/{}", &state.repos, repo);
-    std::fs::remove_file(&cache_dir).or_else(|e| {
-        if e.kind() == io::ErrorKind::NotFound {
-            Ok(())
-        } else {
-            Err(e)
-        }
-    })?;
-    std::fs::remove_dir_all(&repo_dir).or_else(|e| {
-        if e.kind() == io::ErrorKind::NotFound {
-            Ok(())
-        } else {
-            Err(e)
-        }
-    })?;
-    REPO_COUNT.fetch_sub(1, Ordering::Relaxed);
-    Ok(HttpResponse::TemporaryRedirect()
-        .header(
-            LOCATION,
-            format!("/view/{}/{}/{}", T::url_path(), data.0, data.1),
-        )
-        .finish())
+    let future = async {
+        let repo = format!(
+            "{}/{}/{}",
+            T::domain(),
+            data.0.to_lowercase(),
+            data.1.to_lowercase()
+        );
+        info!("Deleting cache and repository");
+        let cache_dir = format!("{}/{}.json", &state.cache, repo);
+        let repo_dir = format!("{}/{}", &state.repos, repo);
+        std::fs::remove_file(&cache_dir).or_else(|e| {
+            if e.kind() == io::ErrorKind::NotFound {
+                Ok(())
+            } else {
+                Err(e)
+            }
+        })?;
+        std::fs::remove_dir_all(&repo_dir).or_else(|e| {
+            if e.kind() == io::ErrorKind::NotFound {
+                Ok(())
+            } else {
+                Err(e)
+            }
+        })?;
+        REPO_COUNT.fetch_sub(1, Ordering::Relaxed);
+        Ok(HttpResponse::TemporaryRedirect()
+            .header(
+                LOCATION,
+                format!("/view/{}/{}/{}", T::url_path(), data.0, data.1),
+            )
+            .finish())
+    };
+    future.instrument(span).await
 }
 
 async fn handle_hoc_request<T, F>(
@@ -236,44 +233,51 @@ where
     F: Fn(HocResult) -> Result<HttpResponse>,
 {
     let data = data.into_inner();
-    let logger = state
-        .logger
-        .new(o!("service" => T::domain(), "user" => data.0.clone(), "repo" => data.1.clone(), "branch" => branch.to_string()));
-    let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
-    let service_path = format!("{}/{}", T::url_path(), repo);
-    let service_url = format!("{}/{}", T::domain(), repo);
-    let path = format!("{}/{}", state.repos, service_url);
-    let url = format!("https://{}", service_url);
-    let remote_exists = remote_exists(&url).await?;
-    let file = Path::new(&path);
-    if !file.exists() {
-        if !remote_exists {
-            warn!(logger, "Repository does not exist");
-            return mapper(HocResult::NotFound);
+    let span = info_span!(
+        "handling hoc calculation",
+        service = T::domain(),
+        user = data.0.as_str(),
+        repo = data.1.as_str(),
+        branch
+    );
+    let future = async {
+        let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
+        let service_path = format!("{}/{}", T::url_path(), repo);
+        let service_url = format!("{}/{}", T::domain(), repo);
+        let path = format!("{}/{}", state.repos, service_url);
+        let url = format!("https://{}", service_url);
+        let remote_exists = remote_exists(&url).await?;
+        let file = Path::new(&path);
+        if !file.exists() {
+            if !remote_exists {
+                warn!("Repository does not exist");
+                return mapper(HocResult::NotFound);
+            }
+            info!("Cloning for the first time");
+            create_dir_all(file)?;
+            let repo = Repository::init_bare(file)?;
+            repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
+            repo.remote_set_url("origin", &url)?;
+            REPO_COUNT.fetch_add(1, Ordering::Relaxed);
         }
-        info!(logger, "Cloning for the first time");
-        create_dir_all(file)?;
-        let repo = Repository::init_bare(file)?;
-        repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
-        repo.remote_set_url("origin", &url)?;
-        REPO_COUNT.fetch_add(1, Ordering::Relaxed);
-    }
-    pull(&path)?;
-    let (hoc, head, commits) = hoc(&service_url, &state.repos, &state.cache, branch, &logger)?;
-    let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
-        NumberPrefix::Standalone(hoc) => hoc.to_string(),
-        NumberPrefix::Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+        pull(&path)?;
+        let (hoc, head, commits) = hoc(&service_url, &state.repos, &state.cache, branch)?;
+        let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
+            NumberPrefix::Standalone(hoc) => hoc.to_string(),
+            NumberPrefix::Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+        };
+        let res = HocResult::Hoc {
+            hoc,
+            commits,
+            hoc_pretty,
+            head,
+            url,
+            repo,
+            service_path,
+        };
+        mapper(res)
     };
-    let res = HocResult::Hoc {
-        hoc,
-        commits,
-        hoc_pretty,
-        head,
-        url,
-        repo,
-        service_path,
-    };
-    mapper(res)
+    future.instrument(span).await
 }
 
 pub(crate) async fn json_hoc<T: Service>(
@@ -419,23 +423,19 @@ fn favicon32() -> HttpResponse {
     HttpResponse::Ok().content_type("image/png").body(FAVICON)
 }
 
-async fn start_server(logger: Logger) -> std::io::Result<()> {
+async fn start_server() -> std::io::Result<()> {
     let interface = format!("{}:{}", OPT.host, OPT.port);
     let state = Arc::new(State {
         repos: OPT.outdir.display().to_string(),
         cache: OPT.cachedir.display().to_string(),
-        logger,
     });
     HttpServer::new(move || {
         App::new()
             .data(state.clone())
-            .wrap(actix_slog::StructuredLogger::new(
-                state.logger.new(o!("log_type" => "access")),
-            ))
+            .wrap(tracing_actix_web::TracingLogger)
             .wrap(middleware::NormalizePath::new(TrailingSlash::Trim))
             .service(index)
             .service(web::resource("/tacit-css.min.css").route(web::get().to(css)))
-            // TODO
             .service(web::resource("/favicon.ico").route(web::get().to(favicon32)))
             .service(generate)
             .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
@@ -469,6 +469,8 @@ async fn start_server(logger: Logger) -> std::io::Result<()> {
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    let logger = config::init();
-    start_server(logger).await
+    config::init();
+    let span = info_span!("hoc", version = env!("CARGO_PKG_VERSION"));
+    let _ = span.enter();
+    start_server().instrument(span).await
 }

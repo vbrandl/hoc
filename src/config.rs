@@ -1,5 +1,3 @@
-use slog::{Drain, Logger};
-use slog_atomic::AtomicSwitch;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -33,28 +31,11 @@ pub(crate) struct Opt {
     #[structopt(short = "w", long = "workers", default_value = "4")]
     /// Number of worker threads
     pub(crate) workers: usize,
-    // #[structopt(
-    //     short = "l",
-    //     long = "logfile",
-    //     parse(from_os_str),
-    //     default_value = "./hoc.log"
-    // )]
-    // /// The logfile
-    // pub(crate) logfile: PathBuf,
 }
 
-pub(crate) fn init() -> Logger {
+pub(crate) fn init() {
     std::env::set_var("RUST_LOG", "actix_web=info,hoc=info");
     openssl_probe::init_ssl_cert_env_vars();
 
-    let decorator = slog_term::PlainDecorator::new(std::io::stdout());
-    let drain = slog_term::FullFormat::new(decorator).build().fuse();
-    let drain = slog_async::Async::new(drain).build().fuse();
-    let drain = AtomicSwitch::new(drain);
-
-    let root = Logger::root(drain, o!("version" => env!("CARGO_PKG_VERSION")));
-
-    info!(root, "Logging initialized");
-
-    root
+    tracing_subscriber::fmt().init();
 }
