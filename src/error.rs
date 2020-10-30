@@ -14,8 +14,6 @@ pub(crate) enum Error {
     Git(git2::Error),
     Internal,
     Io(std::io::Error),
-    Log(log::SetLoggerError),
-    LogBuilder(log4rs::config::Errors),
     Parse(std::num::ParseIntError),
     Serial(serde_json::Error),
     BranchNotFound,
@@ -29,8 +27,6 @@ impl fmt::Display for Error {
             Error::Git(e) => write!(fmt, "Git({})", e),
             Error::Internal => write!(fmt, "Internal Error"),
             Error::Io(e) => write!(fmt, "Io({})", e),
-            Error::Log(e) => write!(fmt, "Log({})", e),
-            Error::LogBuilder(e) => write!(fmt, "LogBuilder({})", e),
             Error::Parse(e) => write!(fmt, "Parse({})", e),
             Error::Serial(e) => write!(fmt, "Serial({})", e),
             Error::BranchNotFound => write!(fmt, "Repo doesn't have master branch"),
@@ -76,12 +72,6 @@ impl From<git2::Error> for Error {
     }
 }
 
-impl From<log::SetLoggerError> for Error {
-    fn from(err: log::SetLoggerError) -> Self {
-        Error::Log(err)
-    }
-}
-
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Self {
         Error::Io(err)
@@ -97,12 +87,6 @@ impl From<serde_json::Error> for Error {
 impl From<reqwest::Error> for Error {
     fn from(err: reqwest::Error) -> Self {
         Error::Client(err)
-    }
-}
-
-impl From<log4rs::config::Errors> for Error {
-    fn from(err: log4rs::config::Errors) -> Self {
-        Error::LogBuilder(err)
     }
 }
 

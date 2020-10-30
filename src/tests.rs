@@ -23,7 +23,11 @@ macro_rules! test_service {
             let cache_dir = dbg!(tempdir().unwrap());
             let repos = format!("{}/", repo_dir.path().display());
             let cache = format!("{}/", cache_dir.path().display());
-            let state = dbg!(State { repos, cache });
+            let state = dbg!(State {
+                repos,
+                cache,
+                logger: crate::config::init(),
+            });
 
             let mut app = test_app!(state, web::resource($path).to($what::<T>));
 

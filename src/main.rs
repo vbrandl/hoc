@@ -4,10 +4,12 @@
 extern crate actix_web;
 #[macro_use]
 extern crate lazy_static;
-#[macro_use]
-extern crate log;
+// #[macro_use]
+// extern crate log;
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
+extern crate slog;
 
 mod cache;
 mod config;
@@ -35,6 +37,7 @@ use actix_web::{
 use badge::{Badge, BadgeOptions};
 use git2::{BranchType, Repository};
 use number_prefix::NumberPrefix;
+use slog::Logger;
 use std::{
     borrow::Cow,
     fs::create_dir_all,
@@ -59,6 +62,7 @@ struct GeneratorForm<'a> {
 pub(crate) struct State {
     repos: String,
     cache: String,
+    logger: Logger,
 }
 
 #[derive(Serialize)]
@@ -81,7 +85,13 @@ fn pull(path: impl AsRef<Path>) -> Result<()> {
     Ok(())
 }
 
-fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64, String, u64)> {
+fn hoc(
+    repo: &str,
+    repo_dir: &str,
+    cache_dir: &str,
+    branch: &str,
+    logger: &Logger,
+) -> Result<(u64, String, u64)> {
     let repo_dir = format!("{}/{}", repo_dir, repo);
     let cache_dir = format!("{}/{}.json", cache_dir, repo);
     let cache_dir = Path::new(&cache_dir);
@@ -108,16 +118,16 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
     let cache = CacheState::read_from_file(&cache_dir, branch, &head)?;
     match &cache {
         CacheState::Current { count, commits, .. } => {
-            info!("Using cache for {}", repo_dir);
+            info!(logger, "Using cache");
             return Ok((*count, head, *commits));
         }
         CacheState::Old { head, .. } => {
-            info!("Updating cache for {}", repo_dir);
+            info!(logger, "Updating cache");
             arg.push(format!("{}..{}", head, branch));
             arg_commit_count.push(format!("{}..{}", head, branch));
         }
         CacheState::No | CacheState::NoneForBranch(..) => {
-            info!("Creating cache for {}", repo_dir);
+            info!(logger, "Creating cache");
             arg.push(branch.to_string());
             arg_commit_count.push(branch.to_string());
         }
@@ -180,13 +190,16 @@ where
     T: Service,
 {
     let data = data.into_inner();
+    let logger = state
+        .logger
+        .new(o!("service" => T::domain(), "user" => data.0.clone(), "repo" => data.1.clone()));
     let repo = format!(
         "{}/{}/{}",
         T::domain(),
         data.0.to_lowercase(),
         data.1.to_lowercase()
     );
-    info!("Deleting cache and repository for {}", repo);
+    info!(logger, "Deleting cache and repository");
     let cache_dir = format!("{}/{}.json", &state.cache, repo);
     let repo_dir = format!("{}/{}", &state.repos, repo);
     std::fs::remove_file(&cache_dir).or_else(|e| {
@@ -223,6 +236,9 @@ where
     F: Fn(HocResult) -> Result<HttpResponse>,
 {
     let data = data.into_inner();
+    let logger = state
+        .logger
+        .new(o!("service" => T::domain(), "user" => data.0.clone(), "repo" => data.1.clone(), "branch" => branch.to_string()));
     let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
     let service_path = format!("{}/{}", T::url_path(), repo);
     let service_url = format!("{}/{}", T::domain(), repo);
@@ -232,10 +248,10 @@ where
     let file = Path::new(&path);
     if !file.exists() {
         if !remote_exists {
-            warn!("Repository does not exist: {}", url);
+            warn!(logger, "Repository does not exist");
             return mapper(HocResult::NotFound);
         }
-        info!("Cloning {} for the first time", url);
+        info!(logger, "Cloning for the first time");
         create_dir_all(file)?;
         let repo = Repository::init_bare(file)?;
         repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
@@ -243,7 +259,7 @@ where
         REPO_COUNT.fetch_add(1, Ordering::Relaxed);
     }
     pull(&path)?;
-    let (hoc, head, commits) = hoc(&service_url, &state.repos, &state.cache, branch)?;
+    let (hoc, head, commits) = hoc(&service_url, &state.repos, &state.cache, branch, &logger)?;
     let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
         NumberPrefix::Standalone(hoc) => hoc.to_string(),
         NumberPrefix::Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
@@ -403,16 +419,19 @@ fn favicon32() -> HttpResponse {
     HttpResponse::Ok().content_type("image/png").body(FAVICON)
 }
 
-async fn start_server() -> std::io::Result<()> {
+async fn start_server(logger: Logger) -> std::io::Result<()> {
     let interface = format!("{}:{}", OPT.host, OPT.port);
     let state = Arc::new(State {
         repos: OPT.outdir.display().to_string(),
         cache: OPT.cachedir.display().to_string(),
+        logger,
     });
     HttpServer::new(move || {
         App::new()
             .data(state.clone())
-            .wrap(middleware::Logger::default())
+            .wrap(actix_slog::StructuredLogger::new(
+                state.logger.new(o!("log_type" => "access")),
+            ))
             .wrap(middleware::NormalizePath::new(TrailingSlash::Trim))
             .service(index)
             .service(web::resource("/tacit-css.min.css").route(web::get().to(css)))
@@ -450,6 +469,6 @@ async fn start_server() -> std::io::Result<()> {
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    config::init().await.unwrap();
-    start_server().await
+    let logger = config::init();
+    start_server(logger).await
 }
