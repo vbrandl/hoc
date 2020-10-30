@@ -1,4 +1,3 @@
-use crate::error::Result;
 use slog::{Drain, Logger};
 use slog_atomic::AtomicSwitch;
 use std::path::PathBuf;
