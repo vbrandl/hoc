@@ -1,10 +1,6 @@
-use crate::{error::Result, statics::OPT};
-use log::LevelFilter;
-use log4rs::{
-    append::{console::ConsoleAppender, file::FileAppender},
-    config::{Appender, Config, Root},
-    encode::pattern::PatternEncoder,
-};
+use crate::error::Result;
+use slog::{Drain, Logger};
+use slog_atomic::AtomicSwitch;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -38,33 +34,28 @@ pub(crate) struct Opt {
     #[structopt(short = "w", long = "workers", default_value = "4")]
     /// Number of worker threads
     pub(crate) workers: usize,
-    #[structopt(
-        short = "l",
-        long = "logfile",
-        parse(from_os_str),
-        default_value = "./hoc.log"
-    )]
-    /// The logfile
-    pub(crate) logfile: PathBuf,
+    // #[structopt(
+    //     short = "l",
+    //     long = "logfile",
+    //     parse(from_os_str),
+    //     default_value = "./hoc.log"
+    // )]
+    // /// The logfile
+    // pub(crate) logfile: PathBuf,
 }
 
-pub(crate) async fn init() -> Result<()> {
+pub(crate) fn init() -> Logger {
     std::env::set_var("RUST_LOG", "actix_web=info,hoc=info");
     openssl_probe::init_ssl_cert_env_vars();
-    let stdout = ConsoleAppender::builder().build();
-    let file = FileAppender::builder()
-        .encoder(Box::new(PatternEncoder::new("{d} - {m}{n}")))
-        .build(&OPT.logfile)
-        .unwrap();
-    let config = Config::builder()
-        .appender(Appender::builder().build("stdout", Box::new(stdout)))
-        .appender(Appender::builder().build("file", Box::new(file)))
-        .build(
-            Root::builder()
-                .appender("stdout")
-                .appender("file")
-                .build(LevelFilter::Info),
-        )?;
-    log4rs::init_config(config)?;
-    Ok(())
+
+    let decorator = slog_term::PlainDecorator::new(std::io::stdout());
+    let drain = slog_term::FullFormat::new(decorator).build().fuse();
+    let drain = slog_async::Async::new(drain).build().fuse();
+    let drain = AtomicSwitch::new(drain);
+
+    let root = Logger::root(drain, o!("version" => env!("CARGO_PKG_VERSION")));
+
+    info!(root, "Logging initialized");
+
+    root
 }
