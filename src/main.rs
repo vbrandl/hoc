@@ -300,11 +300,25 @@ pub(crate) async fn json_hoc<T: Service>(
     handle_hoc_request::<T, _>(state, data, branch, mapper).await
 }
 
+fn no_cache_response(body: Vec<u8>) -> HttpResponse {
+    let expiration = SystemTime::now() + Duration::from_secs(30);
+    HttpResponse::Ok()
+        .content_type("image/svg+xml")
+        .set(Expires(expiration.into()))
+        .set(CacheControl(vec![
+            CacheDirective::MaxAge(0u32),
+            CacheDirective::MustRevalidate,
+            CacheDirective::NoCache,
+            CacheDirective::NoStore,
+        ]))
+        .body(body)
+}
+
 pub(crate) async fn calculate_hoc<T: Service>(
     state: web::Data<Arc<State>>,
     data: web::Path<(String, String)>,
     branch: web::Query<BranchQuery>,
-) -> Result<HttpResponse> {
+) -> HttpResponse {
     let mapper = move |r| match r {
         HocResult::NotFound => p404(),
         HocResult::Hoc { hoc_pretty, .. } => {
@@ -317,21 +331,23 @@ pub(crate) async fn calculate_hoc<T: Service>(
             // TODO: remove clone
             let body = badge.to_svg().as_bytes().to_vec();
 
-            let expiration = SystemTime::now() + Duration::from_secs(30);
-            Ok(HttpResponse::Ok()
-                .content_type("image/svg+xml")
-                .set(Expires(expiration.into()))
-                .set(CacheControl(vec![
-                    CacheDirective::MaxAge(0u32),
-                    CacheDirective::MustRevalidate,
-                    CacheDirective::NoCache,
-                    CacheDirective::NoStore,
-                ]))
-                .body(body))
+            Ok(no_cache_response(body))
         }
     };
     let branch = branch.branch.as_deref().unwrap_or("master");
-    handle_hoc_request::<T, _>(state, data, branch, mapper).await
+    let error_badge = |_| {
+        let error_badge = Badge::new(BadgeOptions {
+            subject: "Hits-of-Code".to_string(),
+            color: "#ff0000".to_string(),
+            status: "error".to_string(),
+        })
+        .unwrap();
+        let body = error_badge.to_svg().as_bytes().to_vec();
+        no_cache_response(body)
+    };
+    handle_hoc_request::<T, _>(state, data, branch, mapper)
+        .await
+        .unwrap_or_else(error_badge)
 }
 
 async fn overview<T: Service>(
