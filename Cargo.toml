@@ -31,7 +31,7 @@ tracing-actix-web = "0.2.1"
 tracing-futures = "0.2.4"
 
 [build-dependencies]
-ructe = "0.12.0"
+ructe = "0.13.0"
 vergen = "3.1.0"
 
 [dev-dependencies]
