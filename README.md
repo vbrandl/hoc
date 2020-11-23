@@ -3,7 +3,6 @@
 [![Hits-of-Code](https://hitsofcode.com/github/vbrandl/hoc)](https://hitsofcode.com/view/github/vbrandl/hoc)
 [![Drone build](https://drone.vbrandl.net/api/badges/vbrandl/hoc/status.svg)](https://drone.vbrandl.net/vbrandl/hoc)
 [![Gitlab build](https://gitlab.com/vbrandl/hoc/badges/master/pipeline.svg)](https://gitlab.com/vbrandl/hoc/pipelines)
-[![Travis build](https://travis-ci.org/vbrandl/hoc.svg?branch=master)](https://travis-ci.org/vbrandl/hoc)
 [![dependency status](https://deps.rs/repo/github/vbrandl/hoc/status.svg)](https://deps.rs/repo/github/vbrandl/hoc)
 
 Small webservice, that returns a badge of the Hits-of-Code of a git repository, as described by [Yegor
