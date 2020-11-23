@@ -24,7 +24,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             ./target
-          key: rustfmt-${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: rustfmt-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Check Formatting
         uses: actions-rs/cargo@v1
@@ -54,7 +54,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             ./target
-          key: clippy-${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: clippy-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Clippy Linting
         uses: actions-rs/cargo@v1
@@ -89,7 +89,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             ./target
-          key: test-${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: test-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run Tests
         uses: actions-rs/cargo@v1
