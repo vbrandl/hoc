@@ -14,17 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache cargo registry
-        uses: actions/cache@v1
+      - name: Cache cargo registry, index and build directory
+        uses: actions/cache@v2
         with:
-          path: /usr/share/rust/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry
-
-      - name: Cache cargo index
-        uses: actions/cache@v1
-        with:
-          path: /usr/share/rust/.cargo/git
-          key: ${{ runner.os }}-cargo-index
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ./target
+          key: audit-${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: actions-rs/audit-check@v1
         with:
