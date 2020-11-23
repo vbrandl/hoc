@@ -4,15 +4,15 @@ on:
     - cron: '0 1 * * *'
   push:
     paths:
-      - 'Cargo.toml'
-      - 'Cargo.lock'
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
   pull_request:
 
 jobs:
   security_audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Cache cargo registry
         uses: actions/cache@v1
