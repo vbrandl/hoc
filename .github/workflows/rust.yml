@@ -1,41 +1,30 @@
-name: Rust
-
 on: [push, pull_request]
 
 jobs:
-  lint:
-    name: Linting and Formatting Checks
+
+  rustfmt:
+    name: Rustfmt
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          profile: minimal
           override: true
+          components: rustfmt
 
-      - name: Install rustfmt
-        run: rustup component add rustfmt
-
-      - name: Cache cargo registry
-        uses: actions/cache@v1
+      - name: Cache cargo registry, index and build directory
+        uses: actions/cache@v2
         with:
-          path: ~/.cargo/registry
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ./target
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Cache cargo index
-        uses: actions/cache@v1
-        with:
-          path: ~/.cargo/git
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Cache cargo build
-        uses: actions/cache@v1
-        with:
-          path: target
-          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Check Formatting
         uses: actions-rs/cargo@v1
@@ -43,8 +32,29 @@ jobs:
           command: fmt
           args: --all -- --check
 
-      - name: Install clippy
-        run: rustup component add clippy
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+          components: rustfmt
+
+      - name: Cache cargo registry, index and build directory
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ./target
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Clippy Linting
         uses: actions-rs/cargo@v1
@@ -52,8 +62,9 @@ jobs:
           command: clippy
           args: -- -D warnings
 
+
   test:
-    name: Run Tests
+    name: Test Suite
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -62,31 +73,23 @@ jobs:
 
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          profile: minimal
           override: true
 
-      - name: Cache cargo registry
-        uses: actions/cache@v1
+      - name: Cache cargo registry, index and build directory
+        uses: actions/cache@v2
         with:
-          path: ~/.cargo/registry
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ./target
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Cache cargo index
-        uses: actions/cache@v1
-        with:
-          path: ~/.cargo/git
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Cache cargo build
-        uses: actions/cache@v1
-        with:
-          path: target
-          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run Tests
         uses: actions-rs/cargo@v1
