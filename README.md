@@ -1,6 +1,6 @@
 # Hits-of-Code
 
-[![Hits-of-Code](https://hitsofcode.com/github/vbrandl/hoc)](https://hitsofcode.com/view/github/vbrandl/hoc)
+[![Hits-of-Code](https://hitsofcode.com/github/vbrandl/hoc)](https://hitsofcode.com/github/vbrandl/hoc/view)
 [![Drone build](https://drone.vbrandl.net/api/badges/vbrandl/hoc/status.svg)](https://drone.vbrandl.net/vbrandl/hoc)
 [![Gitlab build](https://gitlab.com/vbrandl/hoc/badges/master/pipeline.svg)](https://gitlab.com/vbrandl/hoc/pipelines)
 [![dependency status](https://deps.rs/repo/github/vbrandl/hoc/status.svg)](https://deps.rs/repo/github/vbrandl/hoc)
@@ -26,7 +26,7 @@ where `<service>` is one of `gitub`, `gitlab` or `bitbucket`. The HoC data can a
 https://<host>/<service>/<user>/<repo>/json
 ```
 
-There is also an overview page available via `https://<host>/view/<service>/<user>/<repo>`
+There is also an overview page available via `https://<host>/<service>/<user>/<repo>/view`
 
 To delete a repository and the cache from the server, send a `POST` request to
 `https://<host>/<service>/<user>/<repo>/delete`. On the overview page, there is a button to perform this operation. It
@@ -48,18 +48,15 @@ $ docker build .
 
 inside the repository.
 
-I'm currently working on migrating to [nix](https://nixos.org/nix). To get a
-development shell, run `nix-shell`, to build the package run `nix-build --attr
-package` and to build the Docker image, run `nix-build --attr dockerImage`.
+I'm currently working on migrating to [nix](https://nixos.org/nix). To get a development shell, run `nix-shell`, to
+build the package run `nix-build --attr package` and to build the Docker image, run `nix-build --attr dockerImage`.
 
 
 ## Running
 
-Rename [`hoc.toml.example`](./hoc.toml.example) to `hoc.toml` or
-[`.env.example`](./.env.example) to `.env` and set the correct value for
-`base_url`/`HOC_BASE_URL`. If you don't want to use a configuration or dotenv
-file, you can pass all parameters directly via environment variables. For
-variable names see [`.env.example`](./.env.example).
+Rename [`hoc.toml.example`](./hoc.toml.example) to `hoc.toml` or [`.env.example`](./.env.example) to `.env` and set the
+correct value for `base_url`/`HOC_BASE_URL`. If you don't want to use a configuration or dotenv file, you can pass all
+parameters directly via environment variables. For variable names see [`.env.example`](./.env.example).
 
 To start a local instance of the service just run:
 

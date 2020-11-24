@@ -215,7 +215,7 @@ where
         Ok(HttpResponse::TemporaryRedirect()
             .header(
                 LOCATION,
-                format!("/view/{}/{}/{}", T::url_path(), data.0, data.1),
+                format!("/{}/{}/{}/view", T::url_path(), data.0, data.1),
             )
             .finish())
     };
@@ -475,6 +475,9 @@ async fn start_server() -> std::io::Result<()> {
             .service(web::resource("/view/github/{user}/{repo}").to(overview::<GitHub>))
             .service(web::resource("/view/gitlab/{user}/{repo}").to(overview::<Gitlab>))
             .service(web::resource("/view/bitbucket/{user}/{repo}").to(overview::<Bitbucket>))
+            .service(web::resource("/github/{user}/{repo}/view").to(overview::<GitHub>))
+            .service(web::resource("/gitlab/{user}/{repo}/view").to(overview::<Gitlab>))
+            .service(web::resource("/bitbucket/{user}/{repo}/view").to(overview::<Bitbucket>))
             .default_service(web::resource("").route(web::get().to(async_p404)))
     })
     .workers(OPT.workers)
