@@ -1,41 +1,41 @@
+use config::{Config, ConfigError, Environment, File};
 use std::path::PathBuf;
-use structopt::StructOpt;
 
-#[derive(StructOpt, Debug)]
-pub(crate) struct Opt {
-    #[structopt(
-        short = "o",
-        long = "outdir",
-        parse(from_os_str),
-        default_value = "./repos"
-    )]
+#[derive(Debug, Deserialize)]
+pub struct Settings {
     /// Path to store cloned repositories
-    pub(crate) outdir: PathBuf,
-    #[structopt(
-        short = "c",
-        long = "cachedir",
-        parse(from_os_str),
-        default_value = "./cache"
-    )]
+    pub repodir: PathBuf,
     /// Path to store cache
-    pub(crate) cachedir: PathBuf,
-    #[structopt(short = "p", long = "port", default_value = "8080")]
+    pub cachedir: PathBuf,
     /// Port to listen on
-    pub(crate) port: u16,
-    #[structopt(short = "h", long = "host", default_value = "0.0.0.0")]
+    pub port: u16,
     /// Interface to listen on
-    pub(crate) host: String,
-    #[structopt(short = "d", long = "domain", default_value = "hitsofcode.com")]
-    /// Interface to listen on
-    pub(crate) domain: String,
-    #[structopt(short = "w", long = "workers", default_value = "4")]
+    pub host: String,
+    /// Base URL
+    pub base_url: String,
     /// Number of worker threads
-    pub(crate) workers: usize,
+    pub workers: usize,
 }
 
 pub(crate) fn init() {
+    dotenv::dotenv().ok();
     std::env::set_var("RUST_LOG", "actix_web=info,hoc=info");
     openssl_probe::init_ssl_cert_env_vars();
 
     tracing_subscriber::fmt().init();
+}
+
+impl Settings {
+    pub fn new() -> Result<Self, ConfigError> {
+        let mut config = Config::new();
+        config
+            .merge(File::with_name("hoc.toml").required(false))?
+            .merge(Environment::with_prefix("hoc"))?
+            .set_default("repodir", "./repos")?
+            .set_default("cachedir", "./cache")?
+            .set_default("workers", 4)?
+            .set_default("port", 8080)?
+            .set_default("host", "0.0.0.0")?;
+        config.try_into()
+    }
 }

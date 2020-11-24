@@ -371,7 +371,7 @@ async fn overview<T: Service>(
             let repo_info = RepoInfo {
                 commit_url: &T::commit_url(&repo, &head),
                 commits,
-                domain: &OPT.domain,
+                base_url: &OPT.base_url,
                 head: &head,
                 hoc,
                 hoc_pretty: &hoc_pretty,
@@ -399,7 +399,7 @@ async fn index() -> Result<HttpResponse> {
         &mut buf,
         VERSION_INFO,
         REPO_COUNT.load(Ordering::Relaxed),
-        &OPT.domain,
+        &OPT.base_url,
     )?;
     Ok(HttpResponse::Ok().content_type("text/html").body(buf))
 }
@@ -412,7 +412,7 @@ async fn generate(params: web::Form<GeneratorForm<'_>>) -> Result<HttpResponse> 
         &mut buf,
         VERSION_INFO,
         REPO_COUNT.load(Ordering::Relaxed),
-        &OPT.domain,
+        &OPT.base_url,
         params.service.url(),
         params.service.service(),
         &repo,
@@ -442,7 +442,7 @@ fn favicon32() -> HttpResponse {
 async fn start_server() -> std::io::Result<()> {
     let interface = format!("{}:{}", OPT.host, OPT.port);
     let state = Arc::new(State {
-        repos: OPT.outdir.display().to_string(),
+        repos: OPT.repodir.display().to_string(),
         cache: OPT.cachedir.display().to_string(),
     });
     HttpServer::new(move || {
