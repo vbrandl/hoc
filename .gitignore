@@ -4,3 +4,5 @@ repos
 cache
 hoc.log
 result
+hoc.toml
+.env
