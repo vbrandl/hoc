@@ -37,7 +37,9 @@ macro_rules! test_service {
 
 #[actix_rt::test]
 async fn test_index() {
-    let mut app = test::init_service(App::new().service(index)).await;
+    std::env::set_var("HOC_BASE_URL", "http://0.0.0.0:8080");
+
+    let mut app = test_app!(index);
 
     let req = dbg!(test::TestRequest::with_uri("/").to_request());
     let resp = dbg!(test::call_service(&mut app, req).await);
