@@ -1,7 +1,7 @@
 @use super::base;
 @use crate::statics::VersionInfo;
 
-@(version_info: VersionInfo, repo_count: usize, domain: &str)
+@(version_info: VersionInfo, repo_count: usize, base_url: &str)
 
 @:base("Hits-of-Code Badges", "Hits-of-Code Badges", {
 
@@ -24,7 +24,7 @@ used for GitHub, GitLab and Bitbucket repositories. Just put the following code 
 </p>
 
 <pre>
-[![Hits-of-Code](https://@domain/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)](https://@domain/view/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
+[![Hits-of-Code](@base_url/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)](@base_url/view/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)
 </pre>
 
 <p>
@@ -33,7 +33,7 @@ following Markdown
 </p>
 
 <pre>
-[![Hits-of-Code](https://@domain/github/vbrandl/hoc)](https://@domain/view/github/vbrandl/hoc)
+[![Hits-of-Code](@base_url/github/vbrandl/hoc)](@base_url/view/github/vbrandl/hoc)
 </pre>
 
 <p>
@@ -41,7 +41,7 @@ would render this badge:
 </p>
 
 <pre>
-<a href="https://@domain/view/github/vbrandl/hoc"><img src="https://@domain/github/vbrandl/hoc"
+<a href="@base_url/view/github/vbrandl/hoc"><img src="@base_url/github/vbrandl/hoc"
 alt="example badge" /></a>
 </pre>
 
@@ -55,7 +55,7 @@ in your repository or you want a badge for another branch of your repository, ju
 You can also request the HoC as JSON by appending <code>/json</code> to the request path. This will return a JSON object
 with three fields: <code>count</code> (the HoC value), <code>commits</code> (the number of commits) and
 <code>head</code> (the commit ref of HEAD). Requesting <a
-href="https://@domain/github/vbrandl/hoc/json">https://@domain/github/vbrandl/hoc/json</a> might return something along
+href="@base_url/github/vbrandl/hoc/json">@base_url/github/vbrandl/hoc/json</a> might return something along
 the lines of
 </p>
 
