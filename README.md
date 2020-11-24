@@ -55,14 +55,25 @@ package` and to build the Docker image, run `nix-build --attr dockerImage`.
 
 ## Running
 
-Run either the binary produced by cargo, the Docker container you just built (using docker-compose) or pull the image
-from [Docker Hub](https://hub.docker.com/r/vbrandl/hits-of-code)
+Rename [`hoc.toml.example`](./hoc.toml.example) to `hoc.toml` or
+[`.env.example`](./.env.example) to `.env` and set the correct value for
+`base_url`/`HOC_BASE_URL`. If you don't want to use a configuration or dotenv
+file, you can pass all parameters directly via environment variables. For
+variable names see [`.env.example`](./.env.example).
+
+To start a local instance of the service just run:
 
 ```
-$ docker run -it --rm vbrandl/hits-of-code --help
+$ HOC_BASE_URL='http://0.0.0.0:8080' ./hoc
 ```
 
-When running the binary directly, you need a git binary in your `PATH`.
+You can also use the Docker image:
+
+```
+$ docker run -p 8080:8080 --env HOC_BASE_URL='http://0.0.0.0:8080' -it --rm vbrandl/hits-of-code
+```
+
+When running the binary directly, you need a `git` binary in your `PATH`.
 
 
 ## License
