@@ -95,7 +95,7 @@ dependencies = [
  "pin-project 1.0.1",
  "rand",
  "regex",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_json",
  "serde_urlencoded",
  "sha-1",
@@ -123,7 +123,7 @@ dependencies = [
  "http",
  "log",
  "regex",
- "serde 1.0.118",
+ "serde 1.0.120",
 ]
 
 [[package]]
@@ -280,7 +280,7 @@ dependencies = [
  "mime",
  "pin-project 1.0.1",
  "regex",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_json",
  "serde_urlencoded",
  "socket2",
@@ -375,7 +375,7 @@ dependencies = [
  "mime",
  "percent-encoding",
  "rand",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_json",
  "serde_urlencoded",
 ]
@@ -566,7 +566,7 @@ dependencies = [
  "lazy_static",
  "nom",
  "rust-ini",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde-hjson",
  "serde_json",
  "toml",
@@ -952,7 +952,7 @@ dependencies = [
  "openssl-probe",
  "reqwest",
  "ructe",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_derive",
  "serde_json",
  "tempfile",
@@ -1241,7 +1241,7 @@ dependencies = [
  "cfg-if 0.1.10",
  "generator",
  "scoped-tls",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_json",
 ]
 
@@ -1736,7 +1736,7 @@ dependencies = [
  "native-tls",
  "percent-encoding",
  "pin-project-lite 0.2.0",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_urlencoded",
  "tokio",
  "tokio-tls",
@@ -1873,9 +1873,9 @@ checksum = "9dad3f759919b92c3068c696c15c3d17238234498bbdcc80f2c469606f948ac8"
 
 [[package]]
 name = "serde"
-version = "1.0.118"
+version = "1.0.120"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06c64263859d87aa2eb554587e2d23183398d617427327cf2b3d0ed8c69e4800"
+checksum = "166b2349061381baf54a58e4b13c89369feb0ef2eaa57198899e2312aac30aab"
 dependencies = [
  "serde_derive",
 ]
@@ -1895,9 +1895,9 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-version = "1.0.118"
+version = "1.0.120"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c84d3526699cd55261af4b941e4e725444df67aa4f9e6a3564f18030d12672df"
+checksum = "0ca2a8cb5805ce9e3b95435e3765b7b553cecc762d938d409434338386cb5775"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1912,7 +1912,7 @@ checksum = "4fceb2595057b6891a4ee808f70054bd2d12f0e97f1cbb78689b59f676df325a"
 dependencies = [
  "itoa",
  "ryu",
- "serde 1.0.118",
+ "serde 1.0.120",
 ]
 
 [[package]]
@@ -1933,7 +1933,7 @@ dependencies = [
  "form_urlencoded",
  "itoa",
  "ryu",
- "serde 1.0.118",
+ "serde 1.0.120",
 ]
 
 [[package]]
@@ -2033,7 +2033,7 @@ checksum = "c87a60a40fccc84bef0652345bbbbbe20a605bf5d0ce81719fc476f5c03b50ef"
 dependencies = [
  "proc-macro2",
  "quote",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_derive",
  "syn",
 ]
@@ -2047,7 +2047,7 @@ dependencies = [
  "base-x",
  "proc-macro2",
  "quote",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_derive",
  "serde_json",
  "sha1",
@@ -2062,9 +2062,9 @@ checksum = "213701ba3370744dcd1a12960caa4843b3d68b4d1c0a5d575e0d65b2ee9d16c0"
 
 [[package]]
 name = "syn"
-version = "1.0.48"
+version = "1.0.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc371affeffc477f42a221a1e4297aedcea33d47d19b61455588bd9d8f6b19ac"
+checksum = "cc60a3d73ea6594cd712d830cc1f0390fd71542d8c8cd24e70cc54cdfd5e05d5"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2252,7 +2252,7 @@ version = "0.5.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75cf45bb0bef80604d001caaec0d09da99611b3c0fd39d3080468875cdb65645"
 dependencies = [
- "serde 1.0.118",
+ "serde 1.0.120",
 ]
 
 [[package]]
@@ -2333,7 +2333,7 @@ version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fb65ea441fbb84f9f6748fd496cf7f63ec9af5bca94dd86456978d055e8eb28b"
 dependencies = [
- "serde 1.0.118",
+ "serde 1.0.120",
  "tracing-core",
 ]
 
@@ -2348,7 +2348,7 @@ dependencies = [
  "lazy_static",
  "matchers",
  "regex",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_json",
  "sharded-slab",
  "smallvec",
@@ -2534,7 +2534,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1ac64ead5ea5f05873d7c12b545865ca2b8d28adfc50a49b84770a3a97265d42"
 dependencies = [
  "cfg-if 0.1.10",
- "serde 1.0.118",
+ "serde 1.0.120",
  "serde_json",
  "wasm-bindgen-macro",
 ]
