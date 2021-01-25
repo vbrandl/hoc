@@ -13,7 +13,7 @@ bytes = "1.0.0"
 config = { version = "0.10.1", features = ["toml"] }
 dotenv = "0.15.0"
 futures = "0.3.8"
-git2 = "0.13.14"
+git2 = "0.13.17"
 lazy_static = "1.4.0"
 number_prefix = "0.4.0"
 openssl-probe = "0.1.2"
