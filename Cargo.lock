@@ -2527,17 +2527,16 @@ checksum = "b00bca6106a5e23f3eee943593759b7fcddb00554332e856d990c893966879fb"
 
 [[package]]
 name = "vergen"
-version = "4.1.0"
+version = "4.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7559dbf502657d16ddfdee53eea0827fc40ea7e3a53bc8b92d7317417cf9420e"
+checksum = "643197d057c6d2f1a8b56edd4ceaa587ff8d98befa6f058e76746c34c38f5a09"
 dependencies = [
  "bitflags",
  "chrono",
  "enum-iterator",
  "getset",
  "git2",
- "serde 1.0.123",
- "serde_derive",
+ "thiserror",
 ]
 
 [[package]]
