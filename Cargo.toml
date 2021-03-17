@@ -28,7 +28,7 @@ tracing-subscriber = "0.2.16"
 
 [build-dependencies]
 ructe = "0.13.0"
-vergen = { version = "4.1.0", default-features = false, features = ["git"] }
+vergen = { version = "5.0.0", default-features = false, features = ["git"] }
 
 [dev-dependencies]
 tempfile = "3.2.0"
