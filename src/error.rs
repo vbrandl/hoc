@@ -1,9 +1,6 @@
-use crate::{
-    statics::{REPO_COUNT, VERSION_INFO},
-    templates,
-};
-use actix_web::{HttpResponse, ResponseError};
-use std::{fmt, sync::atomic::Ordering};
+use crate::{statics::VERSION_INFO, templates};
+use actix_web::{http::StatusCode, HttpResponse, ResponseError};
+use std::fmt;
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;
 
@@ -35,21 +32,22 @@ impl fmt::Display for Error {
 }
 
 impl ResponseError for Error {
+    fn status_code(&self) -> StatusCode {
+        match self {
+            Error::BranchNotFound => StatusCode::NOT_FOUND,
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
+        }
+    }
+
     fn error_response(&self) -> HttpResponse {
         let mut buf = Vec::new();
         match self {
             Error::BranchNotFound => {
-                templates::p404_no_master(
-                    &mut buf,
-                    VERSION_INFO,
-                    REPO_COUNT.load(Ordering::Relaxed),
-                )
-                .unwrap();
+                templates::p404_no_master(&mut buf, VERSION_INFO, 0).unwrap();
                 HttpResponse::NotFound().content_type("text/html").body(buf)
             }
             _ => {
-                templates::p500(&mut buf, VERSION_INFO, REPO_COUNT.load(Ordering::Relaxed))
-                    .unwrap();
+                templates::p500(&mut buf, VERSION_INFO, 0).unwrap();
                 HttpResponse::InternalServerError()
                     .content_type("text/html")
                     .body(buf)
