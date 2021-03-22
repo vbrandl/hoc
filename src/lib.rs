@@ -18,9 +18,6 @@ mod statics;
 pub mod telemetry;
 mod template;
 
-#[cfg(test)]
-mod tests;
-
 use crate::{
     cache::CacheState,
     config::Settings,
@@ -63,10 +60,6 @@ struct GeneratorForm<'a> {
 #[derive(Debug)]
 pub(crate) struct State {
     settings: Settings,
-    // repos: String,
-    // cache: String,
-    // repos: settings.repodir.display().to_string(),
-    // cache: settings.cachedir.display().to_string(),
 }
 
 impl State {
@@ -482,11 +475,7 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
     let repo_count =
         // TODO: errorhandling
         web::Data::new(AtomicUsize::new(count::count_repositories(&settings.repodir).unwrap()));
-    let state = web::Data::new(State {
-        settings
-        // repos: settings.repodir.display().to_string(),
-        // cache: settings.cachedir.display().to_string(),
-    });
+    let state = web::Data::new(State { settings });
     Ok(HttpServer::new(move || {
         App::new()
             .app_data(state.clone())
