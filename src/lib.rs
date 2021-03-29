@@ -32,6 +32,7 @@ use actix_web::{
     middleware::{self, normalize::TrailingSlash},
     web, App, HttpResponse, HttpServer, Responder,
 };
+use actix_web_opentelemetry::RequestTracing;
 use badge::{Badge, BadgeOptions};
 use git2::{BranchType, Repository};
 use number_prefix::NumberPrefix;
@@ -480,6 +481,7 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
         App::new()
             .app_data(state.clone())
             .app_data(repo_count.clone())
+            .wrap(RequestTracing::new())
             .wrap(tracing_actix_web::TracingLogger)
             .wrap(middleware::NormalizePath::new(TrailingSlash::Trim))
             .service(index)
