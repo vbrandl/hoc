@@ -1,5 +1,4 @@
 use hoc::{config::Settings, telemetry};
-
 use std::net::TcpListener;
 
 fn init() {
@@ -18,7 +17,8 @@ async fn main() -> std::io::Result<()> {
 
     let address = format!("{}:{}", settings.host, settings.port);
     // TODO: error handling
-    let listener = TcpListener::bind(address)?;
+    let listener = TcpListener::bind(address).expect("cannot bind addres");
+
     hoc::run(listener, settings)
         .await
         .expect("Server error")
