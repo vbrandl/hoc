@@ -2,11 +2,12 @@ extern crate ructe;
 extern crate vergen;
 
 use ructe::Ructe;
-use vergen::{gen, ConstantsFlags};
+use vergen::{vergen, Config, ShaKind};
 
 fn main() {
-    let flags = ConstantsFlags::SHA_SHORT;
-    gen(flags).expect("Unable to generate the cargo keys!");
+    let mut config = Config::default();
+    *config.git_mut().sha_kind_mut() = ShaKind::Short;
+    vergen(config).expect("Unable to generate static repo info");
     Ructe::from_env()
         .expect("ructe")
         .compile_templates("templates")

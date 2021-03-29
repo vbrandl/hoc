@@ -301,6 +301,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.40"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "28b2cd92db5cbd74e8e5028f7e27dd7aa3090e89e4f2a197cc7c8dfb69c7063b"
+
+[[package]]
 name = "arrayvec"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1865,6 +1871,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustversion"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb5d2a036dc6d2d8fd16fde3498b04306e29bd193bf306a57427019b823d5acd"
+
+[[package]]
 name = "ryu"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2341,7 +2353,7 @@ dependencies = [
  "chrono",
  "gethostname",
  "log",
- "serde 1.0.123",
+ "serde 1.0.125",
  "serde_json",
  "tracing",
  "tracing-core",
@@ -2537,17 +2549,17 @@ checksum = "b00bca6106a5e23f3eee943593759b7fcddb00554332e856d990c893966879fb"
 
 [[package]]
 name = "vergen"
-version = "4.1.0"
+version = "5.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7559dbf502657d16ddfdee53eea0827fc40ea7e3a53bc8b92d7317417cf9420e"
+checksum = "dfbc87f9a7a9d61b15d51d1d3547284f67b6b4f1494ce3fc5814c101f35a5183"
 dependencies = [
- "bitflags",
+ "anyhow",
  "chrono",
  "enum-iterator",
  "getset",
  "git2",
- "serde 1.0.125",
- "serde_derive",
+ "rustversion",
+ "thiserror",
 ]
 
 [[package]]
