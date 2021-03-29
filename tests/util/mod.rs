@@ -7,7 +7,7 @@ use tempfile::{tempdir, TempDir};
 lazy_static::lazy_static! {
     static ref TRACING: () = {
         let filter = if std::env::var("TEST_LOG").is_ok() { "debug" } else { "" };
-        let subscriber = telemetry::get_subscriber("test", filter);
+        let subscriber = telemetry::get_subscriber("test", filter).0;
         telemetry::init_subscriber(subscriber);
     };
 }
