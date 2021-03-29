@@ -17,16 +17,13 @@ pub struct Settings {
     pub workers: usize,
 }
 
-pub(crate) fn init() {
-    dotenv::dotenv().ok();
-    std::env::set_var("RUST_LOG", "actix_web=info,hoc=info");
-    openssl_probe::init_ssl_cert_env_vars();
-
-    tracing_subscriber::fmt().init();
-}
-
 impl Settings {
+    #[deprecated]
     pub fn new() -> Result<Self, ConfigError> {
+        Self::load()
+    }
+
+    pub fn load() -> Result<Self, ConfigError> {
         let mut config = Config::new();
         config
             .merge(File::with_name("hoc.toml").required(false))?

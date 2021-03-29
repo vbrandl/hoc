@@ -1,0 +1,15 @@
+# every parameter can also be set (or overwritten) by passing an environment
+# variable namend `HOC_<PARAMETERNAME>`, e.g.
+# `HOC_BASE_URL='https://hitsofcode.com' ./hoc`
+
+# these config parameters have default values and must not explicitly be set
+repodir = "./repos"
+cachedir = "./cache"
+port = 8080
+host = "0.0.0.0"
+workers = 4
+
+# these parameters don't have default values and must be set
+
+# this should be the public base URL of the service, e.g. `https://hitsofcode.com`
+base_url = "http://0.0.0.0:8080"
