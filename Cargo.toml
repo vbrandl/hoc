@@ -25,8 +25,8 @@ git2 = "0.13.17"
 lazy_static = "1.4.0"
 number_prefix = "0.4.0"
 openssl-probe = "0.1.2"
-opentelemetry = { version = "0.13.0", default-features = false, features = ["trace", "rt-tokio-current-thread"] }
-opentelemetry-jaeger = "0.12.0"
+opentelemetry = { version = "0.12.0", default-features = false, features = ["trace", "tokio-support"] }
+opentelemetry-jaeger = "0.11.0"
 reqwest = "0.10.10"
 serde = "1.0.125"
 serde_derive = "1.0.123"

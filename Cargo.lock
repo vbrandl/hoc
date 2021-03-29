@@ -276,7 +276,7 @@ dependencies = [
  "actix-http",
  "actix-web",
  "futures",
- "opentelemetry 0.12.0",
+ "opentelemetry",
  "opentelemetry-semantic-conventions",
  "serde 1.0.125",
 ]
@@ -972,7 +972,7 @@ dependencies = [
  "lazy_static",
  "number_prefix",
  "openssl-probe",
- "opentelemetry 0.13.0",
+ "opentelemetry",
  "opentelemetry-jaeger",
  "reqwest",
  "ructe",
@@ -1534,35 +1534,19 @@ dependencies = [
  "pin-project 1.0.5",
  "rand 0.8.3",
  "thiserror",
-]
-
-[[package]]
-name = "opentelemetry"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b91cea1dfd50064e52db033179952d18c770cbc5dfefc8eba45d619357ba3914"
-dependencies = [
- "async-trait",
- "futures",
- "js-sys",
- "lazy_static",
- "percent-encoding",
- "pin-project 1.0.5",
- "rand 0.8.3",
- "thiserror",
  "tokio 1.4.0",
  "tokio-stream",
 ]
 
 [[package]]
 name = "opentelemetry-jaeger"
-version = "0.12.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a619edf77ab8bc75d99220811e1cf1a14f1760750c80c4752a20a9aef7dce214"
+checksum = "a5677b3a361784aff6e2b1b30dbdb5f85f4ec57ff2ced41d9a481ad70a9d0b57"
 dependencies = [
  "async-trait",
  "lazy_static",
- "opentelemetry 0.13.0",
+ "opentelemetry",
  "thiserror",
  "thrift",
 ]
@@ -1573,7 +1557,7 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ecb679b997c41108a498e3ce8b933fe2f643a9a722ad8ca33f95edab84df106"
 dependencies = [
- "opentelemetry 0.12.0",
+ "opentelemetry",
 ]
 
 [[package]]
@@ -2532,7 +2516,7 @@ version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cccdf13c28f1654fe806838f28c5b9cb23ca4c0eae71450daa489f50e523ceb1"
 dependencies = [
- "opentelemetry 0.12.0",
+ "opentelemetry",
  "tracing",
  "tracing-core",
  "tracing-log",
