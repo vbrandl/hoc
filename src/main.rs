@@ -1,16 +1,18 @@
 use hoc::{config::Settings, telemetry};
 use std::net::TcpListener;
 
-fn init() {
+fn init() -> opentelemetry_jaeger::Uninstall {
     dotenv::dotenv().ok();
     openssl_probe::init_ssl_cert_env_vars();
 
-    telemetry::init_subscriber(telemetry::get_subscriber("hoc", "info"))
+    let (subscriber, uninstall) = telemetry::get_subscriber("hoc", "info");
+    telemetry::init_subscriber(subscriber);
+    uninstall
 }
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    init();
+    let _uninstall = init();
 
     // TODO: error handling
     let settings = Settings::load().expect("Cannot load config");
