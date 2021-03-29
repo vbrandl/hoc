@@ -25,7 +25,9 @@ git2 = "0.13.17"
 lazy_static = "1.4.0"
 number_prefix = "0.4.0"
 openssl-probe = "0.1.2"
-opentelemetry = { version = "0.12.0", default-features = false, features = ["trace", "tokio-support"] }
+# TODO: upgrade
+opentelemetry = { version = "0.12.0", default-features = false, features = ["trace"] }
+# TODO: upgrade
 opentelemetry-jaeger = "0.11.0"
 reqwest = "0.10.10"
 serde = "1.0.125"
