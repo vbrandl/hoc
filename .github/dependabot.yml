@@ -1,0 +1,46 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  reviewers:
+  - vbrandl
+  assignees:
+  - vbrandl
+  ignore:
+  - dependency-name: vergen
+    versions:
+    - 4.0.1
+    - 4.0.2
+    - 4.0.3
+    - 4.2.0
+    - 5.0.0
+    - 5.0.1
+    - 5.1.4
+  - dependency-name: tokio
+    versions:
+    - 1.4.0
+  - dependency-name: reqwest
+    versions:
+    - 0.11.1
+    - 0.11.2
+  - dependency-name: actix-rt
+    versions:
+    - 2.0.0
+    - 2.0.2
+    - 2.1.0
+  - dependency-name: tracing-subscriber
+    versions:
+    - 0.2.17
+  - dependency-name: serde
+    versions:
+    - 1.0.124
+  - dependency-name: tracing
+    versions:
+    - 0.1.24
+  - dependency-name: futures
+    versions:
+    - 0.3.9
