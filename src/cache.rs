@@ -101,9 +101,9 @@ impl<'a> CacheState<'a> {
                 entries.insert(
                     branch.into(),
                     CacheEntry {
-                        commits,
                         head,
                         count,
+                        commits,
                     },
                 );
                 Cache { entries }
