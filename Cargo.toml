@@ -42,4 +42,4 @@ vergen = { version = "5.1.8", default-features = false, features = ["git"] }
 [dev-dependencies]
 ructe = "0.13.2"
 tempfile = "3.2.0"
-tokio = "0.2.25"
+tokio = "1.6.1"
