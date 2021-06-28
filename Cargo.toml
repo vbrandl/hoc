@@ -36,10 +36,10 @@ tracing-log = "0.1.2"
 tracing-subscriber = { version = "0.2.18", features = ["registry", "env-filter"] }
 
 [build-dependencies]
-ructe = "0.13.2"
+ructe = "0.13.4"
 vergen = { version = "5.1.2", default-features = false, features = ["git"] }
 
 [dev-dependencies]
-ructe = "0.13.2"
+ructe = "0.13.4"
 tempfile = "3.2.0"
 tokio = "0.2.25"
