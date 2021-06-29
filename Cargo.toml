@@ -1,6 +1,6 @@
 [package]
 name = "hoc"
-version = "0.17.2"
+version = "0.17.3"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
 edition = "2018"
 build = "build.rs"
