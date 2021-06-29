@@ -1,7 +1,7 @@
 FROM ekidd/rust-musl-builder:stable as builder
 
 # create new cargo project
-RUN USER=rust cargo init --bin
+RUN USER=rust cargo init --lib
 # copy build config
 COPY --chown=rust ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
