@@ -37,7 +37,7 @@ tracing-subscriber = { version = "0.2.19", features = ["registry", "env-filter"]
 
 [build-dependencies]
 ructe = "0.13.4"
-vergen = { version = "5.1.2", default-features = false, features = ["git"] }
+vergen = { version = "5.1.13", default-features = false, features = ["git"] }
 
 [dev-dependencies]
 ructe = "0.13.4"
