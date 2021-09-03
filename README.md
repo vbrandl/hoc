@@ -19,8 +19,8 @@ The API is as simple as
 https://<host>/<service>/<user>/<repo>
 ```
 
-where `<service>` is one of `gitub`, `gitlab` or `bitbucket`. The HoC data can also be received as JSON by appending
-`/json` to the reuqest path:
+where `<service>` is one of `gitub`, `gitlab`, `bitbucket` or `sourcehut`. The HoC data can also be received as JSON by
+appending `/json` to the reuqest path:
 
 ```
 https://<host>/<service>/<user>/<repo>/json
