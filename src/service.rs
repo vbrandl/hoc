@@ -12,6 +12,8 @@ pub(crate) enum FormService {
     Gitlab,
     #[serde(rename = "bitbucket")]
     Bitbucket,
+    #[serde(rename = "sourcehut")]
+    Sourcehut,
 }
 
 impl FormService {
@@ -20,6 +22,7 @@ impl FormService {
             FormService::GitHub => "github.com",
             FormService::Gitlab => "gitlab.com",
             FormService::Bitbucket => "bitbucket.org",
+            FormService::Sourcehut => "git.sr.ht",
         }
     }
 
@@ -28,6 +31,7 @@ impl FormService {
             FormService::GitHub => "github",
             FormService::Gitlab => "gitlab",
             FormService::Bitbucket => "bitbucket",
+            FormService::Sourcehut => "sourcehut",
         }
     }
 }
@@ -71,5 +75,19 @@ impl Service for Bitbucket {
     }
     fn commit_url(repo: &str, commit_ref: &str) -> String {
         format!("https://{}/{}/commits/{}", Self::domain(), repo, commit_ref)
+    }
+}
+
+pub(crate) struct Sourcehut;
+
+impl Service for Sourcehut {
+    fn domain() -> &'static str {
+        "git.sr.ht"
+    }
+    fn url_path() -> &'static str {
+        "sourcehut"
+    }
+    fn commit_url(repo: &str, commit_ref: &str) -> String {
+        format!("https://{}/{}/commit/{}", Self::domain(), repo, commit_ref)
     }
 }

@@ -22,7 +22,7 @@ use crate::{
     cache::CacheState,
     config::Settings,
     error::{Error, Result},
-    service::{Bitbucket, FormService, GitHub, Gitlab, Service},
+    service::{Bitbucket, FormService, GitHub, Gitlab, Service, Sourcehut},
     statics::{CLIENT, CSS, FAVICON, VERSION_INFO},
     template::RepoInfo,
 };
@@ -490,6 +490,7 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
             .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
             .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
             .service(web::resource("/bitbucket/{user}/{repo}").to(calculate_hoc::<Bitbucket>))
+            .service(web::resource("/sourcehut/{user}/{repo}").to(calculate_hoc::<Sourcehut>))
             .service(
                 web::resource("/github/{user}/{repo}/delete")
                     .route(web::post().to(delete_repo_and_cache::<GitHub>)),
@@ -502,15 +503,21 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
                 web::resource("/bitbucket/{user}/{repo}/delete")
                     .route(web::post().to(delete_repo_and_cache::<Bitbucket>)),
             )
+            .service(
+                web::resource("/sourcehut/{user}/{repo}/delete")
+                    .route(web::post().to(delete_repo_and_cache::<Sourcehut>)),
+            )
             .service(web::resource("/github/{user}/{repo}/json").to(json_hoc::<GitHub>))
             .service(web::resource("/gitlab/{user}/{repo}/json").to(json_hoc::<Gitlab>))
             .service(web::resource("/bitbucket/{user}/{repo}/json").to(json_hoc::<Bitbucket>))
+            .service(web::resource("/sourcehut/{user}/{repo}/json").to(json_hoc::<Sourcehut>))
             .service(web::resource("/view/github/{user}/{repo}").to(overview::<GitHub>))
             .service(web::resource("/view/gitlab/{user}/{repo}").to(overview::<Gitlab>))
             .service(web::resource("/view/bitbucket/{user}/{repo}").to(overview::<Bitbucket>))
             .service(web::resource("/github/{user}/{repo}/view").to(overview::<GitHub>))
             .service(web::resource("/gitlab/{user}/{repo}/view").to(overview::<Gitlab>))
             .service(web::resource("/bitbucket/{user}/{repo}/view").to(overview::<Bitbucket>))
+            .service(web::resource("/sourcehut/{user}/{repo}/view").to(overview::<Sourcehut>))
             .default_service(web::resource("").route(web::get().to(async_p404)))
     })
     .workers(workers)

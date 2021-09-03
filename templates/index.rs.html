@@ -20,7 +20,7 @@ gives an overview about the amount of work put into a codebase.
 <p>
 There is a <a href="https://github.com/yegor256/hoc/">command-line tool</a> to calculate the HoC of a repository, but
 some people might want a nice badge to put in their README, that's why I implemented this API. Currently the API can be
-used for GitHub, GitLab and Bitbucket repositories. Just put the following code in your README:
+used for GitHub, GitLab, Bitbucket and Sourcehut repositories. Just put the following code in your README:
 </p>
 
 <pre>
@@ -28,8 +28,8 @@ used for GitHub, GitLab and Bitbucket repositories. Just put the following code 
 </pre>
 
 <p>
-where <code>&lt;service&gt;</code> is one of <code>github</code>, <code>gitlab</code> or <code>bitbucket</code>. So the
-following Markdown
+where <code>&lt;service&gt;</code> is one of <code>github</code>, <code>gitlab</code>, <code>bitbucket</code> or
+<code>sourcehut</code>. So the following Markdown
 </p>
 
 <pre>
@@ -74,6 +74,7 @@ the lines of
         <option value="github">GitHub</option>
         <option value="gitlab">Gitlab</option>
         <option value="bitbucket">Bitbucket</option>
+        <option value="sourcehut">Sourcehut</option>
     </select>
     <label>/</label>
     <input name="user" id="user" type="text" placeholder="user" />
