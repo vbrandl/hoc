@@ -29,7 +29,7 @@ use crate::{
 use actix_web::{
     dev::Server,
     http::header::{CacheControl, CacheDirective, Expires, LOCATION},
-    middleware::{self, normalize::TrailingSlash},
+    middleware::{self, TrailingSlash},
     web, App, HttpResponse, HttpServer, Responder,
 };
 use badge::{Badge, BadgeOptions};
@@ -224,10 +224,10 @@ where
         })?;
         repo_count.fetch_sub(1, Ordering::Relaxed);
         Ok(HttpResponse::TemporaryRedirect()
-            .header(
+            .insert_header((
                 LOCATION,
                 format!("/{}/{}/{}/view", T::url_path(), data.0, data.1),
-            )
+            ))
             .finish())
     };
     future.instrument(span).await
@@ -318,8 +318,8 @@ fn no_cache_response(body: Vec<u8>) -> HttpResponse {
     let expiration = SystemTime::now() + Duration::from_secs(30);
     HttpResponse::Ok()
         .content_type("image/svg+xml")
-        .set(Expires(expiration.into()))
-        .set(CacheControl(vec![
+        .insert_header(Expires(expiration.into()))
+        .insert_header(CacheControl(vec![
             CacheDirective::MaxAge(0u32),
             CacheDirective::MustRevalidate,
             CacheDirective::NoCache,
@@ -480,7 +480,7 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
         App::new()
             .app_data(state.clone())
             .app_data(repo_count.clone())
-            .wrap(tracing_actix_web::TracingLogger)
+            .wrap(tracing_actix_web::TracingLogger::default())
             .wrap(middleware::NormalizePath::new(TrailingSlash::Trim))
             .service(index)
             .service(health_check)
@@ -518,7 +518,7 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
             .service(web::resource("/gitlab/{user}/{repo}/view").to(overview::<Gitlab>))
             .service(web::resource("/bitbucket/{user}/{repo}/view").to(overview::<Bitbucket>))
             .service(web::resource("/sourcehut/{user}/{repo}/view").to(overview::<Sourcehut>))
-            .default_service(web::resource("").route(web::get().to(async_p404)))
+            .default_service(web::to(async_p404))
     })
     .workers(workers)
     .listen(listener)?
