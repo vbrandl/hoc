@@ -40,7 +40,7 @@ ructe = "0.13.4"
 vergen = { version = "5.1.17", default-features = false, features = ["git"] }
 
 [dev-dependencies]
-awc = "3.0.0-beta.9"
+awc = "3.0.0-beta.10"
 ructe = "0.13.4"
 tempfile = "3.2.0"
 tokio = "1.13.0"
