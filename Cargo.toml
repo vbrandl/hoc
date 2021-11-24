@@ -19,7 +19,7 @@ badge = "0.3.0"
 bytes = "1.1.0"
 config = { version = "0.11.0", features = ["toml"] }
 dotenv = "0.15.0"
-futures = "0.3.17"
+futures = "0.3.18"
 git2 = "0.13.24"
 lazy_static = "1.4.0"
 number_prefix = "0.4.0"
