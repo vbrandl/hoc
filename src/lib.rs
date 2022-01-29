@@ -477,7 +477,7 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
         web::Data::new(AtomicUsize::new(count::count_repositories(&settings.repodir).unwrap()));
     let state = web::Data::new(State { settings });
     Ok(HttpServer::new(move || {
-        App::new()
+        let app = App::new()
             .app_data(state.clone())
             .app_data(repo_count.clone())
             .wrap(tracing_actix_web::TracingLogger::default())
@@ -487,38 +487,12 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
             .service(web::resource("/tacit-css.min.css").route(web::get().to(css)))
             .service(web::resource("/favicon.ico").route(web::get().to(favicon32)))
             .service(generate)
-            .service(web::resource("/github/{user}/{repo}").to(calculate_hoc::<GitHub>))
-            .service(web::resource("/gitlab/{user}/{repo}").to(calculate_hoc::<Gitlab>))
-            .service(web::resource("/bitbucket/{user}/{repo}").to(calculate_hoc::<Bitbucket>))
-            .service(web::resource("/sourcehut/{user}/{repo}").to(calculate_hoc::<Sourcehut>))
-            .service(
-                web::resource("/github/{user}/{repo}/delete")
-                    .route(web::post().to(delete_repo_and_cache::<GitHub>)),
-            )
-            .service(
-                web::resource("/gitlab/{user}/{repo}/delete")
-                    .route(web::post().to(delete_repo_and_cache::<Gitlab>)),
-            )
-            .service(
-                web::resource("/bitbucket/{user}/{repo}/delete")
-                    .route(web::post().to(delete_repo_and_cache::<Bitbucket>)),
-            )
-            .service(
-                web::resource("/sourcehut/{user}/{repo}/delete")
-                    .route(web::post().to(delete_repo_and_cache::<Sourcehut>)),
-            )
-            .service(web::resource("/github/{user}/{repo}/json").to(json_hoc::<GitHub>))
-            .service(web::resource("/gitlab/{user}/{repo}/json").to(json_hoc::<Gitlab>))
-            .service(web::resource("/bitbucket/{user}/{repo}/json").to(json_hoc::<Bitbucket>))
-            .service(web::resource("/sourcehut/{user}/{repo}/json").to(json_hoc::<Sourcehut>))
-            .service(web::resource("/view/github/{user}/{repo}").to(overview::<GitHub>))
-            .service(web::resource("/view/gitlab/{user}/{repo}").to(overview::<Gitlab>))
-            .service(web::resource("/view/bitbucket/{user}/{repo}").to(overview::<Bitbucket>))
-            .service(web::resource("/github/{user}/{repo}/view").to(overview::<GitHub>))
-            .service(web::resource("/gitlab/{user}/{repo}/view").to(overview::<Gitlab>))
-            .service(web::resource("/bitbucket/{user}/{repo}/view").to(overview::<Bitbucket>))
-            .service(web::resource("/sourcehut/{user}/{repo}/view").to(overview::<Sourcehut>))
-            .default_service(web::to(async_p404))
+            .default_service(web::to(async_p404));
+        let app = GitHub::register_service(app);
+        let app = Gitlab::register_service(app);
+        let app = Bitbucket::register_service(app);
+        let app = Sourcehut::register_service(app);
+        app
     })
     .workers(workers)
     .listen(listener)?

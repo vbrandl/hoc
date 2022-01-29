@@ -1,7 +1,31 @@
-pub(crate) trait Service {
+use crate::{calculate_hoc, delete_repo_and_cache, json_hoc, overview};
+
+use actix_web::{
+    dev::{ServiceFactory, ServiceRequest},
+    web, App,
+};
+
+pub(crate) trait Service: Sized + 'static {
     fn domain() -> &'static str;
     fn url_path() -> &'static str;
     fn commit_url(repo: &str, commit_ref: &str) -> String;
+
+    fn register_service<T>(app: App<T>) -> App<T>
+    where
+        T: ServiceFactory<ServiceRequest, Config = (), Error = actix_web::Error, InitError = ()>,
+    {
+        let url_path = Self::url_path();
+        app.service(
+            web::resource(format!("/{url_path}/{{user}}/{{repo}}")).to(calculate_hoc::<Self>),
+        )
+        .service(
+            web::resource(format!("/{url_path}/{{user}}/{{repo}}/delete"))
+                .route(web::post().to(delete_repo_and_cache::<Self>)),
+        )
+        .service(web::resource(format!("/{url_path}/{{user}}/{{repo}}/json")).to(json_hoc::<Self>))
+        .service(web::resource(format!("/view/{url_path}/{{user}}/{{repo}}")).to(overview::<Self>))
+        .service(web::resource(format!("/{url_path}/{{user}}/{{repo}}/view")).to(overview::<Self>))
+    }
 }
 
 #[derive(Deserialize, Serialize)]
