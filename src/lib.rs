@@ -462,11 +462,11 @@ async fn async_p404(repo_count: web::Data<AtomicUsize>) -> Result<HttpResponse> 
     p404(repo_count)
 }
 
-fn css() -> HttpResponse {
+async fn css() -> HttpResponse {
     HttpResponse::Ok().content_type("text/css").body(CSS)
 }
 
-fn favicon32() -> HttpResponse {
+async fn favicon32() -> HttpResponse {
     HttpResponse::Ok().content_type("image/png").body(FAVICON)
 }
 
