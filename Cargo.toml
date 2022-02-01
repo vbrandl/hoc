@@ -14,7 +14,7 @@ name = "hoc"
 
 [dependencies]
 actix-rt = "2.6.0"
-actix-web = "4.0.0-beta.21"
+actix-web = "4.0.0-rc.1"
 badge = "0.3.0"
 bytes = "1.1.0"
 config = { version = "0.11.0", features = ["toml"] }
@@ -29,7 +29,7 @@ serde = "1.0.136"
 serde_derive = "1.0.136"
 serde_json = "1.0.78"
 tracing = "0.1.29"
-tracing-actix-web = "0.5.0-beta.11"
+tracing-actix-web = "0.5.0-rc.1"
 tracing-bunyan-formatter = "0.3.2"
 tracing-futures = "0.2.5"
 tracing-log = "0.1.2"
@@ -40,7 +40,7 @@ ructe = "0.13.4"
 vergen = { version = "6.0.2", default-features = false, features = ["git"] }
 
 [dev-dependencies]
-awc = "3.0.0-beta.19"
+awc = "3.0.0-beta.20"
 ructe = "0.13.4"
 tempfile = "3.3.0"
 tokio = "1.16.1"
