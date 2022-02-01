@@ -491,8 +491,7 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
         let app = GitHub::register_service(app);
         let app = Gitlab::register_service(app);
         let app = Bitbucket::register_service(app);
-        let app = Sourcehut::register_service(app);
-        app
+        Sourcehut::register_service(app)
     })
     .workers(workers)
     .listen(listener)?
