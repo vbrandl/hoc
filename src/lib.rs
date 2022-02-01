@@ -462,10 +462,12 @@ async fn async_p404(repo_count: web::Data<AtomicUsize>) -> Result<HttpResponse> 
     p404(repo_count)
 }
 
+#[get("/tacit-css.min.css")]
 async fn css() -> HttpResponse {
     HttpResponse::Ok().content_type("text/css").body(CSS)
 }
 
+#[get("/favicon.ico")]
 async fn favicon32() -> HttpResponse {
     HttpResponse::Ok().content_type("image/png").body(FAVICON)
 }
@@ -484,8 +486,8 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
             .wrap(middleware::NormalizePath::new(TrailingSlash::Trim))
             .service(index)
             .service(health_check)
-            .service(web::resource("/tacit-css.min.css").route(web::get().to(css)))
-            .service(web::resource("/favicon.ico").route(web::get().to(favicon32)))
+            .service(css)
+            .service(favicon32)
             .service(generate)
             .default_service(web::to(async_p404));
         let app = GitHub::register_service(app);
