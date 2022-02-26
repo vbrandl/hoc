@@ -18,21 +18,16 @@ pub struct Settings {
 }
 
 impl Settings {
-    #[deprecated]
-    pub fn new() -> Result<Self, ConfigError> {
-        Self::load()
-    }
-
     pub fn load() -> Result<Self, ConfigError> {
-        let mut config = Config::new();
-        config
-            .merge(File::with_name("hoc.toml").required(false))?
-            .merge(Environment::with_prefix("hoc"))?
+        Config::builder()
+            .add_source(File::with_name("hoc.toml").required(false))
+            .add_source(Environment::with_prefix("hoc"))
             .set_default("repodir", "./repos")?
             .set_default("cachedir", "./cache")?
             .set_default("workers", 4)?
             .set_default("port", 8080)?
-            .set_default("host", "0.0.0.0")?;
-        config.try_into()
+            .set_default("host", "0.0.0.0")?
+            .build()?
+            .try_deserialize()
     }
 }
