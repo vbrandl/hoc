@@ -879,7 +879,7 @@ dependencies = [
 
 [[package]]
 name = "hoc"
-version = "0.22.0"
+version = "0.22.1"
 dependencies = [
  "actix-rt",
  "actix-web",
