@@ -17,7 +17,7 @@ actix-rt = "2.7.0"
 actix-web = "4.0.1"
 badge = "0.3.0"
 bytes = "1.1.0"
-config = { version = "0.13.0", features = ["toml"] }
+config = { version = "0.13.1", features = ["toml"] }
 dotenv = "0.15.0"
 futures = "0.3.21"
 git2 = "0.14.2"
