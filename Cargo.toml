@@ -43,4 +43,4 @@ vergen = { version = "7.2.1", default-features = false, features = ["git"] }
 awc = "3.0.0"
 ructe = "0.14.0"
 tempfile = "3.3.0"
-tokio = "1.20.0"
+tokio = "1.20.1"
