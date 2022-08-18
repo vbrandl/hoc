@@ -55,6 +55,7 @@ struct GeneratorForm<'a> {
     service: FormService,
     user: Cow<'a, str>,
     repo: Cow<'a, str>,
+    branch: Option<Cow<'a, str>>,
 }
 
 #[derive(Debug)]
@@ -447,6 +448,11 @@ async fn generate(
         params.service.url(),
         params.service.service(),
         &repo,
+        params
+            .branch
+            .as_deref()
+            .filter(|s| !s.is_empty())
+            .unwrap_or("master"),
     )?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(buf))
