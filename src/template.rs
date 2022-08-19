@@ -1,3 +1,5 @@
+use crate::service::FormService;
+
 pub struct RepoInfo<'a> {
     pub commit_url: &'a str,
     pub commits: u64,
@@ -7,5 +9,12 @@ pub struct RepoInfo<'a> {
     pub hoc_pretty: &'a str,
     pub path: &'a str,
     pub url: &'a str,
+    pub branch: &'a str,
+}
+
+pub struct RepoGeneratorInfo<'a> {
+    pub service: FormService,
+    pub user: &'a str,
+    pub repo: &'a str,
     pub branch: &'a str,
 }
