@@ -8,5 +8,8 @@ fn main() -> Result<(), RucteError> {
     let mut config = Config::default();
     *config.git_mut().sha_kind_mut() = ShaKind::Short;
     vergen(config).expect("Unable to generate static repo info");
-    Ructe::from_env()?.compile_templates("templates")
+    let mut ructe = Ructe::from_env()?;
+    let mut statics = ructe.statics()?;
+    statics.add_files("static")?;
+    ructe.compile_templates("templates")
 }
