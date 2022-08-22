@@ -1,5 +1,10 @@
 use crate::error::Result;
-use std::{fs::{read_dir, ReadDir}, path::Path, result::Result as StdResult, iter::once};
+use std::{
+    fs::{read_dir, ReadDir},
+    iter::once,
+    path::Path,
+    result::Result as StdResult,
+};
 
 /// The on disk layout for served repos is `<service>/<user>/<repo>`
 /// so to get the amount of repos, we just have to count everything
@@ -15,13 +20,11 @@ where
         .flat_map(sub_directories)
         .flat_map(sub_directories)
         .flat_map(sub_directories)
-        .count()
-    )
+        .count())
 }
 
 fn sub_directories(dir: ReadDir) -> impl Iterator<Item = ReadDir> {
-    dir
-        .filter_map(StdResult::ok)
+    dir.filter_map(StdResult::ok)
         .filter(|entry| entry.file_type().map(|ft| ft.is_dir()).unwrap_or(false))
         .filter_map(|entry| read_dir(entry.path()).ok())
 }
