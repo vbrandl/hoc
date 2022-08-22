@@ -1,6 +1,9 @@
 use crate::error::Result;
 use std::{fs::{read_dir, ReadDir}, path::Path, result::Result as StdResult, iter::once};
 
+/// The on disk layout for served repos is `<service>/<user>/<repo>`
+/// so to get the amount of repos, we just have to count everything
+/// in `*/*/*` to get the count.
 #[instrument]
 pub(crate) fn count_repositories<P>(repo_path: P) -> Result<usize>
 where
