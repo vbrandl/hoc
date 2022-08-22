@@ -5,7 +5,7 @@ use std::fmt;
 pub(crate) type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
-pub(crate) enum Error {
+pub enum Error {
     Badge(String),
     Client(reqwest::Error),
     Git(git2::Error),
