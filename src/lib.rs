@@ -11,7 +11,7 @@ extern crate tracing;
 
 mod cache;
 pub mod config;
-mod count;
+pub mod count;
 mod error;
 mod service;
 mod statics;
