@@ -28,8 +28,8 @@ pub(crate) trait Service: Sized + 'static {
     }
 }
 
-#[derive(Deserialize, Serialize)]
-pub(crate) enum FormService {
+#[derive(Deserialize, Serialize, Clone, Copy)]
+pub enum FormService {
     #[serde(rename = "github")]
     GitHub,
     #[serde(rename = "gitlab")]

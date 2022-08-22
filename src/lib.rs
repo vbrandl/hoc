@@ -24,7 +24,7 @@ use crate::{
     error::{Error, Result},
     service::{Bitbucket, FormService, GitHub, Gitlab, Service, Sourcehut},
     statics::{CLIENT, VERSION_INFO},
-    template::RepoInfo,
+    template::{RepoGeneratorInfo, RepoInfo},
 };
 use actix_web::{
     dev::Server,
@@ -56,6 +56,7 @@ struct GeneratorForm<'a> {
     service: FormService,
     user: Cow<'a, str>,
     repo: Cow<'a, str>,
+    branch: Option<Cow<'a, str>>,
 }
 
 #[derive(Debug)]
@@ -438,16 +439,23 @@ async fn generate(
     state: web::Data<State>,
     repo_count: web::Data<AtomicUsize>,
 ) -> Result<HttpResponse> {
-    let repo = format!("{}/{}", params.user, params.repo);
     let mut buf = Vec::new();
+    let repo_info = RepoGeneratorInfo {
+        service: params.service,
+        user: &params.user,
+        repo: &params.repo,
+        branch: params
+            .branch
+            .as_deref()
+            .filter(|s| !s.is_empty())
+            .unwrap_or("master"),
+    };
     templates::generate(
         &mut buf,
         VERSION_INFO,
         repo_count.load(Ordering::Relaxed),
         &state.settings.base_url,
-        params.service.url(),
-        params.service.service(),
-        &repo,
+        &repo_info,
     )?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(buf))
