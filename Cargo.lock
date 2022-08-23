@@ -880,6 +880,7 @@ dependencies = [
  "futures",
  "git2",
  "lazy_static",
+ "mime",
  "number_prefix",
  "openssl-probe",
  "reqwest",
@@ -1647,6 +1648,7 @@ dependencies = [
  "bytecount",
  "itertools",
  "md5",
+ "mime",
  "nom",
 ]
 

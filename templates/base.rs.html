@@ -1,3 +1,4 @@
+@use super::statics::*;
 @use crate::statics::VersionInfo;
 
 @(title: &str, header: &str, content: Content, version_info: VersionInfo, repo_count: usize)
@@ -9,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="keywords" content="Hits-of-Code, GitHub, Badge" />
     <meta name="description" content="Hits-of-Code Badges for Git repositories" />
-    <link rel="stylesheet" href="/tacit-css.min.css" />
+    <link rel="stylesheet" href="/static/@tacit_css_min_css.name" />
     <title>@title</title>
 </head>
 <body>

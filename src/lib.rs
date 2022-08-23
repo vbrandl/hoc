@@ -23,7 +23,7 @@ use crate::{
     config::Settings,
     error::{Error, Result},
     service::{Bitbucket, FormService, GitHub, Gitlab, Service, Sourcehut},
-    statics::{CLIENT, CSS, FAVICON, VERSION_INFO},
+    statics::{CLIENT, VERSION_INFO},
     template::{RepoGeneratorInfo, RepoInfo},
 };
 use actix_web::{
@@ -46,6 +46,7 @@ use std::{
     sync::atomic::Ordering,
     time::{Duration, SystemTime},
 };
+use templates::statics::{self as template_statics, StaticFile};
 use tracing::Instrument;
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
@@ -470,14 +471,32 @@ async fn async_p404(repo_count: web::Data<AtomicUsize>) -> Result<HttpResponse> 
     p404(repo_count)
 }
 
-#[get("/tacit-css.min.css")]
-async fn css() -> HttpResponse {
-    HttpResponse::Ok().content_type("text/css").body(CSS)
+/// A duration to add to current time for a far expires header.
+static FAR: Duration = Duration::from_secs(180 * 24 * 60 * 60);
+
+#[get("/static/{filename}")]
+async fn static_file(
+    path: web::Path<String>,
+    repo_count: web::Data<AtomicUsize>,
+) -> Result<HttpResponse> {
+    StaticFile::get(&path)
+        .map(|data| {
+            let far_expires = SystemTime::now() + FAR;
+            HttpResponse::Ok()
+                .insert_header(Expires(far_expires.into()))
+                .content_type(data.mime.clone())
+                .body(data.content)
+        })
+        .map(Result::Ok)
+        .unwrap_or_else(|| p404(repo_count))
 }
 
 #[get("/favicon.ico")]
 async fn favicon32() -> HttpResponse {
-    HttpResponse::Ok().content_type("image/png").body(FAVICON)
+    let data = &template_statics::favicon32_png;
+    HttpResponse::Ok()
+        .content_type(data.mime.clone())
+        .body(data.content)
 }
 
 async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Result<Server> {
@@ -494,7 +513,7 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
             .wrap(middleware::NormalizePath::new(TrailingSlash::Trim))
             .service(index)
             .service(health_check)
-            .service(css)
+            .service(static_file)
             .service(favicon32)
             .service(generate)
             .default_service(web::to(async_p404));
