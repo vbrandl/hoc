@@ -1,10 +1,13 @@
-FROM ekidd/rust-musl-builder:stable as builder
+# FROM ekidd/rust-musl-builder:stable as builder
+FROM clux/muslrust:stable as builder
 
 # create new cargo project
-RUN USER=rust cargo init --lib
+RUN cargo init --lib
+# RUN USER=rust cargo init --lib
 RUN echo 'fn main() { println!("Hello, world!"); }' >> src/main.rs
 # copy build config
-COPY --chown=rust ./Cargo.lock ./Cargo.lock
+# COPY --chown=rust ./Cargo.lock ./Cargo.lock
+COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
 # HACK: remove build-dependencies so we have at least some caching
 RUN head -n $(($(grep -n "\[build-dependencies\]" Cargo.toml | cut -f1 -d:) - 1)) Cargo.toml | sed '/build.rs/d' > \
@@ -38,6 +41,7 @@ USER hoc
 # FROM scratch
 # COPY --from=linuxkit/ca-certificates:v0.7 / /
 
-COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/hoc .
+# COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/hoc .
+COPY --from=builder /volume/target/x86_64-unknown-linux-musl/release/hoc .
 
 ENTRYPOINT ["/home/hoc/hoc"]
