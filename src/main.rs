@@ -3,7 +3,7 @@ use hoc::{config::Settings, telemetry};
 use std::net::TcpListener;
 
 fn init() {
-    dotenv::dotenv().ok();
+    dotenvy::dotenv().ok();
     openssl_probe::init_ssl_cert_env_vars();
 
     telemetry::init_subscriber(telemetry::get_subscriber("hoc", "info"))
