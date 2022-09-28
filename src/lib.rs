@@ -32,7 +32,7 @@ use actix_web::{
     middleware::{self, TrailingSlash},
     web, App, HttpResponse, HttpServer, Responder,
 };
-use badge::{Badge, BadgeOptions};
+use badgers::{Badge, BadgeOptions};
 use git2::{BranchType, Repository};
 use number_prefix::NumberPrefix;
 use std::{
