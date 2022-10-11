@@ -6,8 +6,12 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
+  tests:
+    uses: vbrandl/hoc/.github/workflows/rust.yml@master
+
   publish:
     name: Publishing for ${{ matrix.os }}
+    needs: [tests]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -29,7 +33,7 @@ jobs:
 
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -44,10 +48,10 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             ./target
-          key: release-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Cargo build
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@v3
         with:
           command: build
           toolchain: ${{ matrix.rust }}
@@ -74,3 +78,14 @@ jobs:
             target/${{ matrix.target }}/release/hoc-${{ matrix.artifact_prefix }}.sha256
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  changelog:
+    name: Update Changelog
+    needs: [tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          changelog: CHANGELOG.md
+          token: ${{ secrets.GITHUB_TOKEN }}
