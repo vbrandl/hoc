@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Updated [`tracing-subscriber`](https://github.com/tokio-rs/tracing) from 0.3.15 to 0.3.16 ([#501])
+* Updated [`tracing`](https://github.com/tokio-rs/tracing) from 0.1.36 to 0.1.37 ([#502])
+* Updated [`serde_json`](https://github.com/serde-rs/json) from 1.0.85 to 1.0.86 ([#503])
 * Updated [`tracing-bunyan-formatter`](https://github.com/LukeMathWalker/tracing-bunyan-formatter) from 0.3.3 to 0.3.4 ([#504])
 
+[#501]: https://github.com/vbrandl/hoc/pull/501
+[#502]: https://github.com/vbrandl/hoc/pull/502
+[#503]: https://github.com/vbrandl/hoc/pull/503
 [#504]: https://github.com/vbrandl/hoc/pull/504
