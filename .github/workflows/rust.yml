@@ -1,13 +1,19 @@
-on: [push, pull_request]
+on:
+  workflow_call:
+  push:
+    branches:
+      - master
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
-
   rustfmt:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -16,15 +22,6 @@ jobs:
           profile: minimal
           override: true
           components: rustfmt
-
-      - name: Cache cargo registry, index and build directory
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            ./target
-          key: rustfmt-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Check Formatting
         uses: actions-rs/cargo@v1
@@ -37,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -48,13 +45,13 @@ jobs:
           components: rustfmt
 
       - name: Cache cargo registry, index and build directory
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             ./target
-          key: clippy-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Clippy Linting
         uses: actions-rs/cargo@v1
@@ -74,7 +71,7 @@ jobs:
 
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -84,13 +81,13 @@ jobs:
           override: true
 
       - name: Cache cargo registry, index and build directory
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             ./target
-          key: test-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run Tests
         uses: actions-rs/cargo@v1
