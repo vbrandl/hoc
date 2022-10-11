@@ -3,26 +3,19 @@ on:
   schedule:
     - cron: '0 1 * * *'
   push:
+    branches:
+      - master
+  pull_request:
     paths:
       - '**/Cargo.toml'
       - '**/Cargo.lock'
-  pull_request:
+      - ".cargo/audit.toml"
 
 jobs:
   security_audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Cache cargo registry, index and build directory
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            ./target
-          key: audit-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
+      - uses: actions/checkout@v3
       - uses: actions-rs/audit-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
