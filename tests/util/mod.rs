@@ -14,8 +14,9 @@ lazy_static::lazy_static! {
 
 pub struct TestApp {
     pub address: String,
-    repo_dir: TempDir,
-    cache_dir: TempDir,
+    // Those are unused but are hold to be dropped and deleted after the TestApp goes out of scope
+    _repo_dir: TempDir,
+    _cache_dir: TempDir,
 }
 
 pub async fn spawn_app() -> TestApp {
@@ -26,15 +27,12 @@ pub async fn spawn_app() -> TestApp {
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
 
-    let repo_dir = tempdir().expect("Cannot create repo_dir");
-    let cache_dir = tempdir().expect("Cannot create cache_dir");
+    let _repo_dir = tempdir().expect("Cannot create repo_dir");
+    let _cache_dir = tempdir().expect("Cannot create cache_dir");
 
     let mut settings = Settings::load().expect("Failed to read configuration.");
-    settings.repodir = repo_dir.path().to_path_buf();
-    settings.cachedir = cache_dir.path().to_path_buf();
-    // configuration.database.database_name = Uuid::new_v4().to_string();
-
-    // let connection_pool = configure_database(&configuration.database).await;
+    settings.repodir = _repo_dir.path().to_path_buf();
+    settings.cachedir = _cache_dir.path().to_path_buf();
 
     let server = hoc::run(listener, settings)
         .await
@@ -44,7 +42,7 @@ pub async fn spawn_app() -> TestApp {
 
     TestApp {
         address,
-        repo_dir,
-        cache_dir,
+        _repo_dir,
+        _cache_dir,
     }
 }
