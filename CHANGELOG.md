@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.0] 2022-10-03
+
 ### Changed
 
 * Updated [`tracing-subscriber`](https://github.com/tokio-rs/tracing) from 0.3.15 to 0.3.16 ([#501])
