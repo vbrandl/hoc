@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* Updated [futures](https://github.com/rust-lang/futures-rs) from 0.3.24 to 0.3.25 ([#511])
+
+[#511]: https://github.com/vbrandl/hoc/pull/511
+
 ## [0.26.0] 2022-10-03
 
 ### Changed
