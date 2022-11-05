@@ -118,7 +118,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
         "-M".to_string(),
         "--diff-filter=ACDM".to_string(),
     ];
-    let cache = CacheState::read_from_file(&cache_dir, branch, &head)?;
+    let cache = CacheState::read_from_file(cache_dir, branch, &head)?;
     match &cache {
         CacheState::Current { count, commits, .. } => {
             info!("Using cache");
