@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`futures`](https://github.com/rust-lang/futures-rs) from 0.3.24 to 0.3.25 ([#511])
 * Updated [`serde_json`](https://github.com/serde-rs/json) from 1.0.86 to 1.0.87 ([#510])
 * Updated [`serde`](https://github.com/serde-rs/serde) from 1.0.145 to 1.0.147 ([#512])
-* Updated [tracing-actix-web](https://github.com/LukeMathWalker/tracing-actix-web) from 0.6.1 to 0.6.2 ([#513])
+* Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.6.1 to 0.6.2 ([#513])
 * Updated [`reqwest`](https://github.com/seanmonstar/reqwest) from 0.11.12 to 0.11.13 ([#515])
+* Updated [`serde_json`](https://github.com/serde-rs/json) from 1.0.87 to 1.0.88 ([#517])
 
 
 ### Fixes
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#513]: https://github.com/vbrandl/hoc/pull/513
 [#514]: https://github.com/vbrandl/hoc/pull/514
 [#515]: https://github.com/vbrandl/hoc/pull/515
+[#517]: https://github.com/vbrandl/hoc/pull/517
 
 
 ## [0.26.0] 2022-10-03
