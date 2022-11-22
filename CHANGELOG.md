@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependency Updates
+
+* Updated [`bytes`](https://github.com/tokio-rs/bytes) from 1.2.1 to 1.3.0 ([#519])
+
+[#519]: https://github.com/vbrandl/hoc/pull/519
 
 ## [0.27.0] 2022-10-21
 
@@ -15,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`serde`](https://github.com/serde-rs/serde) from 1.0.145 to 1.0.147 ([#512])
 * Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.6.1 to 0.6.2 ([#513])
 * Updated [`reqwest`](https://github.com/seanmonstar/reqwest) from 0.11.12 to 0.11.13 ([#515])
-* Bumps [`tokio`](https://github.com/tokio-rs/tokio) from 1.21.2 to 1.22.0 ([#516])
+* Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.21.2 to 1.22.0 ([#516])
 * Updated [`serde_json`](https://github.com/serde-rs/json) from 1.0.87 to 1.0.88 ([#517])
 
 
