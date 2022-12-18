@@ -210,14 +210,14 @@ where
         info!("Deleting cache and repository");
         let cache_dir = format!("{}/{}.json", &state.cache(), repo);
         let repo_dir = format!("{}/{}", &state.repos(), repo);
-        std::fs::remove_file(&cache_dir).or_else(|e| {
+        std::fs::remove_file(cache_dir).or_else(|e| {
             if e.kind() == io::ErrorKind::NotFound {
                 Ok(())
             } else {
                 Err(e)
             }
         })?;
-        std::fs::remove_dir_all(&repo_dir).or_else(|e| {
+        std::fs::remove_dir_all(repo_dir).or_else(|e| {
             if e.kind() == io::ErrorKind::NotFound {
                 Ok(())
             } else {
