@@ -7,13 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
-* Fix clippy lint `needless_borrow` ([#526])
+* Fixed clippy lint `needless_borrow` ([#526])
 
 ### Dependency Updates
 
 * Updated [`bytes`](https://github.com/tokio-rs/bytes) from 1.2.1 to 1.3.0 ([#519])
+* Updated [`config`](https://github.com/mehcode/config-rs) from 0.13.2 to 0.13.3 ([#522])
 
 [#519]: https://github.com/vbrandl/hoc/pull/519
+[#522]: https://github.com/vbrandl/hoc/pull/522
 [#526]: https://github.com/vbrandl/hoc/pull/526
 
 ## [0.27.0] 2022-10-21
