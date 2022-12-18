@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependency Updates
 
 * Updated [`bytes`](https://github.com/tokio-rs/bytes) from 1.2.1 to 1.3.0 ([#519])
+* Bumps [`serde_json`](https://github.com/serde-rs/json) from 1.0.88 to 1.0.89 ([#520])
 
 [#519]: https://github.com/vbrandl/hoc/pull/519
+[#520]: https://github.com/vbrandl/hoc/pull/520
 
 ## [0.27.0] 2022-10-21
 
