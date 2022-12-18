@@ -13,10 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Updated [`bytes`](https://github.com/tokio-rs/bytes) from 1.2.1 to 1.3.0 ([#519])
 * Updated [`config`](https://github.com/mehcode/config-rs) from 0.13.2 to 0.13.3 ([#522])
+* Bumps [`serde_json`](https://github.com/serde-rs/json) from 1.0.88 to 1.0.90 ([#527])
 
 [#519]: https://github.com/vbrandl/hoc/pull/519
 [#522]: https://github.com/vbrandl/hoc/pull/522
 [#526]: https://github.com/vbrandl/hoc/pull/526
+[#527]: https://github.com/vbrandl/hoc/pull/527
 
 ## [0.27.0] 2022-10-21
 
