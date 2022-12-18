@@ -5,11 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+
+* Fix clippy lint `needless_borrow` ([#526])
+
 ### Dependency Updates
 
 * Updated [`bytes`](https://github.com/tokio-rs/bytes) from 1.2.1 to 1.3.0 ([#519])
 
 [#519]: https://github.com/vbrandl/hoc/pull/519
+[#526]: https://github.com/vbrandl/hoc/pull/526
 
 ## [0.27.0] 2022-10-21
 
