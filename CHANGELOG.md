@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependency Updates
 
 * Updated [`badgers`](https://github.com/vbrandl/badgers) from 1.0.0 to 1.1.0 ([#530])
+* Updated [`serde_json`](https://github.com/serde-rs/json) from 1.0.90 to 1.0.91 ([#531])
 
 [#530]: https://github.com/vbrandl/hoc/pull/530
+[#531]: https://github.com/vbrandl/hoc/pull/531
 
 ## [0.28.0] 2022-12-18
 
