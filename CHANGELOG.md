@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`badgers`](https://github.com/vbrandl/badgers) from 1.0.0 to 1.1.0 ([#530])
 * Updated [`serde_json`](https://github.com/serde-rs/json) from 1.0.90 to 1.0.91 ([#531])
 * Updated [`vergen`](https://github.com/rustyhorde/vergen) from 7.3.1 to 7.4.4 ([#533])
+* Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.6.2 to 0.7.1 ([#534])
 
 [#530]: https://github.com/vbrandl/hoc/pull/530
 [#531]: https://github.com/vbrandl/hoc/pull/531
 [#533]: https://github.com/vbrandl/hoc/pull/533
+[#534]: https://github.com/vbrandl/hoc/pull/534
 
 ## [0.28.0] 2022-12-18
 
