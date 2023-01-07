@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`serde`](https://github.com/serde-rs/serde) from 1.0.151 to 1.0.152 ([#535])
 * Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.23.0 to 1.23.1 ([#536])
 * Updated [`vergen`](https://github.com/rustyhorde/vergen) from 7.4.4 to 7.5.0 ([#537])
+* Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.23.1 to 1.24.1 ([#539])
 
 [#530]: https://github.com/vbrandl/hoc/pull/530
 [#531]: https://github.com/vbrandl/hoc/pull/531
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#535]: https://github.com/vbrandl/hoc/pull/535
 [#536]: https://github.com/vbrandl/hoc/pull/536
 [#537]: https://github.com/vbrandl/hoc/pull/537
+[#539]: https://github.com/vbrandl/hoc/pull/539
 
 ## [0.28.0] 2022-12-18
 
