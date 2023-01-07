@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.6.2 to 0.7.1 ([#534])
 * Updated [`serde`](https://github.com/serde-rs/serde) from 1.0.151 to 1.0.152 ([#535])
 * Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.23.0 to 1.23.1 ([#536])
+* Updated [`vergen`](https://github.com/rustyhorde/vergen) from 7.4.4 to 7.5.0 ([#537])
 
 [#530]: https://github.com/vbrandl/hoc/pull/530
 [#531]: https://github.com/vbrandl/hoc/pull/531
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#534]: https://github.com/vbrandl/hoc/pull/534
 [#535]: https://github.com/vbrandl/hoc/pull/535
 [#536]: https://github.com/vbrandl/hoc/pull/536
+[#537]: https://github.com/vbrandl/hoc/pull/537
 
 ## [0.28.0] 2022-12-18
 
