@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependency Updates
 
 * Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.7.1 to 0.7.2 ([#542])
+* Updated [`git2`](https://github.com/rust-lang/git2-rs) from 0.15.0 to 0.16.0 ([#544])
 
 
 [#542]: https://github.com/vbrandl/hoc/pull/542
+[#544]: https://github.com/vbrandl/hoc/pull/544
 
 ## [0.29.0] 2023-01-07
 
