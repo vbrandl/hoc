@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependency Updates
+
+* Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.7.1 to 0.7.2 ([#542])
+
+
+[#542]: https://github.com/vbrandl/hoc/pull/542
 
 ## [0.29.0] 2023-01-07
 
