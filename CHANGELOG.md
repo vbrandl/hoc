@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependency Updates
 
 * Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.7.1 to 0.7.2 ([#542])
+* Updated [`tracing-bunyan-formatter`](https://github.com/LukeMathWalker/tracing-bunyan-formatter) from 0.3.4 to 0.3.6 ([#543])
 
 
 [#542]: https://github.com/vbrandl/hoc/pull/542
+[#543]: https://github.com/vbrandl/hoc/pull/543
 
 ## [0.29.0] 2023-01-07
 
