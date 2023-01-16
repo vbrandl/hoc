@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### New Features
+
+* Allow customization of the badge label ([#546])
+
 ### Dependency Updates
 
 * Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.7.1 to 0.7.2 ([#542])
@@ -13,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [#542]: https://github.com/vbrandl/hoc/pull/542
 [#544]: https://github.com/vbrandl/hoc/pull/544
+[#546]: https://github.com/vbrandl/hoc/pull/546
 
 ## [0.29.0] 2023-01-07
 
