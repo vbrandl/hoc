@@ -2,7 +2,7 @@
 @use crate::statics::VersionInfo;
 @use crate::template::RepoInfo;
 
-@(version_info: VersionInfo, repo_count: usize, repo_info: RepoInfo)
+@(version_info: VersionInfo, repo_count: usize, repo_info: RepoInfo, label: String)
 
 @:base("Hits-of-Code Badges", "Overview", {
 
@@ -19,7 +19,7 @@ To include the badge in your readme, use the following markdown:
 </p>
 
 <pre>
-[![Hits-of-Code](@repo_info.base_url/@repo_info.path?branch=@repo_info.branch)](@repo_info.base_url/@repo_info.path/view?branch=@repo_info.branch)
+[![@label](@repo_info.base_url/@repo_info.path?branch=@repo_info.branch&label=@label)](@repo_info.base_url/@repo_info.path/view?branch=@repo_info.branch&label=@label)
 </pre>
 
 

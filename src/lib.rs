@@ -83,8 +83,14 @@ struct JsonResponse<'a> {
 }
 
 #[derive(Deserialize, Debug)]
-struct BranchQuery {
+struct BadgeQuery {
     branch: Option<String>,
+    #[serde(default = "default_label")]
+    label: String,
+}
+
+fn default_label() -> String {
+    "Hits-of-Code".to_string()
 }
 
 fn pull(path: impl AsRef<Path>) -> Result<()> {
@@ -298,7 +304,7 @@ pub(crate) async fn json_hoc<T: Service>(
     state: web::Data<State>,
     repo_count: web::Data<AtomicUsize>,
     data: web::Path<(String, String)>,
-    branch: web::Query<BranchQuery>,
+    branch: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse> {
     let branch = branch.branch.as_deref().unwrap_or("master");
     let rc_clone = repo_count.clone();
@@ -334,14 +340,15 @@ pub(crate) async fn calculate_hoc<T: Service>(
     state: web::Data<State>,
     repo_count: web::Data<AtomicUsize>,
     data: web::Path<(String, String)>,
-    branch: web::Query<BranchQuery>,
+    query: web::Query<BadgeQuery>,
 ) -> HttpResponse {
     let rc_clone = repo_count.clone();
+    let label = query.label.clone();
     let mapper = move |r| match r {
         HocResult::NotFound => p404(rc_clone),
         HocResult::Hoc { hoc_pretty, .. } => {
             let badge_opt = BadgeOptions {
-                subject: "Hits-of-Code".to_string(),
+                subject: label,
                 color: "#007ec6".to_string(),
                 status: hoc_pretty,
             };
@@ -352,10 +359,10 @@ pub(crate) async fn calculate_hoc<T: Service>(
             Ok(no_cache_response(body))
         }
     };
-    let branch = branch.branch.as_deref().unwrap_or("master");
+    let branch = query.branch.as_deref().unwrap_or("master");
     let error_badge = |_| {
         let error_badge = Badge::new(BadgeOptions {
-            subject: "Hits-of-Code".to_string(),
+            subject: query.label.clone(),
             color: "#ff0000".to_string(),
             status: "error".to_string(),
         })
@@ -372,9 +379,10 @@ async fn overview<T: Service>(
     state: web::Data<State>,
     repo_count: web::Data<AtomicUsize>,
     data: web::Path<(String, String)>,
-    branch: web::Query<BranchQuery>,
+    query: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse> {
-    let branch = branch.branch.as_deref().unwrap_or("master");
+    let branch = query.branch.as_deref().unwrap_or("master");
+    let label = query.label.clone();
     let base_url = state.settings.base_url.clone();
     let rc_clone = repo_count.clone();
     let mapper = move |r| match r {
@@ -405,6 +413,7 @@ async fn overview<T: Service>(
                 VERSION_INFO,
                 rc_clone.load(Ordering::Relaxed),
                 repo_info,
+                label,
             )?;
 
             Ok(HttpResponse::Ok().content_type("text/html").body(buf))
