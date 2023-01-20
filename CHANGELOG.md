@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependency Updates
 
 * Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.24.1 to 1.24.2 ([#547])
+* Updated [`reqwest`](https://github.com/seanmonstar/reqwest) from 0.11.13 to 0.11.14 ([#549])
 
 [#547]: https://github.com/vbrandl/hoc/pull/547
 
