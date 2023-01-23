@@ -37,11 +37,11 @@ tracing-log = "0.1.3"
 tracing-subscriber = { version = "0.3.16", features = ["registry", "env-filter"] }
 
 [build-dependencies]
-ructe = { version = "0.15.0", features = ["mime03"] }
+ructe = { version = "0.16.0", features = ["mime03"] }
 vergen = { version = "7.5.0", default-features = false, features = ["git"] }
 
 [dev-dependencies]
 awc = "3.0.1"
-ructe = "0.15.0"
+ructe = "0.16.0"
 tempfile = "3.3.0"
 tokio = "1.24.2"
