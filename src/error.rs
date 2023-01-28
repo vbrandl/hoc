@@ -19,13 +19,13 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::Badge(s) => write!(fmt, "Badge({})", s),
-            Error::Client(e) => write!(fmt, "Client({})", e),
-            Error::Git(e) => write!(fmt, "Git({})", e),
+            Error::Badge(s) => write!(fmt, "Badge({s})"),
+            Error::Client(e) => write!(fmt, "Client({e})"),
+            Error::Git(e) => write!(fmt, "Git({e})"),
             Error::Internal => write!(fmt, "Internal Error"),
-            Error::Io(e) => write!(fmt, "Io({})", e),
-            Error::Parse(e) => write!(fmt, "Parse({})", e),
-            Error::Serial(e) => write!(fmt, "Serial({})", e),
+            Error::Io(e) => write!(fmt, "Io({e})"),
+            Error::Parse(e) => write!(fmt, "Parse({e})"),
+            Error::Serial(e) => write!(fmt, "Serial({e})"),
             Error::BranchNotFound => write!(fmt, "Repo doesn't have master branch"),
         }
     }

@@ -101,8 +101,8 @@ fn pull(path: impl AsRef<Path>) -> Result<()> {
 }
 
 fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64, String, u64)> {
-    let repo_dir = format!("{}/{}", repo_dir, repo);
-    let cache_dir = format!("{}/{}.json", cache_dir, repo);
+    let repo_dir = format!("{repo_dir}/{repo}");
+    let cache_dir = format!("{cache_dir}/{repo}.json");
     let cache_dir = Path::new(&cache_dir);
     let repo = Repository::open_bare(&repo_dir)?;
     // TODO: do better...
@@ -132,8 +132,8 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
         }
         CacheState::Old { head, .. } => {
             info!("Updating cache");
-            arg.push(format!("{}..{}", head, branch));
-            arg_commit_count.push(format!("{}..{}", head, branch));
+            arg.push(format!("{head}..{branch}"));
+            arg_commit_count.push(format!("{head}..{branch}"));
         }
         CacheState::No | CacheState::NoneForBranch(..) => {
             info!("Creating cache");
@@ -214,8 +214,8 @@ where
             data.1.to_lowercase()
         );
         info!("Deleting cache and repository");
-        let cache_dir = format!("{}/{}.json", &state.cache(), repo);
-        let repo_dir = format!("{}/{}", &state.repos(), repo);
+        let cache_dir = format!("{}/{repo}.json", &state.cache());
+        let repo_dir = format!("{}/{repo}", &state.repos());
         std::fs::remove_file(cache_dir).or_else(|e| {
             if e.kind() == io::ErrorKind::NotFound {
                 Ok(())
@@ -262,10 +262,10 @@ where
     );
     let future = async {
         let repo = format!("{}/{}", data.0.to_lowercase(), data.1.to_lowercase());
-        let service_path = format!("{}/{}", T::url_path(), repo);
-        let service_url = format!("{}/{}", T::domain(), repo);
-        let path = format!("{}/{}", state.repos(), service_url);
-        let url = format!("https://{}", service_url);
+        let service_path = format!("{}/{repo}", T::url_path());
+        let service_url = format!("{}/{repo}", T::domain());
+        let path = format!("{}/{service_url}", state.repos());
+        let url = format!("https://{service_url}");
         let remote_exists = remote_exists(&url).await?;
         let file = Path::new(&path);
         if !file.exists() {
@@ -284,7 +284,7 @@ where
         let (hoc, head, commits) = hoc(&service_url, &state.repos(), &state.cache(), branch)?;
         let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
             NumberPrefix::Standalone(hoc) => hoc.to_string(),
-            NumberPrefix::Prefixed(prefix, hoc) => format!("{:.1}{}", hoc, prefix),
+            NumberPrefix::Prefixed(prefix, hoc) => format!("{hoc:.1}{prefix}"),
         };
         let res = HocResult::Hoc {
             hoc,
