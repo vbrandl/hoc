@@ -1,10 +1,10 @@
-@use super::base;
+@use super::base_html;
 @use crate::statics::VersionInfo;
 @use crate::template::RepoInfo;
 
 @(version_info: VersionInfo, repo_count: usize, repo_info: RepoInfo, label: String)
 
-@:base("Hits-of-Code Badges", "Overview", {
+@:base_html("Hits-of-Code Badges", "Overview", {
 
 <p>
 The project <a href="@repo_info.url">@repo_info.url</a> has

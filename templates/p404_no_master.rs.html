@@ -1,9 +1,9 @@
-@use super::base;
+@use super::base_html;
 @use crate::statics::VersionInfo;
 
 @(version_info: VersionInfo, repo_count: usize)
 
-@:base("Branch not Found - Hits-of-Code Badges", "404 - Branch not Found", {
+@:base_html("Branch not Found - Hits-of-Code Badges", "404 - Branch not Found", {
 <p>
 <big>Sorry</big>. I couldn't find the requested branch of your repositroy.  Currently this service assumes the
 extistence of a branch named <code>master</code>. If you'd like to request a badge for another branch, you can do so by

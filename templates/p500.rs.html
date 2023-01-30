@@ -1,9 +1,9 @@
-@use super::base;
+@use super::base_html;
 @use crate::statics::VersionInfo;
 
 @(version_info: VersionInfo, repo_count: usize)
 
-@:base("Internal Server Error - Hits-of-Code Badges", "500 - Internal Server Error", {
+@:base_html("Internal Server Error - Hits-of-Code Badges", "500 - Internal Server Error", {
 <p>
 <big>Oops</big>. Looks like a made a mistake. Please go <a href="/">back to the homepage</a> and try again.
 </p>

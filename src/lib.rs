@@ -408,7 +408,7 @@ async fn overview<T: Service>(
                 url: &url,
                 branch,
             };
-            templates::overview(
+            templates::overview_html(
                 &mut buf,
                 VERSION_INFO,
                 rc_clone.load(Ordering::Relaxed),
@@ -433,7 +433,7 @@ async fn index(
     repo_count: web::Data<AtomicUsize>,
 ) -> Result<HttpResponse> {
     let mut buf = Vec::new();
-    templates::index(
+    templates::index_html(
         &mut buf,
         VERSION_INFO,
         repo_count.load(Ordering::Relaxed),
@@ -459,7 +459,7 @@ async fn generate(
             .filter(|s| !s.is_empty())
             .unwrap_or("master"),
     };
-    templates::generate(
+    templates::generate_html(
         &mut buf,
         VERSION_INFO,
         repo_count.load(Ordering::Relaxed),
@@ -472,7 +472,7 @@ async fn generate(
 
 fn p404(repo_count: web::Data<AtomicUsize>) -> Result<HttpResponse> {
     let mut buf = Vec::new();
-    templates::p404(&mut buf, VERSION_INFO, repo_count.load(Ordering::Relaxed))?;
+    templates::p404_html(&mut buf, VERSION_INFO, repo_count.load(Ordering::Relaxed))?;
     Ok(HttpResponse::NotFound().content_type("text/html").body(buf))
 }
 
