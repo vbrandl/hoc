@@ -1,9 +1,9 @@
-@use super::base;
+@use super::base_html;
 @use crate::statics::VersionInfo;
 
 @(version_info: VersionInfo, repo_count: usize, base_url: &str)
 
-@:base("Hits-of-Code Badges", "Hits-of-Code Badges", {
+@:base_html("Hits-of-Code Badges", "Hits-of-Code Badges", {
 
 <p>
 This API offers badges for the Hits-of-Code metric for your repositories. This metric was proposed by

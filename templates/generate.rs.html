@@ -1,9 +1,9 @@
-@use super::base;
+@use super::base_html;
 @use crate::{statics::VersionInfo, template::RepoGeneratorInfo};
 
 @(version_info: VersionInfo, repo_count: usize, base_url: &str, repo_info: &RepoGeneratorInfo)
 
-@:base("Hits-of-Code Badges", "Badge Generator", {
+@:base_html("Hits-of-Code Badges", "Badge Generator", {
 
 <p>
 Here is the markdown for the badge for <a href="https://@repo_info.service.url()/@repo_info.user/@repo_info.repo">@repo_info.user/@repo_info.repo</a>

@@ -1,9 +1,9 @@
-@use super::base;
+@use super::base_html;
 @use crate::statics::VersionInfo;
 
 @(version_info: VersionInfo, repo_count: usize)
 
-@:base("Page not Found - Hits-of-Code Badges", "404 - Page not Found", {
+@:base_html("Page not Found - Hits-of-Code Badges", "404 - Page not Found", {
 <p>
 <big>Sorry</big>. I couldn't find the page you are looking for. Please go <a href="/">back to the homepage</a>.
 </p>
