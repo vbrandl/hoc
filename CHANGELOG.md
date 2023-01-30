@@ -11,11 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`badgers`](https://github.com/vbrandl/badgers) from 1.1.0 to 1.2.0 ([#548])
 * Updated [`reqwest`](https://github.com/seanmonstar/reqwest) from 0.11.13 to 0.11.14 ([#549])
 * Updated [`bumpalo`](https://github.com/fitzgen/bumpalo) from 3.10.0 to 3.12.0 ([#550])
+* Updated [`libgit2-sys`](https://github.com/rust-lang/git2-rs) from 0.14.1+1.5.0 to 0.14.2+1.5.1 ([#551])
 * Updated [`ructe`](https://github.com/kaj/ructe) from 0.15.0 to 0.16.1 ([#559])
 
 [#547]: https://github.com/vbrandl/hoc/pull/547
 [#548]: https://github.com/vbrandl/hoc/pull/548
 [#550]: https://github.com/vbrandl/hoc/pull/550
+[#551]: https://github.com/vbrandl/hoc/pull/551
 [#559]: https://github.com/vbrandl/hoc/pull/559
 
 
