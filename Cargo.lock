@@ -328,12 +328,12 @@ dependencies = [
 
 [[package]]
 name = "badgers"
-version = "1.1.0"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d7e5709e2ae2f0d8aa0db9aa872594c1e094cf346442227d09d723b635850f6"
+checksum = "7954c1a712ad1b82f0f719bbeee7dc5ffd3d13a66c7dfb1e1df02f79e2729441"
 dependencies = [
  "ab_glyph",
- "base64 0.20.0",
+ "base64 0.21.0",
  "once_cell",
 ]
 
@@ -342,12 +342,6 @@ name = "base64"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
-
-[[package]]
-name = "base64"
-version = "0.20.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ea22880d78093b0cbe17c89f64a7d457941e65759157ec6cb31a31d652b05e5"
 
 [[package]]
 name = "base64"
