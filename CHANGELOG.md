@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`git2`](https://github.com/rust-lang/git2-rs) from 0.16.0 to 0.16.1 ([#552])
 * Updated [`actix-rt`](https://github.com/actix/actix-net) from 2.7.0 to 2.8.0 ([#553])
 * Updated [`actix-web`](https://github.com/actix/actix-web) from 4.2.1 to 4.3.0 ([#554])
+* Updated [`awc`](https://github.com/actix/actix-web) from 3.0.1 to 3.1.0 ([#555])
 * Updated [`ructe`](https://github.com/kaj/ructe) from 0.15.0 to 0.16.1 ([#559])
 
 [#547]: https://github.com/vbrandl/hoc/pull/547
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#552]: https://github.com/vbrandl/hoc/pull/552
 [#553]: https://github.com/vbrandl/hoc/pull/553
 [#554]: https://github.com/vbrandl/hoc/pull/554
+[#555]: https://github.com/vbrandl/hoc/pull/555
 [#559]: https://github.com/vbrandl/hoc/pull/559
 
 
