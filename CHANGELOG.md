@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependency Updates
 
 * Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.24.1 to 1.24.2 ([#547])
+* Updated [`badgers`](https://github.com/vbrandl/badgers) from 1.1.0 to 1.2.0 ([#548])
 * Updated [`reqwest`](https://github.com/seanmonstar/reqwest) from 0.11.13 to 0.11.14 ([#549])
 * Updated [`ructe`](https://github.com/kaj/ructe) from 0.15.0 to 0.16.1 ([#559])
 
 [#547]: https://github.com/vbrandl/hoc/pull/547
+[#548]: https://github.com/vbrandl/hoc/pull/548
 [#559]: https://github.com/vbrandl/hoc/pull/559
 
 
