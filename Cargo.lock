@@ -1680,11 +1680,11 @@ dependencies = [
 
 [[package]]
 name = "ructe"
-version = "0.15.0"
+version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85517cd381cf0c34694881d8aaf173107c6af7670e66cec18d7a1a8bfce3b758"
+checksum = "79c86c1631418815c5947a34be5872806586c65398754ec91cc2df35a8e26ba8"
 dependencies = [
- "base64 0.13.0",
+ "base64 0.21.0",
  "bytecount",
  "itertools",
  "md5",
