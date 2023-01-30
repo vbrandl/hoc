@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`bumpalo`](https://github.com/fitzgen/bumpalo) from 3.10.0 to 3.12.0 ([#550])
 * Updated [`libgit2-sys`](https://github.com/rust-lang/git2-rs) from 0.14.1+1.5.0 to 0.14.2+1.5.1 ([#551])
 * Updated [`git2`](https://github.com/rust-lang/git2-rs) from 0.16.0 to 0.16.1 ([#552])
+* Updated [`actix-rt`](https://github.com/actix/actix-net) from 2.7.0 to 2.8.0 ([#553])
 * Updated [`ructe`](https://github.com/kaj/ructe) from 0.15.0 to 0.16.1 ([#559])
 
 [#547]: https://github.com/vbrandl/hoc/pull/547
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#550]: https://github.com/vbrandl/hoc/pull/550
 [#551]: https://github.com/vbrandl/hoc/pull/551
 [#552]: https://github.com/vbrandl/hoc/pull/552
+[#553]: https://github.com/vbrandl/hoc/pull/553
 [#559]: https://github.com/vbrandl/hoc/pull/559
 
 
