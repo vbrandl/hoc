@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`awc`](https://github.com/actix/actix-web) from 3.0.1 to 3.1.0 ([#555])
 * Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.24.2 to 1.25.0 ([#558])
 * Updated [`ructe`](https://github.com/kaj/ructe) from 0.15.0 to 0.16.1 ([#559])
+* Updated [`futures`](https://github.com/rust-lang/futures-rs) from 0.3.25 to 0.3.26 ([#560])
 
 [#547]: https://github.com/vbrandl/hoc/pull/547
 [#548]: https://github.com/vbrandl/hoc/pull/548
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#555]: https://github.com/vbrandl/hoc/pull/555
 [#558]: https://github.com/vbrandl/hoc/pull/558
 [#559]: https://github.com/vbrandl/hoc/pull/559
+[#560]: https://github.com/vbrandl/hoc/pull/560
 
 
 ## [0.30.0] 2023-01-16
