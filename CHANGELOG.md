@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`futures`](https://github.com/rust-lang/futures-rs) from 0.3.25 to 0.3.26 ([#560])
 * Updated [`bytes`](https://github.com/tokio-rs/bytes) from 1.3.0 to 1.4.0 ([#561])
 * Updated [`serde_json`](https://github.com/serde-rs/json) from 1.0.91 to 1.0.92 ([#562])
+* Updated [`vergen`](https://github.com/rustyhorde/vergen) from 7.5.0 to 7.5.1 ([#563])
 
 [#547]: https://github.com/vbrandl/hoc/pull/547
 [#548]: https://github.com/vbrandl/hoc/pull/548
@@ -35,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#560]: https://github.com/vbrandl/hoc/pull/560
 [#561]: https://github.com/vbrandl/hoc/pull/561
 [#562]: https://github.com/vbrandl/hoc/pull/562
+[#563]: https://github.com/vbrandl/hoc/pull/563
 
 
 ## [0.30.0] 2023-01-16
