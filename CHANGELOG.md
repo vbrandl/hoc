@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`actix-web`](https://github.com/actix/actix-web) from 4.3.0 to 4.3.1 ([#566])
 * Updated [`tempfile`](https://github.com/Stebalien/tempfile) from 3.3.0 to 3.4.0 ([#567])
 * Updated [`awc`](https://github.com/actix/actix-web) from 3.1.0 to 3.1.1 ([#568])
+* Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.25.0 to 1.26.0 ([#569])
 
 [#566]: https://github.com/vbrandl/hoc/pull/566
 [#567]: https://github.com/vbrandl/hoc/pull/567
 [#568]: https://github.com/vbrandl/hoc/pull/568
+[#569]: https://github.com/vbrandl/hoc/pull/569
 
 
 ## [0.31.0] 2023-02-13
