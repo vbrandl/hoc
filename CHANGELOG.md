@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* Updated [`actix-web`](https://github.com/actix/actix-web) from 4.3.0 to 4.3.1 ([#566])
+
+[#566]: https://github.com/vbrandl/hoc/pull/566
+
 
 ## [0.31.0] 2023-02-13
 
