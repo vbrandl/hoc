@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 * Updated [`futures`](https://github.com/rust-lang/futures-rs) from 0.3.26 to 0.3.27 ([#575])
+* Updated [`serde`](https://github.com/serde-rs/serde) from 1.0.152 to 1.0.156 ([#576])
+
 
 [#575]: https://github.com/vbrandl/hoc/pull/575
+[#576]: https://github.com/vbrandl/hoc/pull/576
 
 
 ## [0.32.0] 2023-03-06
