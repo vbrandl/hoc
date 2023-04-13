@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`dotenvy`](https://github.com/allan2/dotenvy) from 0.15.6 to 0.15.7 ([#583])
 * Updated [`reqwest`](https://github.com/seanmonstar/reqwest) from 0.11.14 to 0.11.16 ([#586])
 * Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.26.0 to 1.27.0 ([#588])
+* Updated [`tempfile`](https://github.com/Stebalien/tempfile) from 3.4.0 to 3.5.0 ([#590])
 
 [#578]: https://github.com/vbrandl/hoc/pull/578
 [#580]: https://github.com/vbrandl/hoc/pull/580
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#583]: https://github.com/vbrandl/hoc/pull/583
 [#586]: https://github.com/vbrandl/hoc/pull/586
 [#588]: https://github.com/vbrandl/hoc/pull/588
+[#590]: https://github.com/vbrandl/hoc/pull/590
 
 
 ## [0.33.0] 2023-03-16
