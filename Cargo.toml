@@ -3,7 +3,7 @@ name = "hoc"
 version = "0.33.0"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
 edition = "2021"
-build = "build.rs"
+build = "src/build.rs"
 
 [lib]
 path = "src/lib.rs"
@@ -37,8 +37,9 @@ tracing-log = "0.1.3"
 tracing-subscriber = { version = "0.3.16", features = ["registry", "env-filter"] }
 
 [build-dependencies]
+anyhow = "1.0.70"
 ructe = { version = "0.16.1", features = ["mime03"] }
-vergen = { version = "7.5.1", default-features = false, features = ["git"] }
+vergen = { version = "8.1.1", default-features = false, features = ["git", "gitoxide"] }
 
 [dev-dependencies]
 awc = "3.1.1"
