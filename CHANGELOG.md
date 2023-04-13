@@ -5,6 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.34.0] 2023-04-13
+
 * Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.7.2 to 0.7.3 ([#578])
 * Updated [`serde`](https://github.com/serde-rs/serde) from 1.0.156 to 1.0.158 ([#580])
 * Updated [`mime`](https://github.com/hyperium/mime) from 0.3.16 to 0.3.17 ([#582])
@@ -12,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`reqwest`](https://github.com/seanmonstar/reqwest) from 0.11.14 to 0.11.16 ([#586])
 * Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.26.0 to 1.27.0 ([#588])
 * Updated [`tempfile`](https://github.com/Stebalien/tempfile) from 3.4.0 to 3.5.0 ([#590])
+* Updated [`tracing-bunyan-formatter`](https://github.com/LukeMathWalker/tracing-bunyan-formatter) from 0.3.6 to 0.3.7 ([#593])
+* Updated [`serde`](https://github.com/serde-rs/serde) from 1.0.158 to 1.0.160 ([#594])
+* Updated [`serde_json`](https://github.com/serde-rs/json) from 1.0.94 to 1.0.96 ([#595])
+* Updated [`openssl`](https://github.com/sfackler/rust-openssl) from 0.10.40 to 0.10.50, fixes [SEC#6], [SEC#7], and [SEC#8] ([#596])
 
 [#578]: https://github.com/vbrandl/hoc/pull/578
 [#580]: https://github.com/vbrandl/hoc/pull/580
@@ -20,6 +27,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#586]: https://github.com/vbrandl/hoc/pull/586
 [#588]: https://github.com/vbrandl/hoc/pull/588
 [#590]: https://github.com/vbrandl/hoc/pull/590
+[#593]: https://github.com/vbrandl/hoc/pull/593
+[#594]: https://github.com/vbrandl/hoc/pull/594
+[#595]: https://github.com/vbrandl/hoc/pull/595
+[#596]: https://github.com/vbrandl/hoc/pull/596
+
+[SEC#6]: https://github.com/vbrandl/hoc/security/dependabot/6
+[SEC#7]: https://github.com/vbrandl/hoc/security/dependabot/7
+[SEC#8]: https://github.com/vbrandl/hoc/security/dependabot/8
 
 
 ## [0.33.0] 2023-03-16
