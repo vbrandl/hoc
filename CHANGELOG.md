@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Updated [`tracing-actix-web`](https://github.com/LukeMathWalker/tracing-actix-web) from 0.7.2 to 0.7.3 ([#578])
 * Updated [`serde`](https://github.com/serde-rs/serde) from 1.0.156 to 1.0.158 ([#580])
+* Updated [`mime`](https://github.com/hyperium/mime) from 0.3.16 to 0.3.17 ([#582])
 
 [#578]: https://github.com/vbrandl/hoc/pull/578
 [#580]: https://github.com/vbrandl/hoc/pull/580
+[#582]: https://github.com/vbrandl/hoc/pull/582
 
 
 ## [0.33.0] 2023-03-16
