@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`mime`](https://github.com/hyperium/mime) from 0.3.16 to 0.3.17 ([#582])
 * Updated [`dotenvy`](https://github.com/allan2/dotenvy) from 0.15.6 to 0.15.7 ([#583])
 * Updated [`reqwest`](https://github.com/seanmonstar/reqwest) from 0.11.14 to 0.11.16 ([#586])
+* Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.26.0 to 1.27.0 ([#588])
 
 [#578]: https://github.com/vbrandl/hoc/pull/578
 [#580]: https://github.com/vbrandl/hoc/pull/580
 [#582]: https://github.com/vbrandl/hoc/pull/582
 [#583]: https://github.com/vbrandl/hoc/pull/583
 [#586]: https://github.com/vbrandl/hoc/pull/586
+[#588]: https://github.com/vbrandl/hoc/pull/588
 
 
 ## [0.33.0] 2023-03-16
