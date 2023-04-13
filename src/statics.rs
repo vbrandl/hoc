@@ -4,7 +4,7 @@ pub struct VersionInfo<'a> {
 }
 
 pub(crate) const VERSION_INFO: VersionInfo = VersionInfo {
-    commit: env!("VERGEN_GIT_SHA_SHORT"),
+    commit: env!("VERGEN_GIT_SHA"),
     version: env!("CARGO_PKG_VERSION"),
 };
 
