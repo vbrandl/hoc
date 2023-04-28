@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`git2`](https://github.com/rust-lang/git2-rs) from 0.17.0 to 0.17.1 ([#603])
 * Updated [`tracing-subscriber`](https://github.com/tokio-rs/tracing) from 0.3.16 to 0.3.17 ([#604])
 * Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.27.0 to 1.28.0 ([#605])
+* Updated [`tracing`](https://github.com/tokio-rs/tracing) from 0.1.37 to 0.1.38 ([#607])
 
 [#599]: https://github.com/vbrandl/hoc/pull/599
 [#602]: https://github.com/vbrandl/hoc/pull/602
 [#603]: https://github.com/vbrandl/hoc/pull/603
 [#604]: https://github.com/vbrandl/hoc/pull/604
 [#605]: https://github.com/vbrandl/hoc/pull/605
+[#607]: https://github.com/vbrandl/hoc/pull/607
 
 [SEC#11]: https://github.com/vbrandl/hoc/security/dependabot/11
 
