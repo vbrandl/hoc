@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`tokio`](https://github.com/tokio-rs/tokio) from 1.27.0 to 1.28.0 ([#605])
 * Updated [`tracing`](https://github.com/tokio-rs/tracing) from 0.1.37 to 0.1.38 ([#607])
 * Updated [`vergen`](https://github.com/rustyhorde/vergen) from 8.1.1 to 8.1.3 ([#608])
+* Downgrade yanked [`tracing`](https://github.com/tokio-rs/tracing) 0.1.38 to 0.1.37 ([#611])
 
 [#599]: https://github.com/vbrandl/hoc/pull/599
 [#602]: https://github.com/vbrandl/hoc/pull/602
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#605]: https://github.com/vbrandl/hoc/pull/605
 [#607]: https://github.com/vbrandl/hoc/pull/607
 [#608]: https://github.com/vbrandl/hoc/pull/608
+[#611]: https://github.com/vbrandl/hoc/pull/611
 
 [SEC#11]: https://github.com/vbrandl/hoc/security/dependabot/11
 
