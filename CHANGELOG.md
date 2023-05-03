@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated [`vergen`](https://github.com/rustyhorde/vergen) from 8.1.1 to 8.1.3 ([#608])
 * Downgrade yanked [`tracing`](https://github.com/tokio-rs/tracing) 0.1.38 to 0.1.37 ([#611])
 * Updated [`reqwest`](https://github.com/seanmonstar/reqwest) from 0.11.16 to 0.11.17 ([#609])
+* Updated [`anyhow`](https://github.com/dtolnay/anyhow) from 1.0.70 to 1.0.71 ([#610])
 
 [#599]: https://github.com/vbrandl/hoc/pull/599
 [#602]: https://github.com/vbrandl/hoc/pull/602
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#608]: https://github.com/vbrandl/hoc/pull/608
 [#611]: https://github.com/vbrandl/hoc/pull/611
 [#609]: https://github.com/vbrandl/hoc/pull/609
+[#610]: https://github.com/vbrandl/hoc/pull/610
 
 [SEC#11]: https://github.com/vbrandl/hoc/security/dependabot/11
 
