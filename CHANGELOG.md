@@ -5,6 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.35.0] 2023-05-04
+
 * Updated [`h2`](https://github.com/hyperium/h2) from 0.3.16 to 0.3.17, fixes [SEC#11] ([#599])
 * Updated [`git2`](https://github.com/rust-lang/git2-rs) from 0.16.1 to 0.17.0 ([#602])
 * Updated [`git2`](https://github.com/rust-lang/git2-rs) from 0.17.0 to 0.17.1 ([#603])
