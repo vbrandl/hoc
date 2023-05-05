@@ -10,3 +10,4 @@ updates:
       - vbrandl
     labels:
       - dependencies
+      - dependabot
