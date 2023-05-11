@@ -5,7 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Dependencies
-- Bump `serde` from 1.0.160 to 1.0.162 (#613)
+- Bump `serde` from 1.0.160 to 1.0.163 (#613, #617)
 - Bump `actions/cache` from 2 to 3 (#616)
 
 
