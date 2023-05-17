@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ACTION_TOKEN }}
       - uses: dangoslen/dependabot-changelog-helper@v3
         with:
           activationLabel: 'dependabot'
