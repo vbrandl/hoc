@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `actions/cache` from 2 to 3 (#616)
 - Bump `tokio` from 1.28.0 to 1.28.1 (#618)
 - Bump `reqwest` from 0.11.17 to 0.11.18 (#619)
+- Bump `vergen` from 8.1.3 to 8.2.0 (#621)
 
 
 ## [0.35.0] 2023-05-04
