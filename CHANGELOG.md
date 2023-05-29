@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bump `serde` from 1.0.160 to 1.0.163 (#613, #617)
 - Bump `actions/cache` from 2 to 3 (#616)
-- Bump `tokio` from 1.28.0 to 1.28.1 (#618)
+- Bump `tokio` from 1.28.0 to 1.28.2 (#618, #625)
 - Bump `reqwest` from 0.11.17 to 0.11.18 (#619)
 - Bump `vergen` from 8.1.3 to 8.2.1 (#621, #622)
 - Bump `tracing-actix-web` from 0.7.4 to 0.7.5 (#623)
