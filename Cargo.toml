@@ -20,7 +20,7 @@ bytes = "1.4.0"
 config = { version = "0.13.3", features = ["toml"] }
 dotenvy = "0.15.7"
 futures = "0.3.27"
-git2 = "0.17.1"
+git2 = "0.17.2"
 lazy_static = "1.4.0"
 mime = "0.3"
 number_prefix = "0.4.0"
