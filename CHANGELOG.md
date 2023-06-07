@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `vergen` from 8.1.3 to 8.2.1 (#621, #622)
 - Bump `tracing-actix-web` from 0.7.4 to 0.7.5 (#623)
 - Bump `git2` from 0.17.1 to 0.17.2 (#624)
+- Bump `tempfile` from 3.5.0 to 3.6.0 (#626)
 
 
 ## [0.35.0] 2023-05-04
