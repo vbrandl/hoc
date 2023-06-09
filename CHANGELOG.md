@@ -5,7 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Dependencies
-- Bump `serde` from 1.0.160 to 1.0.163 (#613, #617)
+- Bump `serde` from 1.0.160 to 1.0.164 (#613, #617, #627)
 - Bump `actions/cache` from 2 to 3 (#616)
 - Bump `tokio` from 1.28.0 to 1.28.2 (#618, #625)
 - Bump `reqwest` from 0.11.17 to 0.11.18 (#619)
