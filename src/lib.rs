@@ -501,9 +501,7 @@ async fn static_file(
                 .content_type(data.mime.clone())
                 .body(data.content)
         })
-        .map_or_else(
-        || p404(&repo_count),
-            Result::Ok)
+        .map_or_else(|| p404(&repo_count), Result::Ok)
 }
 
 #[get("/favicon.ico")]
