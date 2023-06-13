@@ -1,5 +1,6 @@
-use crate::service::FormService;
+use crate::service::FormValue;
 
+#[derive(Clone, Copy)]
 pub struct RepoInfo<'a> {
     pub commit_url: &'a str,
     pub commits: u64,
@@ -13,7 +14,7 @@ pub struct RepoInfo<'a> {
 }
 
 pub struct RepoGeneratorInfo<'a> {
-    pub service: FormService,
+    pub service: FormValue,
     pub user: &'a str,
     pub repo: &'a str,
     pub branch: &'a str,

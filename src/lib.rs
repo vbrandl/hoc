@@ -22,7 +22,7 @@ use crate::{
     cache::CacheState,
     config::Settings,
     error::{Error, Result},
-    service::{Bitbucket, FormService, GitHub, Gitlab, Service, Sourcehut},
+    service::{Bitbucket, FormValue, GitHub, Gitlab, Service, Sourcehut},
     statics::{CLIENT, VERSION_INFO},
     template::{RepoGeneratorInfo, RepoInfo},
 };
@@ -53,7 +53,7 @@ include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 #[derive(Deserialize, Serialize)]
 struct GeneratorForm<'a> {
-    service: FormService,
+    service: FormValue,
     user: Cow<'a, str>,
     repo: Cow<'a, str>,
     branch: Option<Cow<'a, str>>,
@@ -309,7 +309,7 @@ pub(crate) async fn json_hoc<T: Service>(
     let branch = branch.branch.as_deref().unwrap_or("master");
     let rc_clone = repo_count.clone();
     let mapper = move |r| match r {
-        HocResult::NotFound => p404(rc_clone),
+        HocResult::NotFound => p404(&rc_clone),
         HocResult::Hoc {
             hoc, head, commits, ..
         } => Ok(HttpResponse::Ok().json(JsonResponse {
@@ -345,7 +345,7 @@ pub(crate) async fn calculate_hoc<T: Service>(
     let rc_clone = repo_count.clone();
     let label = query.label.clone();
     let mapper = move |r| match r {
-        HocResult::NotFound => p404(rc_clone),
+        HocResult::NotFound => p404(&rc_clone),
         HocResult::Hoc { hoc_pretty, .. } => {
             let badge_opt = BadgeOptions {
                 subject: label,
@@ -386,7 +386,7 @@ async fn overview<T: Service>(
     let base_url = state.settings.base_url.clone();
     let rc_clone = repo_count.clone();
     let mapper = move |r| match r {
-        HocResult::NotFound => p404(rc_clone),
+        HocResult::NotFound => p404(&rc_clone),
         HocResult::Hoc {
             hoc,
             commits,
@@ -413,7 +413,7 @@ async fn overview<T: Service>(
                 VERSION_INFO,
                 rc_clone.load(Ordering::Relaxed),
                 repo_info,
-                label,
+                &label,
             )?;
 
             Ok(HttpResponse::Ok().content_type("text/html").body(buf))
@@ -423,11 +423,13 @@ async fn overview<T: Service>(
 }
 
 #[get("/health_check")]
+#[allow(clippy::unused_async)]
 async fn health_check() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
 #[get("/")]
+#[allow(clippy::unused_async)]
 async fn index(
     state: web::Data<State>,
     repo_count: web::Data<AtomicUsize>,
@@ -443,6 +445,7 @@ async fn index(
 }
 
 #[post("/generate")]
+#[allow(clippy::unused_async)]
 async fn generate(
     params: web::Form<GeneratorForm<'_>>,
     state: web::Data<State>,
@@ -470,20 +473,22 @@ async fn generate(
     Ok(HttpResponse::Ok().content_type("text/html").body(buf))
 }
 
-fn p404(repo_count: web::Data<AtomicUsize>) -> Result<HttpResponse> {
+fn p404(repo_count: &web::Data<AtomicUsize>) -> Result<HttpResponse> {
     let mut buf = Vec::new();
     templates::p404_html(&mut buf, VERSION_INFO, repo_count.load(Ordering::Relaxed))?;
     Ok(HttpResponse::NotFound().content_type("text/html").body(buf))
 }
 
+#[allow(clippy::unused_async)]
 async fn async_p404(repo_count: web::Data<AtomicUsize>) -> Result<HttpResponse> {
-    p404(repo_count)
+    p404(&repo_count)
 }
 
 /// A duration to add to current time for a far expires header.
 static FAR: Duration = Duration::from_secs(180 * 24 * 60 * 60);
 
 #[get("/static/{filename}")]
+#[allow(clippy::unused_async)]
 async fn static_file(
     path: web::Path<String>,
     repo_count: web::Data<AtomicUsize>,
@@ -496,11 +501,13 @@ async fn static_file(
                 .content_type(data.mime.clone())
                 .body(data.content)
         })
-        .map(Result::Ok)
-        .unwrap_or_else(|| p404(repo_count))
+        .map_or_else(
+        || p404(&repo_count),
+            Result::Ok)
 }
 
 #[get("/favicon.ico")]
+#[allow(clippy::unused_async)]
 async fn favicon32() -> HttpResponse {
     let data = &template_statics::favicon32_png;
     HttpResponse::Ok()
@@ -508,6 +515,7 @@ async fn favicon32() -> HttpResponse {
         .body(data.content)
 }
 
+#[allow(clippy::unused_async)]
 async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Result<Server> {
     let workers = settings.workers;
     let repo_count =
@@ -536,6 +544,11 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
     .run())
 }
 
+/// Start the server.
+///
+/// # Errors
+///
+/// * server cannot bind to `listener`
 pub async fn run(listener: TcpListener, settings: Settings) -> std::io::Result<Server> {
     let span = info_span!("hoc", version = env!("CARGO_PKG_VERSION"));
     let _ = span.enter();

@@ -39,7 +39,10 @@ impl<'a> CacheState<'a> {
             Ok(cache
                 .entries
                 .get(branch)
-                .map(|c| {
+                .map_or_else(
+                // TODO: get rid of clone
+|| CacheState::NoneForBranch(cache.clone()),
+                    |c| {
                     if c.head == head {
                         trace!("Cache is up to date");
                         CacheState::Current {
@@ -57,8 +60,7 @@ impl<'a> CacheState<'a> {
                         }
                     }
                 })
-                // TODO: get rid of clone
-                .unwrap_or_else(|| CacheState::NoneForBranch(cache.clone())))
+                    )
         } else {
             Ok(CacheState::No)
         }
