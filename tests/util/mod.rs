@@ -38,7 +38,7 @@ pub async fn spawn_app() -> TestApp {
         .await
         .expect("Failed to bind address");
 
-    let _ = tokio::spawn(server);
+    let _ = tokio::spawn(server).await;
 
     TestApp {
         address,
