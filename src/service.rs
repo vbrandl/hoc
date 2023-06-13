@@ -29,7 +29,7 @@ pub(crate) trait Service: Sized + 'static {
 }
 
 #[derive(Deserialize, Serialize, Clone, Copy)]
-pub enum FormService {
+pub enum FormValue {
     #[serde(rename = "github")]
     GitHub,
     #[serde(rename = "gitlab")]
@@ -40,22 +40,22 @@ pub enum FormService {
     Sourcehut,
 }
 
-impl FormService {
+impl FormValue {
     pub(crate) fn url(&self) -> &str {
         match self {
-            FormService::GitHub => "github.com",
-            FormService::Gitlab => "gitlab.com",
-            FormService::Bitbucket => "bitbucket.org",
-            FormService::Sourcehut => "git.sr.ht",
+            FormValue::GitHub => "github.com",
+            FormValue::Gitlab => "gitlab.com",
+            FormValue::Bitbucket => "bitbucket.org",
+            FormValue::Sourcehut => "git.sr.ht",
         }
     }
 
     pub(crate) fn service(&self) -> &str {
         match self {
-            FormService::GitHub => "github",
-            FormService::Gitlab => "gitlab",
-            FormService::Bitbucket => "bitbucket",
-            FormService::Sourcehut => "sourcehut",
+            FormValue::GitHub => "github",
+            FormValue::Gitlab => "gitlab",
+            FormValue::Bitbucket => "bitbucket",
+            FormValue::Sourcehut => "sourcehut",
         }
     }
 }

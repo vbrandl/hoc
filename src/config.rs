@@ -18,6 +18,12 @@ pub struct Settings {
 }
 
 impl Settings {
+    /// Load the configuration from file and environment.
+    ///
+    /// # Errors
+    ///
+    /// * File cannot be read or parsed
+    /// * Environment variables cannot be parsed
     pub fn load() -> Result<Self, ConfigError> {
         Config::builder()
             .add_source(File::with_name("hoc.toml").required(false))

@@ -36,10 +36,10 @@ impl<'a> CacheState<'a> {
         trace!("Reading cache");
         if path.as_ref().exists() {
             let cache: Cache = serde_json::from_reader(BufReader::new(File::open(path)?))?;
-            Ok(cache
-                .entries
-                .get(branch)
-                .map(|c| {
+            Ok(cache.entries.get(branch).map_or_else(
+                // TODO: get rid of clone
+                || CacheState::NoneForBranch(cache.clone()),
+                |c| {
                     if c.head == head {
                         trace!("Cache is up to date");
                         CacheState::Current {
@@ -56,9 +56,8 @@ impl<'a> CacheState<'a> {
                             cache: cache.clone(),
                         }
                     }
-                })
-                // TODO: get rid of clone
-                .unwrap_or_else(|| CacheState::NoneForBranch(cache.clone())))
+                },
+            ))
         } else {
             Ok(CacheState::No)
         }

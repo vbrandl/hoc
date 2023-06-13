@@ -2,7 +2,7 @@
 @use crate::statics::VersionInfo;
 @use crate::template::RepoInfo;
 
-@(version_info: VersionInfo, repo_count: usize, repo_info: RepoInfo, label: String)
+@(version_info: VersionInfo, repo_count: usize, repo_info: RepoInfo, label: &str)
 
 @:base_html("Hits-of-Code Badges", "Overview", {
 

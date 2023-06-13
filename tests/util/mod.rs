@@ -38,6 +38,8 @@ pub async fn spawn_app() -> TestApp {
         .await
         .expect("Failed to bind address");
 
+    #[allow(clippy::let_underscore_future)]
+    // don't await so the test server runs in the background
     let _ = tokio::spawn(server);
 
     TestApp {

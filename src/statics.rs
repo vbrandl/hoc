@@ -1,3 +1,4 @@
+#[derive(Clone, Copy)]
 pub struct VersionInfo<'a> {
     pub commit: &'a str,
     pub version: &'a str,
