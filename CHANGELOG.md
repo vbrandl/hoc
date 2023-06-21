@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `git2` from 0.17.1 to 0.17.2 (#624)
 - Bump `tempfile` from 3.5.0 to 3.6.0 (#626)
 - Bump `serde_json` from 1.0.96 to 1.0.97 (#630)
+- Bump `openssl` from 0.10.50 to 0.10.55 (#631)
 
 
 ## [0.35.0] 2023-05-04
