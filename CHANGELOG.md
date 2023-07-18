@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tempfile` from 3.5.0 to 3.6.0 (#626)
 - Bump `serde_json` from 1.0.96 to 1.0.102 (#630, #632, #637, #641)
 - Bump `openssl` from 0.10.50 to 0.10.55 (#631)
+- Bump `tracing-bunyan-formatter` from 0.3.7 to 0.3.8 (#642)
 
 
 ## [0.35.0] 2023-05-04
