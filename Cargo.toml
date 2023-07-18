@@ -37,7 +37,7 @@ tracing-log = "0.1.3"
 tracing-subscriber = { version = "0.3.17", features = ["registry", "env-filter"] }
 
 [build-dependencies]
-anyhow = "1.0.71"
+anyhow = "1.0.72"
 ructe = { version = "0.16.1", features = ["mime03"] }
 vergen = { version = "8.2.4", default-features = false, features = ["git", "gitoxide"] }
 
