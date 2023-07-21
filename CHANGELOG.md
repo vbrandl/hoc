@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `vergen` from 8.1.3 to 8.2.4 (#621, #622, #635, #638)
 - Bump `tracing-actix-web` from 0.7.4 to 0.7.5 (#623)
 - Bump `git2` from 0.17.1 to 0.17.2 (#624)
-- Bump `tempfile` from 3.5.0 to 3.6.0 (#626)
+- Bump `tempfile` from 3.5.0 to 3.7.0 (#626, [#646](https://github.com/vbrandl/hoc/pull/646))
 - Bump `serde_json` from 1.0.96 to 1.0.103 (#630, #632, #637, #641, #644)
 - Bump `openssl` from 0.10.50 to 0.10.55 (#631)
 - Bump `tracing-bunyan-formatter` from 0.3.7 to 0.3.8 (#642)
