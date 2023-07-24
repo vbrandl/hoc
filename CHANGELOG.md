@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `openssl` from 0.10.50 to 0.10.55 (#631)
 - Bump `tracing-bunyan-formatter` from 0.3.7 to 0.3.8 (#642)
 - Bump `anyhow` from 1.0.71 to 1.0.72 (#643)
+- Bump `ructe` from 0.16.1 to 0.17.0 ([#647](https://github.com/vbrandl/hoc/pull/647))
 
 
 ## [0.35.0] 2023-05-04
