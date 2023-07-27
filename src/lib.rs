@@ -282,6 +282,7 @@ where
         }
         pull(&path)?;
         let (hoc, head, commits) = hoc(&service_url, &state.repos(), &state.cache(), branch)?;
+        #[allow(clippy::cast_precision_loss)]
         let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
             NumberPrefix::Standalone(hoc) => hoc.to_string(),
             NumberPrefix::Prefixed(prefix, hoc) => format!("{hoc:.1}{prefix}"),
