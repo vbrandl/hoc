@@ -41,17 +41,14 @@ impl ResponseError for Error {
 
     fn error_response(&self) -> HttpResponse {
         let mut buf = Vec::new();
-        match self {
-            Error::BranchNotFound => {
-                templates::p404_no_master_html(&mut buf, VERSION_INFO, 0).unwrap();
-                HttpResponse::NotFound().content_type("text/html").body(buf)
-            }
-            _ => {
-                templates::p500_html(&mut buf, VERSION_INFO, 0).unwrap();
-                HttpResponse::InternalServerError()
-                    .content_type("text/html")
-                    .body(buf)
-            }
+        if let Error::BranchNotFound = self {
+            templates::p404_no_master_html(&mut buf, VERSION_INFO, 0).unwrap();
+            HttpResponse::NotFound().content_type("text/html").body(buf)
+        } else {
+            templates::p500_html(&mut buf, VERSION_INFO, 0).unwrap();
+            HttpResponse::InternalServerError()
+                .content_type("text/html")
+                .body(buf)
         }
     }
 }

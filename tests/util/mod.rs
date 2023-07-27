@@ -25,14 +25,14 @@ pub async fn spawn_app() -> TestApp {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
 
     let port = listener.local_addr().unwrap().port();
-    let address = format!("http://127.0.0.1:{}", port);
+    let address = format!("http://127.0.0.1:{port}");
 
-    let _repo_dir = tempdir().expect("Cannot create repo_dir");
-    let _cache_dir = tempdir().expect("Cannot create cache_dir");
+    let repo_dir = tempdir().expect("Cannot create repo_dir");
+    let cache_dir = tempdir().expect("Cannot create cache_dir");
 
     let mut settings = Settings::load().expect("Failed to read configuration.");
-    settings.repodir = _repo_dir.path().to_path_buf();
-    settings.cachedir = _cache_dir.path().to_path_buf();
+    settings.repodir = repo_dir.path().to_path_buf();
+    settings.cachedir = cache_dir.path().to_path_buf();
 
     let server = hoc::run(listener, settings)
         .await
@@ -44,7 +44,7 @@ pub async fn spawn_app() -> TestApp {
 
     TestApp {
         address,
-        _repo_dir,
-        _cache_dir,
+        _repo_dir: repo_dir,
+        _cache_dir: cache_dir,
     }
 }
