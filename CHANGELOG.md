@@ -5,7 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Dependencies
-- Bump `serde` from 1.0.160 to 1.0.179 (#613, #617, #627, #636, #639, #640, #645, [#648](https://github.com/vbrandl/hoc/pull/648), [#650](https://github.com/vbrandl/hoc/pull/650), [#652](https://github.com/vbrandl/hoc/pull/652), [#653](https://github.com/vbrandl/hoc/pull/653))
+- Bump `serde` from 1.0.160 to 1.0.180 (#613, #617, #627, #636, #639, #640, #645, [#648](https://github.com/vbrandl/hoc/pull/648), [#650](https://github.com/vbrandl/hoc/pull/650), [#652](https://github.com/vbrandl/hoc/pull/652), [#653](https://github.com/vbrandl/hoc/pull/653), [#654](https://github.com/vbrandl/hoc/pull/654))
 - Bump `actions/cache` from 2 to 3 (#616)
 - Bump `tokio` from 1.28.0 to 1.29.1 (#618, #625, #633, #634)
 - Bump `reqwest` from 0.11.17 to 0.11.18 (#619)
