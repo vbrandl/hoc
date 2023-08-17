@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `serde_json` from 1.0.96 to 1.0.105 (#630, #632, #637, #641, #644, [#649](https://github.com/vbrandl/hoc/pull/649), [#663](https://github.com/vbrandl/hoc/pull/663))
 - Bump `openssl` from 0.10.50 to 0.10.55 (#631)
 - Bump `tracing-bunyan-formatter` from 0.3.7 to 0.3.9 (#642, [#661](https://github.com/vbrandl/hoc/pull/661))
-- Bump `anyhow` from 1.0.71 to 1.0.74 (#643, [#662](https://github.com/vbrandl/hoc/pull/662))
+- Bump `anyhow` from 1.0.71 to 1.0.75 (#643, [#662](https://github.com/vbrandl/hoc/pull/662), [#664](https://github.com/vbrandl/hoc/pull/664))
 - Bump `ructe` from 0.16.1 to 0.17.0 ([#647](https://github.com/vbrandl/hoc/pull/647))
 
 
