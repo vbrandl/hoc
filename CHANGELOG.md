@@ -5,7 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Dependencies
-- Bump `serde` from 1.0.160 to 1.0.183 (#613, #617, #627, #636, #639, #640, #645, [#648](https://github.com/vbrandl/hoc/pull/648), [#650](https://github.com/vbrandl/hoc/pull/650), [#652](https://github.com/vbrandl/hoc/pull/652), [#653](https://github.com/vbrandl/hoc/pull/653), [#654](https://github.com/vbrandl/hoc/pull/654), [#655](https://github.com/vbrandl/hoc/pull/655), [#657](https://github.com/vbrandl/hoc/pull/657))
+- Bump `serde` from 1.0.160 to 1.0.184 (#613, #617, #627, #636, #639, #640, #645, [#648](https://github.com/vbrandl/hoc/pull/648), [#650](https://github.com/vbrandl/hoc/pull/650), [#652](https://github.com/vbrandl/hoc/pull/652), [#653](https://github.com/vbrandl/hoc/pull/653), [#654](https://github.com/vbrandl/hoc/pull/654), [#655](https://github.com/vbrandl/hoc/pull/655), [#657](https://github.com/vbrandl/hoc/pull/657), [#666](https://github.com/vbrandl/hoc/pull/666))
 - Bump `actions/cache` from 2 to 3 (#616)
 - Bump `tokio` from 1.28.0 to 1.32.0 (#618, #625, #633, #634, [#659](https://github.com/vbrandl/hoc/pull/659), [#660](https://github.com/vbrandl/hoc/pull/660), [#665](https://github.com/vbrandl/hoc/pull/665))
 - Bump `reqwest` from 0.11.17 to 0.11.18 (#619)
