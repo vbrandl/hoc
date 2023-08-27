@@ -13,7 +13,7 @@ path = "src/main.rs"
 name = "hoc"
 
 [dependencies]
-actix-rt = "2.8.0"
+actix-rt = "2.9.0"
 actix-web = "4.3.1"
 badgers = "1.2.0"
 bytes = "1.4.0"
