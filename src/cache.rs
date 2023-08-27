@@ -74,7 +74,7 @@ impl<'a> CacheState<'a> {
         trace!("Calculating new cache");
         match self {
             CacheState::Old { mut cache, .. } => {
-                if let Some(mut cache) = cache.entries.get_mut(branch) {
+                if let Some(cache) = cache.entries.get_mut(branch) {
                     cache.head = head;
                     cache.count += count;
                     cache.commits += commits;
