@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `ructe` from 0.16.1 to 0.17.0 ([#647](https://github.com/vbrandl/hoc/pull/647))
 - Bump `actix-rt` from 2.8.0 to 2.9.0 ([#670](https://github.com/vbrandl/hoc/pull/670))
 - Bump `actix-web` from 4.3.1 to 4.4.0 ([#673](https://github.com/vbrandl/hoc/pull/673))
+- Bump `awc` from 3.1.1 to 3.2.0 ([#675](https://github.com/vbrandl/hoc/pull/675))
 
 
 ## [0.35.0] 2023-05-04
