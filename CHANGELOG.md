@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `actix-rt` from 2.8.0 to 2.9.0 ([#670](https://github.com/vbrandl/hoc/pull/670))
 - Bump `actix-web` from 4.3.1 to 4.4.0 ([#673](https://github.com/vbrandl/hoc/pull/673))
 - Bump `awc` from 3.1.1 to 3.2.0 ([#675](https://github.com/vbrandl/hoc/pull/675))
+- Bump `actions/checkout` from 3 to 4 ([#676](https://github.com/vbrandl/hoc/pull/676))
 
 
 ## [0.35.0] 2023-05-04
