@@ -16,7 +16,7 @@ name = "hoc"
 actix-rt = "2.9.0"
 actix-web = "4.4.0"
 badgers = "1.2.0"
-bytes = "1.4.0"
+bytes = "1.5.0"
 config = { version = "0.13.3", features = ["toml"] }
 dotenvy = "0.15.7"
 futures = "0.3.28"
