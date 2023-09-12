@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing-actix-web` from 0.7.4 to 0.7.6 (#623, [#656](https://github.com/vbrandl/hoc/pull/656))
 - Bump `git2` from 0.17.1 to 0.18.0 (#624, [#674](https://github.com/vbrandl/hoc/pull/674))
 - Bump `tempfile` from 3.5.0 to 3.8.0 (#626, [#646](https://github.com/vbrandl/hoc/pull/646), [#658](https://github.com/vbrandl/hoc/pull/658), [#667](https://github.com/vbrandl/hoc/pull/667))
-- Bump `serde_json` from 1.0.96 to 1.0.105 (#630, #632, #637, #641, #644, [#649](https://github.com/vbrandl/hoc/pull/649), [#663](https://github.com/vbrandl/hoc/pull/663))
+- Bump `serde_json` from 1.0.96 to 1.0.106 (#630, #632, #637, #641, #644, [#649](https://github.com/vbrandl/hoc/pull/649), [#663](https://github.com/vbrandl/hoc/pull/663), [#678](https://github.com/vbrandl/hoc/pull/678))
 - Bump `openssl` from 0.10.50 to 0.10.55 (#631)
 - Bump `tracing-bunyan-formatter` from 0.3.7 to 0.3.9 (#642, [#661](https://github.com/vbrandl/hoc/pull/661))
 - Bump `anyhow` from 1.0.71 to 1.0.75 (#643, [#662](https://github.com/vbrandl/hoc/pull/662), [#664](https://github.com/vbrandl/hoc/pull/664))
