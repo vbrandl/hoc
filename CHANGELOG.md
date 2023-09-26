@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `reqwest` from 0.11.17 to 0.11.20 (#619, [#672](https://github.com/vbrandl/hoc/pull/672))
 - Bump `vergen` from 8.1.3 to 8.2.5 (#621, #622, #635, #638, [#679](https://github.com/vbrandl/hoc/pull/679))
 - Bump `tracing-actix-web` from 0.7.4 to 0.7.6 (#623, [#656](https://github.com/vbrandl/hoc/pull/656))
-- Bump `git2` from 0.17.1 to 0.18.0 (#624, [#674](https://github.com/vbrandl/hoc/pull/674))
+- Bump `git2` from 0.17.1 to 0.18.1 (#624, [#674](https://github.com/vbrandl/hoc/pull/674), [#681](https://github.com/vbrandl/hoc/pull/681))
 - Bump `tempfile` from 3.5.0 to 3.8.0 (#626, [#646](https://github.com/vbrandl/hoc/pull/646), [#658](https://github.com/vbrandl/hoc/pull/658), [#667](https://github.com/vbrandl/hoc/pull/667))
 - Bump `serde_json` from 1.0.96 to 1.0.107 (#630, #632, #637, #641, #644, [#649](https://github.com/vbrandl/hoc/pull/649), [#663](https://github.com/vbrandl/hoc/pull/663), [#678](https://github.com/vbrandl/hoc/pull/678), [#680](https://github.com/vbrandl/hoc/pull/680))
 - Bump `openssl` from 0.10.50 to 0.10.55 (#631)
