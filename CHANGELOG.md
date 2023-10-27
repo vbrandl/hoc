@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `stefanzweifel/git-auto-commit-action` from 4 to 5 ([#685](https://github.com/vbrandl/hoc/pull/685))
 - Bump `tracing` from 0.1.37 to 0.1.40 ([#688](https://github.com/vbrandl/hoc/pull/688), [#689](https://github.com/vbrandl/hoc/pull/689))
 - Bump `tracing-log` from 0.1.3 to 0.2.0 ([#691](https://github.com/vbrandl/hoc/pull/691), [#693](https://github.com/vbrandl/hoc/pull/693))
+- Bump `futures` from 0.3.28 to 0.3.29 ([#694](https://github.com/vbrandl/hoc/pull/694))
 
 
 ## [0.35.0] 2023-05-04
