@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `actions/cache` from 2 to 3 (#616)
 - Bump `tokio` from 1.28.0 to 1.33.0 (#618, #625, #633, #634, [#659](https://github.com/vbrandl/hoc/pull/659), [#660](https://github.com/vbrandl/hoc/pull/660), [#665](https://github.com/vbrandl/hoc/pull/665), [#686](https://github.com/vbrandl/hoc/pull/686))
 - Bump `reqwest` from 0.11.17 to 0.11.22 (#619, [#672](https://github.com/vbrandl/hoc/pull/672), [#683](https://github.com/vbrandl/hoc/pull/683), [#684](https://github.com/vbrandl/hoc/pull/684))
-- Bump `vergen` from 8.1.3 to 8.2.5 (#621, #622, #635, #638, [#679](https://github.com/vbrandl/hoc/pull/679))
+- Bump `vergen` from 8.1.3 to 8.2.6 (#621, #622, #635, #638, [#679](https://github.com/vbrandl/hoc/pull/679), [#697](https://github.com/vbrandl/hoc/pull/697))
 - Bump `tracing-actix-web` from 0.7.4 to 0.7.8 (#623, [#656](https://github.com/vbrandl/hoc/pull/656), [#682](https://github.com/vbrandl/hoc/pull/682), [#690](https://github.com/vbrandl/hoc/pull/690))
 - Bump `git2` from 0.17.1 to 0.18.1 (#624, [#674](https://github.com/vbrandl/hoc/pull/674), [#681](https://github.com/vbrandl/hoc/pull/681))
 - Bump `tempfile` from 3.5.0 to 3.8.1 (#626, [#646](https://github.com/vbrandl/hoc/pull/646), [#658](https://github.com/vbrandl/hoc/pull/658), [#667](https://github.com/vbrandl/hoc/pull/667), [#695](https://github.com/vbrandl/hoc/pull/695))
