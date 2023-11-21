@@ -5,6 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+- Bump `serde` from 1.0.192 to 1.0.193 ([#704](https://github.com/vbrandl/hoc/pull/704))
+
 ## [0.36.0] 2023-11-17
 ### Dependencies
 - Bump `serde` from 1.0.160 to 1.0.192 (#613, #617, #627, #636, #639, #640, #645, [#648](https://github.com/vbrandl/hoc/pull/648), [#650](https://github.com/vbrandl/hoc/pull/650), [#652](https://github.com/vbrandl/hoc/pull/652), [#653](https://github.com/vbrandl/hoc/pull/653), [#654](https://github.com/vbrandl/hoc/pull/654), [#655](https://github.com/vbrandl/hoc/pull/655), [#657](https://github.com/vbrandl/hoc/pull/657), [#669](https://github.com/vbrandl/hoc/pull/669), [#687](https://github.com/vbrandl/hoc/pull/687), [#692](https://github.com/vbrandl/hoc/pull/692), [#698](https://github.com/vbrandl/hoc/pull/698))
