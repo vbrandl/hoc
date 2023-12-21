@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `openssl` from 0.10.55 to 0.10.60 ([#706](https://github.com/vbrandl/hoc/pull/706))
 - Bump `tokio` from 1.34.0 to 1.35.1 ([#707](https://github.com/vbrandl/hoc/pull/707), [#709](https://github.com/vbrandl/hoc/pull/709))
 - Bump `reqwest` from 0.11.22 to 0.11.23 ([#708](https://github.com/vbrandl/hoc/pull/708))
+- Bump `anyhow` from 1.0.75 to 1.0.76 ([#710](https://github.com/vbrandl/hoc/pull/710))
 
 ## [0.36.0] 2023-11-17
 ### Dependencies
