@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `awc` from 3.2.0 to 3.3.0 ([#712](https://github.com/vbrandl/hoc/pull/712))
 - Bump `actix-web` from 4.4.0 to 4.4.1 ([#713](https://github.com/vbrandl/hoc/pull/713))
 - Bump `tempfile` from 3.8.1 to 3.9.0 ([#715](https://github.com/vbrandl/hoc/pull/715))
+- Bump `serde_json` from 1.0.108 to 1.0.109 ([#717](https://github.com/vbrandl/hoc/pull/717))
 
 ## [0.36.0] 2023-11-17
 ### Dependencies
