@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Dependencies
-- Bump `serde` from 1.0.192 to 1.0.193 ([#704](https://github.com/vbrandl/hoc/pull/704))
+- Bump `serde` from 1.0.192 to 1.0.195 ([#704](https://github.com/vbrandl/hoc/pull/704), [#719](https://github.com/vbrandl/hoc/pull/719))
 - Bump `config` from 0.13.3 to 0.13.4 ([#705](https://github.com/vbrandl/hoc/pull/705))
 - Bump `openssl` from 0.10.55 to 0.10.60 ([#706](https://github.com/vbrandl/hoc/pull/706))
 - Bump `tokio` from 1.34.0 to 1.35.1 ([#707](https://github.com/vbrandl/hoc/pull/707), [#709](https://github.com/vbrandl/hoc/pull/709))
