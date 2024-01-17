@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `actix-web` from 4.4.0 to 4.4.1 ([#713](https://github.com/vbrandl/hoc/pull/713))
 - Bump `tempfile` from 3.8.1 to 3.9.0 ([#715](https://github.com/vbrandl/hoc/pull/715))
 - Bump `serde_json` from 1.0.108 to 1.0.111 ([#717](https://github.com/vbrandl/hoc/pull/717), [#722](https://github.com/vbrandl/hoc/pull/722))
-- Bump `vergen` from 8.2.6 to 8.2.9 ([#721](https://github.com/vbrandl/hoc/pull/721))
+- Bump `vergen` from 8.2.6 to 8.3.0 ([#721](https://github.com/vbrandl/hoc/pull/721), [#723](https://github.com/vbrandl/hoc/pull/723))
 
 ## [0.36.0] 2023-11-17
 ### Dependencies
