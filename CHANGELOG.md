@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `serde_json` from 1.0.108 to 1.0.111 ([#717](https://github.com/vbrandl/hoc/pull/717), [#722](https://github.com/vbrandl/hoc/pull/722))
 - Bump `vergen` from 8.2.6 to 8.2.9 ([#721](https://github.com/vbrandl/hoc/pull/721))
 - Bump `actions/cache` from 3 to 4 ([#724](https://github.com/vbrandl/hoc/pull/724))
+- Bump `h2` from 0.3.20 to 0.3.24 ([#725](https://github.com/vbrandl/hoc/pull/725))
 
 ## [0.36.0] 2023-11-17
 ### Dependencies
