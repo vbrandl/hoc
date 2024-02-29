@@ -42,7 +42,7 @@ ructe = { version = "0.17.0", features = ["mime03"] }
 vergen = { version = "8.3.1", default-features = false, features = ["git", "gitoxide"] }
 
 [dev-dependencies]
-awc = "3.3.0"
+awc = "3.4.0"
 ructe = "0.17.0"
 tempfile = "3.9.0"
 tokio = "1.35.1"
