@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `h2` from 0.3.20 to 0.3.24 ([#725](https://github.com/vbrandl/hoc/pull/725))
 - Bump `git2` from 0.18.1 to 0.18.2 ([#734](https://github.com/vbrandl/hoc/pull/734))
 - Bump `tracing-actix-web` from 0.7.9 to 0.7.10 ([#742](https://github.com/vbrandl/hoc/pull/742))
+- Bump `mio` from 0.8.9 to 0.8.11 ([#740](https://github.com/vbrandl/hoc/pull/740))
 
 ## [0.36.0] 2023-11-17
 ### Dependencies
