@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `openssl` from 0.10.55 to 0.10.60 ([#706](https://github.com/vbrandl/hoc/pull/706))
 - Bump `tokio` from 1.34.0 to 1.36.0 ([#707](https://github.com/vbrandl/hoc/pull/707), [#709](https://github.com/vbrandl/hoc/pull/709), [#732](https://github.com/vbrandl/hoc/pull/732))
 - Bump `reqwest` from 0.11.22 to 0.11.25 ([#708](https://github.com/vbrandl/hoc/pull/708), [#728](https://github.com/vbrandl/hoc/pull/728), [#741](https://github.com/vbrandl/hoc/pull/741))
-- Bump `anyhow` from 1.0.75 to 1.0.80 ([#710](https://github.com/vbrandl/hoc/pull/710), [#714](https://github.com/vbrandl/hoc/pull/714), [#720](https://github.com/vbrandl/hoc/pull/720), [#737](https://github.com/vbrandl/hoc/pull/737))
+- Bump `anyhow` from 1.0.75 to 1.0.81 ([#710](https://github.com/vbrandl/hoc/pull/710), [#714](https://github.com/vbrandl/hoc/pull/714), [#720](https://github.com/vbrandl/hoc/pull/720), [#737](https://github.com/vbrandl/hoc/pull/737), [#744](https://github.com/vbrandl/hoc/pull/744))
 - Bump `futures` from 0.3.29 to 0.3.30 ([#711](https://github.com/vbrandl/hoc/pull/711))
 - Bump `awc` from 3.2.0 to 3.4.0 ([#712](https://github.com/vbrandl/hoc/pull/712), [#731](https://github.com/vbrandl/hoc/pull/731))
 - Bump `actix-web` from 4.4.0 to 4.5.1 ([#713](https://github.com/vbrandl/hoc/pull/713), [#739](https://github.com/vbrandl/hoc/pull/739))
