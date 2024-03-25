@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing-actix-web` from 0.7.9 to 0.7.10 ([#742](https://github.com/vbrandl/hoc/pull/742))
 - Bump `mio` from 0.8.9 to 0.8.11 ([#740](https://github.com/vbrandl/hoc/pull/740))
 - Bump `softprops/action-gh-release` from 1 to 2 ([#743](https://github.com/vbrandl/hoc/pull/743))
+- Bump `bytes` from 1.5.0 to 1.6.0 ([#751](https://github.com/vbrandl/hoc/pull/751))
 
 ## [0.36.0] 2023-11-17
 ### Dependencies
