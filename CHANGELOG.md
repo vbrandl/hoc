@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `serde` from 1.0.192 to 1.0.197 ([#704](https://github.com/vbrandl/hoc/pull/704), [#719](https://github.com/vbrandl/hoc/pull/719), [#726](https://github.com/vbrandl/hoc/pull/726), [#736](https://github.com/vbrandl/hoc/pull/736))
 - Bump `config` from 0.13.3 to 0.14.0 ([#705](https://github.com/vbrandl/hoc/pull/705), [#729](https://github.com/vbrandl/hoc/pull/729))
 - Bump `openssl` from 0.10.55 to 0.10.60 ([#706](https://github.com/vbrandl/hoc/pull/706))
-- Bump `tokio` from 1.34.0 to 1.36.0 ([#707](https://github.com/vbrandl/hoc/pull/707), [#709](https://github.com/vbrandl/hoc/pull/709), [#732](https://github.com/vbrandl/hoc/pull/732))
+- Bump `tokio` from 1.34.0 to 1.37.0 ([#707](https://github.com/vbrandl/hoc/pull/707), [#709](https://github.com/vbrandl/hoc/pull/709), [#732](https://github.com/vbrandl/hoc/pull/732), [#756](https://github.com/vbrandl/hoc/pull/756))
 - Bump `reqwest` from 0.11.22 to 0.12.2 ([#708](https://github.com/vbrandl/hoc/pull/708), [#728](https://github.com/vbrandl/hoc/pull/728), [#741](https://github.com/vbrandl/hoc/pull/741), [#745](https://github.com/vbrandl/hoc/pull/745), [#749](https://github.com/vbrandl/hoc/pull/749), [#750](https://github.com/vbrandl/hoc/pull/750), [#754](https://github.com/vbrandl/hoc/pull/754))
 - Bump `anyhow` from 1.0.75 to 1.0.81 ([#710](https://github.com/vbrandl/hoc/pull/710), [#714](https://github.com/vbrandl/hoc/pull/714), [#720](https://github.com/vbrandl/hoc/pull/720), [#737](https://github.com/vbrandl/hoc/pull/737), [#744](https://github.com/vbrandl/hoc/pull/744))
 - Bump `futures` from 0.3.29 to 0.3.30 ([#711](https://github.com/vbrandl/hoc/pull/711))
