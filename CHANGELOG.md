@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `serde_json` from 1.0.108 to 1.0.114 ([#717](https://github.com/vbrandl/hoc/pull/717), [#722](https://github.com/vbrandl/hoc/pull/722), [#727](https://github.com/vbrandl/hoc/pull/727), [#738](https://github.com/vbrandl/hoc/pull/738))
 - Bump `vergen` from 8.2.6 to 8.3.1 ([#721](https://github.com/vbrandl/hoc/pull/721), [#730](https://github.com/vbrandl/hoc/pull/730))
 - Bump `actions/cache` from 3 to 4 ([#724](https://github.com/vbrandl/hoc/pull/724))
-- Bump `h2` from 0.3.20 to 0.3.24 ([#725](https://github.com/vbrandl/hoc/pull/725))
+- Bump `h2` from 0.3.20 to 0.3.26 ([#725](https://github.com/vbrandl/hoc/pull/725), [#757](https://github.com/vbrandl/hoc/pull/757))
 - Bump `git2` from 0.18.1 to 0.18.3 ([#734](https://github.com/vbrandl/hoc/pull/734), [#748](https://github.com/vbrandl/hoc/pull/748))
 - Bump `tracing-actix-web` from 0.7.9 to 0.7.10 ([#742](https://github.com/vbrandl/hoc/pull/742))
 - Bump `mio` from 0.8.9 to 0.8.11 ([#740](https://github.com/vbrandl/hoc/pull/740))
