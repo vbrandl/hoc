@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Dependencies
-- Bump `serde` from 1.0.192 to 1.0.200 ([#704](https://github.com/vbrandl/hoc/pull/704), [#719](https://github.com/vbrandl/hoc/pull/719), [#726](https://github.com/vbrandl/hoc/pull/726), [#736](https://github.com/vbrandl/hoc/pull/736), [#761](https://github.com/vbrandl/hoc/pull/761), [#766](https://github.com/vbrandl/hoc/pull/766), [#767](https://github.com/vbrandl/hoc/pull/767))
+- Bump `serde` from 1.0.192 to 1.0.202 ([#704](https://github.com/vbrandl/hoc/pull/704), [#719](https://github.com/vbrandl/hoc/pull/719), [#726](https://github.com/vbrandl/hoc/pull/726), [#736](https://github.com/vbrandl/hoc/pull/736), [#761](https://github.com/vbrandl/hoc/pull/761), [#766](https://github.com/vbrandl/hoc/pull/766), [#767](https://github.com/vbrandl/hoc/pull/767), [#771](https://github.com/vbrandl/hoc/pull/771))
 - Bump `config` from 0.13.3 to 0.14.0 ([#705](https://github.com/vbrandl/hoc/pull/705), [#729](https://github.com/vbrandl/hoc/pull/729))
 - Bump `openssl` from 0.10.55 to 0.10.60 ([#706](https://github.com/vbrandl/hoc/pull/706))
 - Bump `tokio` from 1.34.0 to 1.37.0 ([#707](https://github.com/vbrandl/hoc/pull/707), [#709](https://github.com/vbrandl/hoc/pull/709), [#732](https://github.com/vbrandl/hoc/pull/732), [#756](https://github.com/vbrandl/hoc/pull/756))
