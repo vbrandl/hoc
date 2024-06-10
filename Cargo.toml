@@ -14,7 +14,7 @@ name = "hoc"
 
 [dependencies]
 actix-rt = "2.9.0"
-actix-web = "4.6.0"
+actix-web = "4.7.0"
 badgers = "1.2.0"
 bytes = "1.6.0"
 config = { version = "0.14.0", features = ["toml"], default-features = false }
