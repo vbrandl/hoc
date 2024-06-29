@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `softprops/action-gh-release` from 1 to 2 ([#743](https://github.com/vbrandl/hoc/pull/743))
 - Bump `bytes` from 1.5.0 to 1.6.0 ([#751](https://github.com/vbrandl/hoc/pull/751))
 - Bump `actix-rt` from 2.9.0 to 2.10.0 ([#779](https://github.com/vbrandl/hoc/pull/779))
+- Bump `lazy_static` from 1.4.0 to 1.5.0 ([#783](https://github.com/vbrandl/hoc/pull/783))
 
 ## [0.36.0] 2023-11-17
 ### Dependencies
