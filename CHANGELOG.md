@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `bytes` from 1.5.0 to 1.6.1 ([#751](https://github.com/vbrandl/hoc/pull/751), [#794](https://github.com/vbrandl/hoc/pull/794))
 - Bump `actix-rt` from 2.9.0 to 2.10.0 ([#779](https://github.com/vbrandl/hoc/pull/779))
 - Bump `lazy_static` from 1.4.0 to 1.5.0 ([#783](https://github.com/vbrandl/hoc/pull/783))
+- Bump `gix-path` from 0.10.8 to 0.10.9 ([#796](https://github.com/vbrandl/hoc/pull/796))
 
 ## [0.36.0] 2023-11-17
 ### Dependencies
