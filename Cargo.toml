@@ -45,4 +45,4 @@ vergen = { version = "8.3.2", default-features = false, features = ["git", "gito
 awc = "3.5.0"
 ructe = "0.17.2"
 tempfile = "3.10.1"
-tokio = "1.38.0"
+tokio = "1.38.1"
