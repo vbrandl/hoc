@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing-actix-web` from 0.7.9 to 0.7.11 ([#742](https://github.com/vbrandl/hoc/pull/742), [#777](https://github.com/vbrandl/hoc/pull/777))
 - Bump `mio` from 0.8.9 to 0.8.11 ([#740](https://github.com/vbrandl/hoc/pull/740))
 - Bump `softprops/action-gh-release` from 1 to 2 ([#743](https://github.com/vbrandl/hoc/pull/743))
-- Bump `bytes` from 1.5.0 to 1.7.0 ([#751](https://github.com/vbrandl/hoc/pull/751), [#794](https://github.com/vbrandl/hoc/pull/794), [#801](https://github.com/vbrandl/hoc/pull/801))
+- Bump `bytes` from 1.5.0 to 1.7.1 ([#751](https://github.com/vbrandl/hoc/pull/751), [#794](https://github.com/vbrandl/hoc/pull/794), [#801](https://github.com/vbrandl/hoc/pull/801), [#803](https://github.com/vbrandl/hoc/pull/803))
 - Bump `actix-rt` from 2.9.0 to 2.10.0 ([#779](https://github.com/vbrandl/hoc/pull/779))
 - Bump `lazy_static` from 1.4.0 to 1.5.0 ([#783](https://github.com/vbrandl/hoc/pull/783))
 - Bump `gix-path` from 0.10.8 to 0.10.9 ([#796](https://github.com/vbrandl/hoc/pull/796))
