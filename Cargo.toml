@@ -14,7 +14,7 @@ name = "hoc"
 
 [dependencies]
 actix-rt = "2.10.0"
-actix-web = "4.8.0"
+actix-web = "4.9.0"
 badgers = "1.2.0"
 bytes = "1.7.1"
 config = { version = "0.14.0", features = ["toml"], default-features = false }
@@ -27,7 +27,7 @@ number_prefix = "0.4.0"
 openssl-probe = "0.1.5"
 reqwest = "0.12.5"
 serde = "1.0.205"
-serde_derive = "1.0.204"
+serde_derive = "1.0.205"
 serde_json = "1.0.122"
 tracing = "0.1.40"
 tracing-actix-web = "0.7.11"
@@ -42,7 +42,7 @@ ructe = { version = "0.17.2", features = ["mime03"] }
 vergen = { version = "8.3.2", default-features = false, features = ["git", "gitoxide"] }
 
 [dev-dependencies]
-awc = "3.5.0"
+awc = "3.5.1"
 ructe = "0.17.2"
 tempfile = "3.12.0"
 tokio = "1.39.2"
