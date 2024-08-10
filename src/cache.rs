@@ -120,7 +120,7 @@ pub(crate) struct Cache<'a> {
 pub(crate) struct CacheEntry<'a> {
     /// HEAD commit ref
     pub head: Cow<'a, str>,
-    /// HoC value
+    /// `HoC` value
     pub count: u64,
     /// Number of commits
     pub commits: u64,
