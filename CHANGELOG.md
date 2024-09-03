@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `actions/cache` from 3 to 4 ([#724](https://github.com/vbrandl/hoc/pull/724))
 - Bump `h2` from 0.3.20 to 0.3.26 ([#725](https://github.com/vbrandl/hoc/pull/725), [#757](https://github.com/vbrandl/hoc/pull/757))
 - Bump `git2` from 0.18.1 to 0.18.3 ([#734](https://github.com/vbrandl/hoc/pull/734), [#748](https://github.com/vbrandl/hoc/pull/748))
-- Bump `tracing-actix-web` from 0.7.9 to 0.7.11 ([#742](https://github.com/vbrandl/hoc/pull/742), [#777](https://github.com/vbrandl/hoc/pull/777))
+- Bump `tracing-actix-web` from 0.7.9 to 0.7.12 ([#742](https://github.com/vbrandl/hoc/pull/742), [#777](https://github.com/vbrandl/hoc/pull/777), [#815](https://github.com/vbrandl/hoc/pull/815))
 - Bump `mio` from 0.8.9 to 0.8.11 ([#740](https://github.com/vbrandl/hoc/pull/740))
 - Bump `softprops/action-gh-release` from 1 to 2 ([#743](https://github.com/vbrandl/hoc/pull/743))
 - Bump `bytes` from 1.5.0 to 1.7.1 ([#751](https://github.com/vbrandl/hoc/pull/751), [#794](https://github.com/vbrandl/hoc/pull/794), [#801](https://github.com/vbrandl/hoc/pull/801), [#803](https://github.com/vbrandl/hoc/pull/803))
