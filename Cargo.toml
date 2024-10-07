@@ -19,7 +19,7 @@ badgers = "1.2.0"
 bytes = "1.7.2"
 config = { version = "0.14.0", features = ["toml"], default-features = false }
 dotenvy = "0.15.7"
-futures = "0.3.30"
+futures = "0.3.31"
 git2 = "0.19.0"
 lazy_static = "1.5.0"
 mime = "0.3"
