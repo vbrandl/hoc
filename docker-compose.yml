@@ -2,7 +2,7 @@ version: "3"
 
 services:
   hoc:
-    image: vbrandl/hits-of-code:latest
+    image: ghcr.io/vbrandl/hoc:latest
     volumes:
       - ./repos:/home/hoc/repos
       - ./cache:/home/hoc/cache
