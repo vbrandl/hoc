@@ -195,6 +195,7 @@ async fn delete_repo_and_cache<T>(
     state: web::Data<State>,
     repo_count: web::Data<AtomicUsize>,
     data: web::Path<(String, String)>,
+    branch: web::Query<BadgeQuery>,
 ) -> Result<impl Responder>
 where
     T: Service,
@@ -231,10 +232,15 @@ where
             }
         })?;
         repo_count.fetch_sub(1, Ordering::Relaxed);
+        let branch_query = branch
+            .branch
+            .as_ref()
+            .map_or_else(String::new, |b| format!("&branch={b}"));
+        let query = format!("?label={}{branch_query}", branch.label);
         Ok(HttpResponse::TemporaryRedirect()
             .insert_header((
                 LOCATION,
-                format!("/{}/{}/{}/view", T::url_path(), data.0, data.1),
+                format!("/{}/{}/{}/view{query}", T::url_path(), data.0, data.1),
             ))
             .finish())
     };
