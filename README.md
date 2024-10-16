@@ -31,6 +31,15 @@ To delete a repository and the cache from the server, send a `POST` request to
 `https://<host>/<service>/<user>/<repo>/delete`. On the overview page, there is a button to perform this operation. It
 will respond with a redirect to the overview page so the cache is rebuilt directly.
 
+## Files excluding
+
+If you want to ignore some files on a HoC score calculating you can pass an `exclude` query parameter to a link:
+
+```
+https://<host>/<service>/<user>/<repo>?exclude=Cargo.lock
+https://<host>/<service>/<user>/<repo>?exclude=package-lock.json,yarn.lock
+```
+
 ## Building
 
 The code can be built as a standalone binary, using `cargo` or as a Docker container. Run either
