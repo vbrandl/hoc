@@ -52,6 +52,15 @@ in your repository or you want a badge for another branch of your repository, ju
 </p>
 
 <p>
+    If you want to ignore some files on a HoC score calculating you can pass an <code>exclude</code> query parameter to a link:
+</p>
+
+<pre>
+    https://&lt;host&gt;/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;?exclude=Cargo.lock
+    https://&lt;host&gt;/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;?exclude=package-lock.json,yarn.lock
+</pre>
+
+<p>
 The badge label can be customized using the <code>label=&lt;some-label&gt;</code> query parameter. It defaults to <code>Hits-of-Code</code>.
 </p>
 

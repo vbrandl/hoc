@@ -87,6 +87,7 @@ struct BadgeQuery {
     branch: Option<String>,
     #[serde(default = "default_label")]
     label: String,
+    exclude: Option<String>,
 }
 
 fn default_label() -> String {
@@ -100,10 +101,28 @@ fn pull(path: impl AsRef<Path>) -> Result<()> {
     Ok(())
 }
 
-fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64, String, u64)> {
+fn hoc(
+    repo: &str,
+    repo_dir: &str,
+    cache_dir: &str,
+    branch: &str,
+    exclude: Option<&str>,
+) -> Result<(u64, String, u64)> {
     let repo_dir = format!("{repo_dir}/{repo}");
-    let cache_dir = format!("{cache_dir}/{repo}.json");
-    let cache_dir = Path::new(&cache_dir);
+    let cache_file_name = match exclude {
+        None => repo.to_string(),
+        Some(query_param) => {
+            let mut files_to_exclude = query_param
+                .split(',')
+                .map(|file| file.trim().replace('.', "_"))
+                .collect::<Vec<String>>();
+            files_to_exclude.sort();
+            let cache_suffix = files_to_exclude.join("_");
+            format!("{repo}_{cache_suffix}")
+        }
+    };
+    let cache_path = format!("{cache_dir}/{cache_file_name}.json");
+    let cache_path = Path::new(&cache_path);
     let repo = Repository::open_bare(&repo_dir)?;
     // TODO: do better...
     let head = repo
@@ -124,7 +143,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
         "-M".to_string(),
         "--diff-filter=ACDM".to_string(),
     ];
-    let cache = CacheState::read_from_file(cache_dir, branch, &head)?;
+    let cache = CacheState::read_from_file(cache_path, branch, &head)?;
     match &cache {
         CacheState::Current { count, commits, .. } => {
             info!("Using cache");
@@ -142,7 +161,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
         }
     };
     arg.push("--".to_string());
-    arg.push(".".to_string());
+    arg.push('.'.to_string());
     let output = Command::new("git")
         .args(&arg)
         .current_dir(&repo_dir)
@@ -156,19 +175,29 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
         .stdout;
     let output_commits = String::from_utf8_lossy(&output_commits);
     let commits: u64 = output_commits.trim().parse()?;
-    let count: u64 = output
-        .lines()
-        .map(|s| {
-            s.split_whitespace()
-                .take(2)
-                .map(str::parse::<u64>)
-                .filter_map(std::result::Result::ok)
-                .sum::<u64>()
-        })
-        .sum();
+
+    let mut files_to_exclude = Vec::<&str>::new();
+    if let Some(query_param) = exclude {
+        query_param
+            .split(',')
+            .for_each(|file| files_to_exclude.push(file));
+    }
+
+    let count: u64 = output.lines().fold(0, |sum, s| {
+        if !files_to_exclude.is_empty() && files_to_exclude.iter().any(|file| s.ends_with(file)) {
+            return sum;
+        }
+        let current = s
+            .split_whitespace()
+            .take(2)
+            .map(str::parse::<u64>)
+            .filter_map(std::result::Result::ok)
+            .sum::<u64>();
+        sum + current
+    });
 
     let cache = cache.calculate_new_cache(count, commits, (&head).into(), branch);
-    cache.write_to_file(cache_dir)?;
+    cache.write_to_file(cache_path)?;
 
     Ok((count, head, commits))
 }
@@ -252,6 +281,7 @@ async fn handle_hoc_request<T, F>(
     repo_count: web::Data<AtomicUsize>,
     data: web::Path<(String, String)>,
     branch: &str,
+    exclude: Option<&str>,
     mapper: F,
 ) -> Result<HttpResponse>
 where
@@ -287,7 +317,13 @@ where
             repo_count.fetch_add(1, Ordering::Relaxed);
         }
         pull(&path)?;
-        let (hoc, head, commits) = hoc(&service_url, &state.repos(), &state.cache(), branch)?;
+        let (hoc, head, commits) = hoc(
+            &service_url,
+            &state.repos(),
+            &state.cache(),
+            branch,
+            exclude,
+        )?;
         #[allow(clippy::cast_precision_loss)]
         let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
             NumberPrefix::Standalone(hoc) => hoc.to_string(),
@@ -311,9 +347,10 @@ pub(crate) async fn json_hoc<T: Service>(
     state: web::Data<State>,
     repo_count: web::Data<AtomicUsize>,
     data: web::Path<(String, String)>,
-    branch: web::Query<BadgeQuery>,
+    query: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse> {
-    let branch = branch.branch.as_deref().unwrap_or("master");
+    let branch = query.branch.as_deref().unwrap_or("master");
+    let exclude = query.exclude.as_deref();
     let rc_clone = repo_count.clone();
     let mapper = move |r| match r {
         HocResult::NotFound => p404(&rc_clone),
@@ -326,7 +363,7 @@ pub(crate) async fn json_hoc<T: Service>(
             commits,
         })),
     };
-    handle_hoc_request::<T, _>(state, repo_count, data, branch, mapper).await
+    handle_hoc_request::<T, _>(state, repo_count, data, branch, exclude, mapper).await
 }
 
 fn no_cache_response(body: Vec<u8>) -> HttpResponse {
@@ -367,6 +404,7 @@ pub(crate) async fn calculate_hoc<T: Service>(
         }
     };
     let branch = query.branch.as_deref().unwrap_or("master");
+    let exclude = query.exclude.as_deref();
     let error_badge = |_| {
         let error_badge = Badge::new(BadgeOptions {
             subject: query.label.clone(),
@@ -377,7 +415,7 @@ pub(crate) async fn calculate_hoc<T: Service>(
         let body = error_badge.to_svg().as_bytes().to_vec();
         no_cache_response(body)
     };
-    handle_hoc_request::<T, _>(state, repo_count, data, branch, mapper)
+    handle_hoc_request::<T, _>(state, repo_count, data, branch, exclude, mapper)
         .await
         .unwrap_or_else(error_badge)
 }
@@ -389,6 +427,7 @@ async fn overview<T: Service>(
     query: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse> {
     let branch = query.branch.as_deref().unwrap_or("master");
+    let exclude = query.exclude.as_deref();
     let label = query.label.clone();
     let base_url = state.settings.base_url.clone();
     let rc_clone = repo_count.clone();
@@ -426,7 +465,7 @@ async fn overview<T: Service>(
             Ok(HttpResponse::Ok().content_type("text/html").body(buf))
         }
     };
-    handle_hoc_request::<T, _>(state, repo_count, data, branch, mapper).await
+    handle_hoc_request::<T, _>(state, repo_count, data, branch, exclude, mapper).await
 }
 
 #[get("/health_check")]
