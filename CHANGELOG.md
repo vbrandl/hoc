@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.38.0] 2024-10-16
+
 ### Fixes
 
 - Fix redirect for non-default branches when clearing the cache ([#833](https://github.com/vbrandl/hoc/issues/833), [#834](https://github.com/vbrandl/hoc/pull/834))
