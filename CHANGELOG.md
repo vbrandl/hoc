@@ -5,6 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+- Bump `serde_json` from 1.0.128 to 1.0.129 ([#838](https://github.com/vbrandl/hoc/pull/838))
+
 ## [0.38.0] 2024-10-16
 
 ### Fixes
