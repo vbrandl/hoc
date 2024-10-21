@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Dependencies
 - Bump `anyhow` from 1.0.89 to 1.0.90 ([#840](https://github.com/vbrandl/hoc/pull/840))
+- Bump `serde_json` from 1.0.128 to 1.0.132 ([#841](https://github.com/vbrandl/hoc/pull/841))
 
 ## [0.38.0] 2024-10-16
 
