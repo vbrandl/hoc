@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing-actix-web` from 0.7.13 to 0.7.14 ([#839](https://github.com/vbrandl/hoc/pull/839))
 - Bump `bytes` from 1.7.2 to 1.8.0 ([#842](https://github.com/vbrandl/hoc/pull/842))
 - Bump `tokio` from 1.40.0 to 1.41.0 ([#844](https://github.com/vbrandl/hoc/pull/844))
+- Bump `serde` from 1.0.210 to 1.0.213 ([#845](https://github.com/vbrandl/hoc/pull/845))
 
 ## [0.38.0] 2024-10-16
 
