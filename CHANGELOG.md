@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tokio` from 1.40.0 to 1.41.0 ([#844](https://github.com/vbrandl/hoc/pull/844))
 - Bump `serde` from 1.0.210 to 1.0.213 ([#845](https://github.com/vbrandl/hoc/pull/845))
 - Bump `config` from 0.14.0 to 0.14.1 ([#846](https://github.com/vbrandl/hoc/pull/846))
+- Bump `reqwest` from 0.12.8 to 0.12.9 ([#848](https://github.com/vbrandl/hoc/pull/848))
 
 ## [0.38.0] 2024-10-16
 
