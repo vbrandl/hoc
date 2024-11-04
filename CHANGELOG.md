@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Dependencies
-- Bump `anyhow` from 1.0.89 to 1.0.91 ([#840](https://github.com/vbrandl/hoc/pull/840), [#843](https://github.com/vbrandl/hoc/pull/843))
+- Bump `anyhow` from 1.0.89 to 1.0.92 ([#840](https://github.com/vbrandl/hoc/pull/840), [#843](https://github.com/vbrandl/hoc/pull/843), [#849](https://github.com/vbrandl/hoc/pull/849))
 - Bump `serde_json` from 1.0.128 to 1.0.132 ([#841](https://github.com/vbrandl/hoc/pull/841))
 - Bump `tracing-actix-web` from 0.7.13 to 0.7.14 ([#839](https://github.com/vbrandl/hoc/pull/839))
 - Bump `bytes` from 1.7.2 to 1.8.0 ([#842](https://github.com/vbrandl/hoc/pull/842))
