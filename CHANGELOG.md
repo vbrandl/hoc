@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `serde_json` from 1.0.128 to 1.0.132 ([#841](https://github.com/vbrandl/hoc/pull/841))
 - Bump `tracing-actix-web` from 0.7.13 to 0.7.14 ([#839](https://github.com/vbrandl/hoc/pull/839))
 - Bump `bytes` from 1.7.2 to 1.8.0 ([#842](https://github.com/vbrandl/hoc/pull/842))
-- Bump `tokio` from 1.40.0 to 1.41.0 ([#844](https://github.com/vbrandl/hoc/pull/844))
+- Bump `tokio` from 1.40.0 to 1.41.1 ([#844](https://github.com/vbrandl/hoc/pull/844), [#851](https://github.com/vbrandl/hoc/pull/851))
 - Bump `serde` from 1.0.210 to 1.0.214 ([#845](https://github.com/vbrandl/hoc/pull/845), [#847](https://github.com/vbrandl/hoc/pull/847))
 - Bump `config` from 0.14.0 to 0.14.1 ([#846](https://github.com/vbrandl/hoc/pull/846))
 - Bump `reqwest` from 0.12.8 to 0.12.9 ([#848](https://github.com/vbrandl/hoc/pull/848))
