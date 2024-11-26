@@ -27,19 +27,22 @@ number_prefix = "0.4.0"
 openssl-probe = "0.1.5"
 reqwest = "0.12.9"
 serde = "1.0.215"
-serde_derive = "1.0.210"
+serde_derive = "1.0.215"
 serde_json = "1.0.133"
 tracing = "0.1.40"
 tracing-actix-web = "0.7.15"
 tracing-bunyan-formatter = "0.3.9"
 tracing-futures = "0.2.5"
 tracing-log = "0.2.0"
-tracing-subscriber = { version = "0.3.18", features = ["registry", "env-filter"] }
+tracing-subscriber = { version = "0.3.18", features = [
+  "registry",
+  "env-filter",
+] }
 
 [build-dependencies]
 anyhow = "1.0.93"
 ructe = { version = "0.17.2", features = ["mime03"] }
-vergen = { version = "8.3.2", default-features = false, features = ["git", "gitoxide"] }
+vergen-gix = "1.0.2"
 
 [dev-dependencies]
 awc = "3.5.1"
