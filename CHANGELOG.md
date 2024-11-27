@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `reqwest` from 0.12.8 to 0.12.9 ([#848](https://github.com/vbrandl/hoc/pull/848))
 - Bump `tempfile` from 3.13.0 to 3.14.0 ([#852](https://github.com/vbrandl/hoc/pull/852))
 - Bump `vergen-gix` from 1.0.2 to 1.0.3 ([#858](https://github.com/vbrandl/hoc/pull/858))
+- Bump `tracing-bunyan-formatter` from 0.3.9 to 0.3.10 ([#859](https://github.com/vbrandl/hoc/pull/859))
 
 ## [0.38.0] 2024-10-16
 
