@@ -126,7 +126,7 @@ pub(crate) struct CacheEntry<'a> {
     pub commits: u64,
 }
 
-impl<'a> Cache<'a> {
+impl Cache<'_> {
     #[instrument]
     pub(crate) fn write_to_file(&self, path: impl AsRef<Path> + std::fmt::Debug) -> Result<()> {
         trace!("Persisting cache to disk");
