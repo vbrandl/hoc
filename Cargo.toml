@@ -34,7 +34,7 @@ tracing-actix-web = "0.7.15"
 tracing-bunyan-formatter = "0.3.10"
 tracing-futures = "0.2.5"
 tracing-log = "0.2.0"
-tracing-subscriber = { version = "0.3.18", features = [
+tracing-subscriber = { version = "0.3.19", features = [
   "registry",
   "env-filter",
 ] }
