@@ -40,7 +40,7 @@ tracing-subscriber = { version = "0.3.19", features = [
 ] }
 
 [build-dependencies]
-anyhow = "1.0.93"
+anyhow = "1.0.94"
 ructe = { version = "0.17.2", features = ["mime03"] }
 vergen-gix = "1.0.3"
 
