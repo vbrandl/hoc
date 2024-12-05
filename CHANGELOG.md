@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing-bunyan-formatter` from 0.3.9 to 0.3.10 ([#859](https://github.com/vbrandl/hoc/pull/859))
 - Bump `tracing` from 0.1.40 to 0.1.41 ([#860](https://github.com/vbrandl/hoc/pull/860))
 - Bump `tracing-subscriber` from 0.3.18 to 0.3.19 ([#862](https://github.com/vbrandl/hoc/pull/862))
+- Bump `actions/attest-build-provenance` from 1 to 2 ([#865](https://github.com/vbrandl/hoc/pull/865))
 
 ## [0.38.0] 2024-10-16
 
