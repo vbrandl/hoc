@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `serde_json` from 1.0.128 to 1.0.135 ([#841](https://github.com/vbrandl/hoc/pull/841), [#854](https://github.com/vbrandl/hoc/pull/854), [#870](https://github.com/vbrandl/hoc/pull/870), [#877](https://github.com/vbrandl/hoc/pull/877))
 - Bump `tracing-actix-web` from 0.7.13 to 0.7.15 ([#839](https://github.com/vbrandl/hoc/pull/839), [#855](https://github.com/vbrandl/hoc/pull/855))
 - Bump `bytes` from 1.7.2 to 1.9.0 ([#842](https://github.com/vbrandl/hoc/pull/842), [#861](https://github.com/vbrandl/hoc/pull/861))
-- Bump `tokio` from 1.40.0 to 1.42.0 ([#844](https://github.com/vbrandl/hoc/pull/844), [#851](https://github.com/vbrandl/hoc/pull/851), [#863](https://github.com/vbrandl/hoc/pull/863))
+- Bump `tokio` from 1.40.0 to 1.43.0 ([#844](https://github.com/vbrandl/hoc/pull/844), [#851](https://github.com/vbrandl/hoc/pull/851), [#863](https://github.com/vbrandl/hoc/pull/863), [#878](https://github.com/vbrandl/hoc/pull/878))
 - Bump `serde` from 1.0.210 to 1.0.217 ([#845](https://github.com/vbrandl/hoc/pull/845), [#847](https://github.com/vbrandl/hoc/pull/847), [#853](https://github.com/vbrandl/hoc/pull/853), [#866](https://github.com/vbrandl/hoc/pull/866), [#872](https://github.com/vbrandl/hoc/pull/872))
 - Bump `config` from 0.14.0 to 0.15.4 ([#846](https://github.com/vbrandl/hoc/pull/846), [#867](https://github.com/vbrandl/hoc/pull/867), [#868](https://github.com/vbrandl/hoc/pull/868))
 - Bump `reqwest` from 0.12.8 to 0.12.12 ([#848](https://github.com/vbrandl/hoc/pull/848), [#873](https://github.com/vbrandl/hoc/pull/873), [#874](https://github.com/vbrandl/hoc/pull/874))
