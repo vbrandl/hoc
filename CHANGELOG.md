@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing-subscriber` from 0.3.18 to 0.3.19 ([#862](https://github.com/vbrandl/hoc/pull/862))
 - Bump `actions/attest-build-provenance` from 1 to 2 ([#865](https://github.com/vbrandl/hoc/pull/865))
 - Bump `git2` from 0.19.0 to 0.20.0 ([#876](https://github.com/vbrandl/hoc/pull/876))
+- Bump `openssl-probe` from 0.1.5 to 0.1.6 ([#884](https://github.com/vbrandl/hoc/pull/884))
 
 ## [0.38.0] 2024-10-16
 
