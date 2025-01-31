@@ -17,7 +17,7 @@ actix-rt = "2.10.0"
 actix-web = "4.9.0"
 badgers = "1.2.0"
 bytes = "1.9.0"
-config = { version = "0.15.6", features = ["toml"], default-features = false }
+config = { version = "0.15.7", features = ["toml"], default-features = false }
 dotenvy = "0.15.7"
 futures = "0.3.31"
 git2 = "0.20.0"
