@@ -1,3 +1,5 @@
+use lazy_static::lazy_static;
+
 #[derive(Clone, Copy)]
 pub struct VersionInfo<'a> {
     pub commit: &'a str,

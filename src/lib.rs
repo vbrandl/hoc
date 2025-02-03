@@ -1,14 +1,5 @@
 #![type_length_limit = "2257138"]
 
-#[macro_use]
-extern crate actix_web;
-#[macro_use]
-extern crate lazy_static;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate tracing;
-
 mod cache;
 pub mod config;
 pub mod count;
@@ -26,15 +17,7 @@ use crate::{
     statics::{CLIENT, VERSION_INFO},
     template::{RepoGeneratorInfo, RepoInfo},
 };
-use actix_web::{
-    dev::Server,
-    http::header::{CacheControl, CacheDirective, Expires, LOCATION},
-    middleware::{self, TrailingSlash},
-    web, App, HttpResponse, HttpServer, Responder,
-};
-use badgers::{Badge, BadgeOptions};
-use git2::{BranchType, Repository};
-use number_prefix::NumberPrefix;
+
 use std::{
     borrow::Cow,
     fs::create_dir_all,
@@ -46,8 +29,20 @@ use std::{
     sync::atomic::Ordering,
     time::{Duration, SystemTime},
 };
+
+use actix_web::{
+    dev::Server,
+    get,
+    http::header::{CacheControl, CacheDirective, Expires, LOCATION},
+    middleware::{self, TrailingSlash},
+    post, web, App, HttpResponse, HttpServer, Responder,
+};
+use badgers::{Badge, BadgeOptions};
+use git2::{BranchType, Repository};
+use number_prefix::NumberPrefix;
+use serde::{Deserialize, Serialize};
 use templates::statics::{self as template_statics, StaticFile};
-use tracing::Instrument;
+use tracing::{info, info_span, warn, Instrument};
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 

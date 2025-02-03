@@ -1569,7 +1569,6 @@ dependencies = [
  "reqwest",
  "ructe",
  "serde",
- "serde_derive",
  "serde_json",
  "tempfile",
  "tokio",
