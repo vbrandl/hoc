@@ -1,10 +1,13 @@
 use crate::error::Result;
+
 use std::{
     fs::{read_dir, ReadDir},
     iter::once,
     path::Path,
     result::Result as StdResult,
 };
+
+use tracing::{instrument, trace};
 
 /// The on disk layout for served repos is `<service>/<user>/<repo>`
 /// so to get the amount of repos, we just have to count everything

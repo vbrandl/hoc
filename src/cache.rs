@@ -1,4 +1,5 @@
 use crate::error::{Error, Result};
+
 use std::{
     borrow::Cow,
     collections::HashMap,
@@ -6,6 +7,9 @@ use std::{
     io::BufReader,
     path::Path,
 };
+
+use serde::{Deserialize, Serialize};
+use tracing::{instrument, trace};
 
 /// Enum to indicate the state of the cache
 #[derive(Debug)]
