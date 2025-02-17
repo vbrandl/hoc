@@ -46,5 +46,5 @@ vergen-gix = "1.0.6"
 [dev-dependencies]
 awc = "3.5.1"
 ructe = "0.18.2"
-tempfile = "3.16.0"
+tempfile = "3.17.0"
 tokio = "1.43.0"
