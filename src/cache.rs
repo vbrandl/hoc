@@ -3,7 +3,7 @@ use crate::error::{Error, Result};
 use std::{
     borrow::Cow,
     collections::HashMap,
-    fs::{create_dir_all, File, OpenOptions},
+    fs::{File, OpenOptions, create_dir_all},
     io::BufReader,
     path::Path,
 };

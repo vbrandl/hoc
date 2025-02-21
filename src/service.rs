@@ -1,8 +1,9 @@
 use crate::{calculate_hoc, delete_repo_and_cache, json_hoc, overview};
 
 use actix_web::{
+    App,
     dev::{ServiceFactory, ServiceRequest},
-    web, App,
+    web,
 };
 use serde::{Deserialize, Serialize};
 
