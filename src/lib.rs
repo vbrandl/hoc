@@ -1,5 +1,3 @@
-#![type_length_limit = "2257138"]
-
 mod cache;
 pub mod config;
 pub mod count;
