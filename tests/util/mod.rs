@@ -2,7 +2,7 @@ use hoc::{config::Settings, telemetry};
 
 use std::net::TcpListener;
 
-use tempfile::{tempdir, TempDir};
+use tempfile::{TempDir, tempdir};
 
 lazy_static::lazy_static! {
     static ref TRACING: () = {
