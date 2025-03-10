@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `openssl-probe` from 0.1.5 to 0.1.6 ([#884](https://github.com/vbrandl/hoc/pull/884))
 - Bump `ructe` from 0.17.2 to 0.18.2 ([#891](https://github.com/vbrandl/hoc/pull/891), [#892](https://github.com/vbrandl/hoc/pull/892))
 - Bump `dangoslen/dependabot-changelog-helper` from 3 to 4 ([#902](https://github.com/vbrandl/hoc/pull/902))
+- Bump `awc` from 3.5.1 to 3.6.0 ([#911](https://github.com/vbrandl/hoc/pull/911))
 
 ## [0.38.0] 2024-10-16
 
