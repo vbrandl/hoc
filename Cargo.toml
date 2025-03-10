@@ -44,7 +44,7 @@ ructe = { version = "0.18.2", features = ["mime03"] }
 vergen-gix = "1.0.6"
 
 [dev-dependencies]
-awc = "3.5.1"
+awc = "3.6.0"
 ructe = "0.18.2"
 tempfile = "3.18.0"
 tokio = "1.44.0"
