@@ -17,7 +17,7 @@ actix-rt = "2.10.0"
 actix-web = "4.10.2"
 badgers = "1.2.0"
 bytes = "1.10.1"
-config = { version = "0.15.9", features = ["toml"], default-features = false }
+config = { version = "0.15.11", features = ["toml"], default-features = false }
 dotenvy = "0.15.7"
 futures = "0.3.31"
 git2 = "0.20.0"
@@ -25,7 +25,7 @@ lazy_static = "1.5.0"
 mime = "0.3"
 number_prefix = "0.4.0"
 openssl-probe = "0.1.6"
-reqwest = "0.12.13"
+reqwest = "0.12.14"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 tracing = "0.1.41"
