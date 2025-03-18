@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing` from 0.1.40 to 0.1.41 ([#860](https://github.com/vbrandl/hoc/pull/860))
 - Bump `tracing-subscriber` from 0.3.18 to 0.3.19 ([#862](https://github.com/vbrandl/hoc/pull/862))
 - Bump `actions/attest-build-provenance` from 1 to 2 ([#865](https://github.com/vbrandl/hoc/pull/865))
-- Bump `git2` from 0.19.0 to 0.20.0 ([#876](https://github.com/vbrandl/hoc/pull/876))
+- Bump `git2` from 0.19.0 to 0.20.1 ([#876](https://github.com/vbrandl/hoc/pull/876), [#920](https://github.com/vbrandl/hoc/pull/920))
 - Bump `openssl-probe` from 0.1.5 to 0.1.6 ([#884](https://github.com/vbrandl/hoc/pull/884))
 - Bump `ructe` from 0.17.2 to 0.18.2 ([#891](https://github.com/vbrandl/hoc/pull/891), [#892](https://github.com/vbrandl/hoc/pull/892))
 - Bump `dangoslen/dependabot-changelog-helper` from 3 to 4 ([#902](https://github.com/vbrandl/hoc/pull/902))
