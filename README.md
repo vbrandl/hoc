@@ -10,6 +10,16 @@ Bugayenko](https://www.yegor256.com/2014/11/14/hits-of-code.html). It is impleme
 
 A live version of this webservice can be found on [hitsofcode.com](https://hitsofcode.com/).
 
+## Calculation
+
+The original implementation was provided in the [hoc](https://github.com/yegor256/hoc) Ruby gem.
+
+To calculate the Hits-of-Code metric for a local/private Git repository, you can use this one-line command (which you may want to add as a git alias):
+
+```
+git log --pretty=tformat: --numstat --ignore-space-change --ignore-all-space --ignore-submodules --no-color --find-copies-harder -M --diff-filter=ACDM -- . | awk '$1 ~ /^[0-9]+$/ && $2 ~ /^[0-9]+$/ { add += $1; del += $2 } END { print add + del }'
+```
+
 ## API
 
 The API is as simple as
