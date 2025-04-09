@@ -21,7 +21,6 @@ config = { version = "0.15.11", features = ["toml"], default-features = false }
 dotenvy = "0.15.7"
 futures = "0.3.31"
 git2 = "0.20.1"
-lazy_static = "1.5.0"
 mime = "0.3"
 number_prefix = "0.4.0"
 openssl-probe = "0.1.6"
