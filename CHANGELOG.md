@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.39.0] 2025-04-09
+
+- Document and clarify how the metric is calculated. Thank you @razum2um [#923](https://github.com/vbrandl/hoc/pull/923)
+
 ### Dependencies
 - Bump `anyhow` from 1.0.89 to 1.0.97 ([#840](https://github.com/vbrandl/hoc/pull/840), [#843](https://github.com/vbrandl/hoc/pull/843), [#849](https://github.com/vbrandl/hoc/pull/849), [#850](https://github.com/vbrandl/hoc/pull/850), [#864](https://github.com/vbrandl/hoc/pull/864), [#869](https://github.com/vbrandl/hoc/pull/869), [#897](https://github.com/vbrandl/hoc/pull/897), [#904](https://github.com/vbrandl/hoc/pull/904))
 - Bump `serde_json` from 1.0.128 to 1.0.140 ([#841](https://github.com/vbrandl/hoc/pull/841), [#854](https://github.com/vbrandl/hoc/pull/854), [#870](https://github.com/vbrandl/hoc/pull/870), [#877](https://github.com/vbrandl/hoc/pull/877), [#883](https://github.com/vbrandl/hoc/pull/883), [#885](https://github.com/vbrandl/hoc/pull/885), [#896](https://github.com/vbrandl/hoc/pull/896), [#903](https://github.com/vbrandl/hoc/pull/903))
