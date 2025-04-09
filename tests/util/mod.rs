@@ -4,13 +4,11 @@ use std::net::TcpListener;
 
 use tempfile::{tempdir, TempDir};
 
-lazy_static::lazy_static! {
-    static ref TRACING: () = {
-        let filter = if std::env::var("TEST_LOG").is_ok() { "debug" } else { "" };
-        let subscriber = telemetry::get_subscriber("test", filter);
-        telemetry::init_subscriber(subscriber);
-    };
-}
+static TRACING: () = {
+    let filter = if std::env::var("TEST_LOG").is_ok() { "debug" } else { "" };
+    let subscriber = telemetry::get_subscriber("test", filter);
+    telemetry::init_subscriber(subscriber);
+};
 
 pub struct TestApp {
     pub address: String,
