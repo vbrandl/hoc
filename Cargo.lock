@@ -1558,6 +1558,7 @@ dependencies = [
  "dotenvy",
  "futures",
  "git2",
+ "lazy_static",
  "mime",
  "number_prefix",
  "openssl-probe",
