@@ -5,7 +5,11 @@ use std::net::TcpListener;
 use tempfile::{tempdir, TempDir};
 
 static TRACING: () = {
-    let filter = if std::env::var("TEST_LOG").is_ok() { "debug" } else { "" };
+    let filter = if std::env::var("TEST_LOG").is_ok() {
+        "debug"
+    } else {
+        ""
+    };
     let subscriber = telemetry::get_subscriber("test", filter);
     telemetry::init_subscriber(subscriber);
 };
