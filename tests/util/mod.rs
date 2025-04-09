@@ -1,10 +1,10 @@
 use hoc::{config::Settings, telemetry};
 
-use std::net::TcpListener;
+use std::{net::TcpListener, sync::LazyLock};
 
 use tempfile::{tempdir, TempDir};
 
-static TRACING: () = {
+static TRACING: LazyLock<()> = LazyLock::new(|| {
     let filter = if std::env::var("TEST_LOG").is_ok() {
         "debug"
     } else {
@@ -12,7 +12,7 @@ static TRACING: () = {
     };
     let subscriber = telemetry::get_subscriber("test", filter);
     telemetry::init_subscriber(subscriber);
-};
+});
 
 pub struct TestApp {
     pub address: String,
@@ -22,7 +22,7 @@ pub struct TestApp {
 }
 
 pub async fn spawn_app() -> TestApp {
-    lazy_static::initialize(&TRACING);
+    LazyLock::force(&TRACING);
 
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
 
