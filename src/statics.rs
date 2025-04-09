@@ -1,4 +1,4 @@
-use lazy_static::lazy_static;
+use std::sync::LazyLock;
 
 #[derive(Clone, Copy)]
 pub struct VersionInfo<'a> {
@@ -11,6 +11,4 @@ pub(crate) const VERSION_INFO: VersionInfo = VersionInfo {
     version: env!("CARGO_PKG_VERSION"),
 };
 
-lazy_static! {
-    pub(crate) static ref CLIENT: reqwest::Client = reqwest::Client::new();
-}
+pub(crate) static CLIENT: LazyLock<reqwest::Client> = LazyLock::new(reqwest::Client::new);

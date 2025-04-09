@@ -135,7 +135,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
             arg.push(branch.to_string());
             arg_commit_count.push(branch.to_string());
         }
-    };
+    }
     arg.push("--".to_string());
     arg.push(".".to_string());
     let output = Command::new("git")
