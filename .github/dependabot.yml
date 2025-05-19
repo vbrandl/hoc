@@ -11,6 +11,13 @@ updates:
     labels:
       - dependencies
       - dependabot
+    groups:
+      minor:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: 'github-actions'
     directory: '/'
@@ -22,6 +29,13 @@ updates:
     labels:
       - dependabot
       - dependencies
+    groups:
+      minor:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: docker
     directory: "/"
@@ -34,3 +48,10 @@ updates:
     labels:
       - dependencies
       - dependabot
+    groups:
+      minor:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch

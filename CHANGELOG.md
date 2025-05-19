@@ -5,6 +5,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.39.0] 2025-04-09
+
+- Document and clarify how the metric is calculated. Thank you @razum2um [#923](https://github.com/vbrandl/hoc/pull/923)
+
+### Dependencies
+- Bump `anyhow` from 1.0.89 to 1.0.97 ([#840](https://github.com/vbrandl/hoc/pull/840), [#843](https://github.com/vbrandl/hoc/pull/843), [#849](https://github.com/vbrandl/hoc/pull/849), [#850](https://github.com/vbrandl/hoc/pull/850), [#864](https://github.com/vbrandl/hoc/pull/864), [#869](https://github.com/vbrandl/hoc/pull/869), [#897](https://github.com/vbrandl/hoc/pull/897), [#904](https://github.com/vbrandl/hoc/pull/904))
+- Bump `serde_json` from 1.0.128 to 1.0.140 ([#841](https://github.com/vbrandl/hoc/pull/841), [#854](https://github.com/vbrandl/hoc/pull/854), [#870](https://github.com/vbrandl/hoc/pull/870), [#877](https://github.com/vbrandl/hoc/pull/877), [#883](https://github.com/vbrandl/hoc/pull/883), [#885](https://github.com/vbrandl/hoc/pull/885), [#896](https://github.com/vbrandl/hoc/pull/896), [#903](https://github.com/vbrandl/hoc/pull/903))
+- Bump `tracing-actix-web` from 0.7.13 to 0.7.16 ([#839](https://github.com/vbrandl/hoc/pull/839), [#855](https://github.com/vbrandl/hoc/pull/855), [#901](https://github.com/vbrandl/hoc/pull/901))
+- Bump `bytes` from 1.7.2 to 1.10.1 ([#842](https://github.com/vbrandl/hoc/pull/842), [#861](https://github.com/vbrandl/hoc/pull/861), [#890](https://github.com/vbrandl/hoc/pull/890), [#905](https://github.com/vbrandl/hoc/pull/905))
+- Bump `tokio` from 1.40.0 to 1.44.1 ([#844](https://github.com/vbrandl/hoc/pull/844), [#851](https://github.com/vbrandl/hoc/pull/851), [#863](https://github.com/vbrandl/hoc/pull/863), [#878](https://github.com/vbrandl/hoc/pull/878), [#912](https://github.com/vbrandl/hoc/pull/912), [#919](https://github.com/vbrandl/hoc/pull/919))
+- Bump `serde` from 1.0.210 to 1.0.219 ([#845](https://github.com/vbrandl/hoc/pull/845), [#847](https://github.com/vbrandl/hoc/pull/847), [#853](https://github.com/vbrandl/hoc/pull/853), [#866](https://github.com/vbrandl/hoc/pull/866), [#872](https://github.com/vbrandl/hoc/pull/872), [#898](https://github.com/vbrandl/hoc/pull/898), [#910](https://github.com/vbrandl/hoc/pull/910))
+- Bump `config` from 0.14.0 to 0.15.11 ([#846](https://github.com/vbrandl/hoc/pull/846), [#867](https://github.com/vbrandl/hoc/pull/867), [#868](https://github.com/vbrandl/hoc/pull/868), [#882](https://github.com/vbrandl/hoc/pull/882), [#887](https://github.com/vbrandl/hoc/pull/887), [#893](https://github.com/vbrandl/hoc/pull/893), [#906](https://github.com/vbrandl/hoc/pull/906), [#918](https://github.com/vbrandl/hoc/pull/918))
+- Bump `reqwest` from 0.12.8 to 0.12.15 ([#848](https://github.com/vbrandl/hoc/pull/848), [#873](https://github.com/vbrandl/hoc/pull/873), [#874](https://github.com/vbrandl/hoc/pull/874), [#917](https://github.com/vbrandl/hoc/pull/917), [#918](https://github.com/vbrandl/hoc/pull/918), [#921](https://github.com/vbrandl/hoc/pull/921))
+- Bump `tempfile` from 3.13.0 to 3.19.1 ([#852](https://github.com/vbrandl/hoc/pull/852), [#875](https://github.com/vbrandl/hoc/pull/875), [#886](https://github.com/vbrandl/hoc/pull/886), [#895](https://github.com/vbrandl/hoc/pull/895), [#919](https://github.com/vbrandl/hoc/pull/919), [#922](https://github.com/vbrandl/hoc/pull/922))
+- Bump `vergen-gix` from 1.0.2 to 1.0.6 ([#858](https://github.com/vbrandl/hoc/pull/858), [#879](https://github.com/vbrandl/hoc/pull/879), [#880](https://github.com/vbrandl/hoc/pull/880))
+- Bump `tracing-bunyan-formatter` from 0.3.9 to 0.3.10 ([#859](https://github.com/vbrandl/hoc/pull/859))
+- Bump `tracing` from 0.1.40 to 0.1.41 ([#860](https://github.com/vbrandl/hoc/pull/860))
+- Bump `tracing-subscriber` from 0.3.18 to 0.3.19 ([#862](https://github.com/vbrandl/hoc/pull/862))
+- Bump `actions/attest-build-provenance` from 1 to 2 ([#865](https://github.com/vbrandl/hoc/pull/865))
+- Bump `git2` from 0.19.0 to 0.20.1 ([#876](https://github.com/vbrandl/hoc/pull/876), [#920](https://github.com/vbrandl/hoc/pull/920))
+- Bump `openssl-probe` from 0.1.5 to 0.1.6 ([#884](https://github.com/vbrandl/hoc/pull/884))
+- Bump `ructe` from 0.17.2 to 0.18.2 ([#891](https://github.com/vbrandl/hoc/pull/891), [#892](https://github.com/vbrandl/hoc/pull/892))
+- Bump `dangoslen/dependabot-changelog-helper` from 3 to 4 ([#902](https://github.com/vbrandl/hoc/pull/902))
+- Bump `awc` from 3.5.1 to 3.6.0 ([#911](https://github.com/vbrandl/hoc/pull/911))
+- Bump `actix-web` from 4.9.0 to 4.10.2 ([#914](https://github.com/vbrandl/hoc/pull/914))
+- Bump `openssl` from 0.10.71 to 0.10.72 ([#924](https://github.com/vbrandl/hoc/pull/924))
+
 ## [0.38.0] 2024-10-16
 
 ### Fixes

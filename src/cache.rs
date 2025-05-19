@@ -1,4 +1,5 @@
 use crate::error::{Error, Result};
+
 use std::{
     borrow::Cow,
     collections::HashMap,
@@ -6,6 +7,9 @@ use std::{
     io::BufReader,
     path::Path,
 };
+
+use serde::{Deserialize, Serialize};
+use tracing::{instrument, trace};
 
 /// Enum to indicate the state of the cache
 #[derive(Debug)]
@@ -126,7 +130,7 @@ pub(crate) struct CacheEntry<'a> {
     pub commits: u64,
 }
 
-impl<'a> Cache<'a> {
+impl Cache<'_> {
     #[instrument]
     pub(crate) fn write_to_file(&self, path: impl AsRef<Path> + std::fmt::Debug) -> Result<()> {
         trace!("Persisting cache to disk");

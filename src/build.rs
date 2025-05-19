@@ -1,9 +1,10 @@
 use anyhow::Result;
 use ructe::Ructe;
-use vergen::EmitBuilder;
+use vergen_gix::{Emitter, GixBuilder};
 
 fn main() -> Result<()> {
-    EmitBuilder::builder().git_sha(true).emit()?;
+    let gix = GixBuilder::default().sha(true).build()?;
+    Emitter::default().add_instructions(&gix)?.emit()?;
 
     let mut ructe = Ructe::from_env()?;
     let mut statics = ructe.statics()?;

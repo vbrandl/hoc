@@ -18,8 +18,15 @@ gives an overview about the amount of work put into a codebase.
 </p>
 
 <p>
-There is a <a href="https://github.com/yegor256/hoc/">command-line tool</a> to calculate the HoC of a repository, but
-some people might want a nice badge to put in their README, that's why I implemented this API. Currently the API can be
+There is a <a href="https://github.com/yegor256/hoc/">command-line tool</a> to calculate the HoC of a repository. For a Git repository you can use this one-line command:
+</p>
+
+<pre>
+git log --pretty=tformat: --numstat --ignore-space-change --ignore-all-space --ignore-submodules --no-color --find-copies-harder -M --diff-filter=ACDM -- . | awk '$1 ~ /^[0-9]+$/ && $2 ~ /^[0-9]+$/ &#123 add += $1; del += $2 &#125 END &#123 print add + del &#125'
+</pre>
+
+<p>
+Some people might want a nice badge to put in their README, that's why I implemented this API. Currently the API can be
 used for GitHub, GitLab, Bitbucket and Sourcehut repositories. Just put the following code in your README:
 </p>
 

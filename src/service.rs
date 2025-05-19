@@ -4,6 +4,7 @@ use actix_web::{
     dev::{ServiceFactory, ServiceRequest},
     web, App,
 };
+use serde::{Deserialize, Serialize};
 
 pub(crate) trait Service: Sized + 'static {
     fn domain() -> &'static str;
