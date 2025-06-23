@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+### Dependencies
+
+- Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#930](https://github.com/vbrandl/hoc/pull/930))
+
 ## [0.39.0] 2025-04-09
 
 - Document and clarify how the metric is calculated. Thank you @razum2um [#923](https://github.com/vbrandl/hoc/pull/923)
