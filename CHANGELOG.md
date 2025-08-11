@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Dependencies
-
+- Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#930](https://github.com/vbrandl/hoc/pull/930))
+- Bump `actions/checkout` from 4 to 5 ([#931](https://github.com/vbrandl/hoc/pull/931))
 - Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#930](https://github.com/vbrandl/hoc/pull/930))
 
 ## [0.39.0] 2025-04-09
