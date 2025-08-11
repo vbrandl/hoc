@@ -358,9 +358,9 @@ pub(crate) async fn json_hoc<T: Service>(
     state: web::Data<State>,
     repo_count: web::Data<AtomicUsize>,
     data: web::Path<(String, String)>,
-    query: web::Query<BadgeQuery>,
+    branch: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse> {
-    let branch = query.branch.as_deref().unwrap_or("master");
+    let branch = branch.branch.as_deref().unwrap_or("master");
     let rc_clone = repo_count.clone();
     let mapper = move |r| match r {
         HocResult::NotFound => p404(&rc_clone),
