@@ -38,7 +38,9 @@ use actix_web::{
     post, web, App, HttpResponse, HttpServer, Responder,
 };
 use badgers::{Badge, BadgeOptions};
+use bytes::BytesMut;
 use git2::{BranchType, Repository};
+use gix_glob::{pattern::Case, wildmatch::Mode, Pattern};
 use number_prefix::NumberPrefix;
 use serde::{Deserialize, Serialize};
 use templates::statics::{self as template_statics, StaticFile};
@@ -82,7 +84,6 @@ struct BadgeQuery {
     branch: Option<String>,
     #[serde(default = "default_label")]
     label: String,
-    exclude: Option<String>,
 }
 
 fn default_label() -> String {
@@ -96,28 +97,10 @@ fn pull(path: impl AsRef<Path>) -> Result<()> {
     Ok(())
 }
 
-fn hoc(
-    repo: &str,
-    repo_dir: &str,
-    cache_dir: &str,
-    branch: &str,
-    exclude: Option<&str>,
-) -> Result<(u64, String, u64)> {
+fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64, String, u64)> {
     let repo_dir = format!("{repo_dir}/{repo}");
-    let cache_file_name = match exclude {
-        None => repo.to_string(),
-        Some(query_param) => {
-            let mut files_to_exclude = query_param
-                .split(',')
-                .map(|file| file.trim().replace('.', "_"))
-                .collect::<Vec<String>>();
-            files_to_exclude.sort();
-            let cache_suffix = files_to_exclude.join("_");
-            format!("{repo}_{cache_suffix}")
-        }
-    };
-    let cache_path = format!("{cache_dir}/{cache_file_name}.json");
-    let cache_path = Path::new(&cache_path);
+    let cache_dir = format!("{cache_dir}/{repo}.json");
+    let cache_path = Path::new(&cache_dir);
     let repo = Repository::open_bare(&repo_dir)?;
     // TODO: do better...
     let head = repo
@@ -170,31 +153,71 @@ fn hoc(
         .stdout;
     let output_commits = String::from_utf8_lossy(&output_commits);
     let commits: u64 = output_commits.trim().parse()?;
-
-    let mut files_to_exclude = Vec::<&str>::new();
-    if let Some(query_param) = exclude {
-        query_param
-            .split(',')
-            .for_each(|file| files_to_exclude.push(file));
-    }
+    let patterns_to_exclude = read_hocignore(&repo_dir)?;
 
     let count: u64 = output.lines().fold(0, |sum, s| {
-        if !files_to_exclude.is_empty() && files_to_exclude.iter().any(|file| s.ends_with(file)) {
+        let mut parts = s.split_whitespace();
+        let additions = parts.next();
+        let deletions = parts.next();
+        let file_path = parts.next().unwrap_or_default();
+
+        if is_matched(file_path, &patterns_to_exclude) {
             return sum;
         }
-        let current = s
-            .split_whitespace()
-            .take(2)
-            .map(str::parse::<u64>)
-            .filter_map(std::result::Result::ok)
-            .sum::<u64>();
-        sum + current
+
+        let additions: u64 = additions.and_then(|s| s.parse().ok()).unwrap_or_default();
+        let deletions: u64 = deletions.and_then(|s| s.parse().ok()).unwrap_or_default();
+
+        sum + additions + deletions
     });
 
     let cache = cache.calculate_new_cache(count, commits, (&head).into(), branch);
     cache.write_to_file(cache_path)?;
 
     Ok((count, head, commits))
+}
+
+#[inline(always)]
+fn read_hocignore(repo_dir: &str) -> Result<Vec<Pattern>> {
+    let hocignore_path = Path::new(repo_dir).join(".hocignore");
+    if !hocignore_path.exists() {
+        return Ok(Vec::default());
+    }
+
+    let content = std::fs::read_to_string(hocignore_path)?;
+    Ok(build_patterns(&content))
+}
+
+#[inline(always)]
+fn build_patterns(content: &str) -> Vec<Pattern> {
+    content
+        .lines()
+        .filter_map(|line| {
+            let pattern = line.trim();
+            if pattern.is_empty() || pattern.starts_with('#') {
+                None
+            } else {
+                let mut bytes = BytesMut::from(pattern.as_bytes());
+                if pattern.ends_with('/') {
+                    bytes.extend_from_slice(b"*");
+                }
+                Pattern::from_bytes(bytes.as_ref())
+            }
+        })
+        .collect()
+}
+
+#[inline(always)]
+fn is_matched(file_path: &str, patterns: &Vec<Pattern>) -> bool {
+    if file_path.is_empty() {
+        return false;
+    }
+
+    let bstr_path = file_path.into();
+
+    patterns.iter().any(|pattern| {
+        pattern.matches_repo_relative_path(bstr_path, None, None, Case::Sensitive, Mode::empty())
+    })
 }
 
 async fn remote_exists(url: &str) -> Result<bool> {
@@ -276,7 +299,6 @@ async fn handle_hoc_request<T, F>(
     repo_count: web::Data<AtomicUsize>,
     data: web::Path<(String, String)>,
     branch: &str,
-    exclude: Option<&str>,
     mapper: F,
 ) -> Result<HttpResponse>
 where
@@ -312,13 +334,7 @@ where
             repo_count.fetch_add(1, Ordering::Relaxed);
         }
         pull(&path)?;
-        let (hoc, head, commits) = hoc(
-            &service_url,
-            &state.repos(),
-            &state.cache(),
-            branch,
-            exclude,
-        )?;
+        let (hoc, head, commits) = hoc(&service_url, &state.repos(), &state.cache(), branch)?;
         #[allow(clippy::cast_precision_loss)]
         let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
             NumberPrefix::Standalone(hoc) => hoc.to_string(),
@@ -345,7 +361,6 @@ pub(crate) async fn json_hoc<T: Service>(
     query: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse> {
     let branch = query.branch.as_deref().unwrap_or("master");
-    let exclude = query.exclude.as_deref();
     let rc_clone = repo_count.clone();
     let mapper = move |r| match r {
         HocResult::NotFound => p404(&rc_clone),
@@ -358,7 +373,7 @@ pub(crate) async fn json_hoc<T: Service>(
             commits,
         })),
     };
-    handle_hoc_request::<T, _>(state, repo_count, data, branch, exclude, mapper).await
+    handle_hoc_request::<T, _>(state, repo_count, data, branch, mapper).await
 }
 
 fn no_cache_response(body: Vec<u8>) -> HttpResponse {
@@ -399,7 +414,6 @@ pub(crate) async fn calculate_hoc<T: Service>(
         }
     };
     let branch = query.branch.as_deref().unwrap_or("master");
-    let exclude = query.exclude.as_deref();
     let error_badge = |_| {
         let error_badge = Badge::new(BadgeOptions {
             subject: query.label.clone(),
@@ -410,7 +424,7 @@ pub(crate) async fn calculate_hoc<T: Service>(
         let body = error_badge.to_svg().as_bytes().to_vec();
         no_cache_response(body)
     };
-    handle_hoc_request::<T, _>(state, repo_count, data, branch, exclude, mapper)
+    handle_hoc_request::<T, _>(state, repo_count, data, branch, mapper)
         .await
         .unwrap_or_else(error_badge)
 }
@@ -422,7 +436,6 @@ async fn overview<T: Service>(
     query: web::Query<BadgeQuery>,
 ) -> Result<HttpResponse> {
     let branch = query.branch.as_deref().unwrap_or("master");
-    let exclude = query.exclude.as_deref();
     let label = query.label.clone();
     let base_url = state.settings.base_url.clone();
     let rc_clone = repo_count.clone();
@@ -460,7 +473,7 @@ async fn overview<T: Service>(
             Ok(HttpResponse::Ok().content_type("text/html").body(buf))
         }
     };
-    handle_hoc_request::<T, _>(state, repo_count, data, branch, exclude, mapper).await
+    handle_hoc_request::<T, _>(state, repo_count, data, branch, mapper).await
 }
 
 #[get("/health_check")]
@@ -592,4 +605,79 @@ pub async fn run(listener: TcpListener, settings: Settings) -> std::io::Result<S
     let span = info_span!("hoc", version = env!("CARGO_PKG_VERSION"));
     let _ = span.enter();
     start_server(listener, settings).instrument(span).await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_empty_patterns() {
+        let patterns = build_patterns("");
+        assert!(!is_matched("src/main.rs", &patterns));
+    }
+
+    #[test]
+    fn test_empty_path() {
+        let patterns = build_patterns("*.rs");
+        assert!(!is_matched("", &patterns));
+    }
+
+    #[test]
+    fn test_simple_extension_match() {
+        let patterns = build_patterns("*.rs");
+        assert!(is_matched("src/main.rs", &patterns));
+        assert!(is_matched("lib.rs", &patterns));
+        assert!(!is_matched("README.md", &patterns));
+    }
+
+    #[test]
+    fn test_directory_match() {
+        let patterns = build_patterns(
+            r"
+                target/
+                dist/*
+                **/temp/
+            ",
+        );
+        assert!(is_matched("target/", &patterns));
+        assert!(is_matched("target/file.txt", &patterns));
+        assert!(is_matched("dist/", &patterns));
+        assert!(is_matched("dist/main.js", &patterns));
+        assert!(is_matched("src/temp/file.txt", &patterns));
+        assert!(!is_matched("src/main.rs", &patterns));
+    }
+
+    #[test]
+    fn test_multiple_patterns() {
+        let patterns = build_patterns(
+            r"
+                *.rs
+                *.md
+            ",
+        );
+        assert!(is_matched("src/main.rs", &patterns));
+        assert!(is_matched("README.md", &patterns));
+        assert!(!is_matched("Makefile", &patterns));
+    }
+
+    #[test]
+    fn test_exact_filename_match() {
+        let patterns = build_patterns("config.toml");
+        assert!(is_matched("config.toml", &patterns));
+        assert!(!is_matched("src/config.toml", &patterns));
+    }
+
+    #[test]
+    fn test_complex_patterns() {
+        let patterns = build_patterns(
+            r"
+                src/**/*.bak
+                *.log
+            ",
+        );
+        assert!(is_matched("src/utils/backup.bak", &patterns));
+        assert!(is_matched("error.log", &patterns));
+        assert!(!is_matched("src/main.rs", &patterns));
+    }
 }

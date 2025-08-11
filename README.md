@@ -43,12 +43,7 @@ will respond with a redirect to the overview page so the cache is rebuilt direct
 
 ## Files excluding
 
-If you want to ignore some files on a HoC score calculating you can pass an `exclude` query parameter to a link:
-
-```
-https://<host>/<service>/<user>/<repo>?exclude=Cargo.lock
-https://<host>/<service>/<user>/<repo>?exclude=package-lock.json,yarn.lock
-```
+If you want to ignore some files on a HoC score calculating you can add a `.hocignore` file to a root of your repository. It works just like a .gitignore file but for the HoC calculation.
 
 ## Building
 
