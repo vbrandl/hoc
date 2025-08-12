@@ -38,7 +38,9 @@ use actix_web::{
     post, web, App, HttpResponse, HttpServer, Responder,
 };
 use badgers::{Badge, BadgeOptions};
+use bytes::BytesMut;
 use git2::{BranchType, Repository};
+use gix_glob::{pattern::Case, wildmatch::Mode, Pattern};
 use number_prefix::NumberPrefix;
 use serde::{Deserialize, Serialize};
 use templates::statics::{self as template_statics, StaticFile};
@@ -98,7 +100,7 @@ fn pull(path: impl AsRef<Path>) -> Result<()> {
 fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64, String, u64)> {
     let repo_dir = format!("{repo_dir}/{repo}");
     let cache_dir = format!("{cache_dir}/{repo}.json");
-    let cache_dir = Path::new(&cache_dir);
+    let cache_path = Path::new(&cache_dir);
     let repo = Repository::open_bare(&repo_dir)?;
     // TODO: do better...
     let head = repo
@@ -119,7 +121,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
         "-M".to_string(),
         "--diff-filter=ACDM".to_string(),
     ];
-    let cache = CacheState::read_from_file(cache_dir, branch, &head)?;
+    let cache = CacheState::read_from_file(cache_path, branch, &head)?;
     match &cache {
         CacheState::Current { count, commits, .. } => {
             info!("Using cache");
@@ -137,7 +139,7 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
         }
     }
     arg.push("--".to_string());
-    arg.push(".".to_string());
+    arg.push('.'.to_string());
     let output = Command::new("git")
         .args(&arg)
         .current_dir(&repo_dir)
@@ -151,21 +153,71 @@ fn hoc(repo: &str, repo_dir: &str, cache_dir: &str, branch: &str) -> Result<(u64
         .stdout;
     let output_commits = String::from_utf8_lossy(&output_commits);
     let commits: u64 = output_commits.trim().parse()?;
-    let count: u64 = output
-        .lines()
-        .map(|s| {
-            s.split_whitespace()
-                .take(2)
-                .map(str::parse::<u64>)
-                .filter_map(std::result::Result::ok)
-                .sum::<u64>()
-        })
-        .sum();
+    let patterns_to_exclude = read_hocignore(&repo_dir)?;
+
+    let count: u64 = output.lines().fold(0, |sum, s| {
+        let mut parts = s.split_whitespace();
+        let additions = parts.next();
+        let deletions = parts.next();
+        let file_path = parts.next().unwrap_or_default();
+
+        if is_matched(file_path, &patterns_to_exclude) {
+            return sum;
+        }
+
+        let additions: u64 = additions.and_then(|s| s.parse().ok()).unwrap_or_default();
+        let deletions: u64 = deletions.and_then(|s| s.parse().ok()).unwrap_or_default();
+
+        sum + additions + deletions
+    });
 
     let cache = cache.calculate_new_cache(count, commits, (&head).into(), branch);
-    cache.write_to_file(cache_dir)?;
+    cache.write_to_file(cache_path)?;
 
     Ok((count, head, commits))
+}
+
+#[inline(always)]
+fn read_hocignore(repo_dir: &str) -> Result<Vec<Pattern>> {
+    let hocignore_path = Path::new(repo_dir).join(".hocignore");
+    if !hocignore_path.exists() {
+        return Ok(Vec::default());
+    }
+
+    let content = std::fs::read_to_string(hocignore_path)?;
+    Ok(build_patterns(&content))
+}
+
+#[inline(always)]
+fn build_patterns(content: &str) -> Vec<Pattern> {
+    content
+        .lines()
+        .filter_map(|line| {
+            let pattern = line.trim();
+            if pattern.is_empty() || pattern.starts_with('#') {
+                None
+            } else {
+                let mut bytes = BytesMut::from(pattern.as_bytes());
+                if pattern.ends_with('/') {
+                    bytes.extend_from_slice(b"*");
+                }
+                Pattern::from_bytes(bytes.as_ref())
+            }
+        })
+        .collect()
+}
+
+#[inline(always)]
+fn is_matched(file_path: &str, patterns: &Vec<Pattern>) -> bool {
+    if file_path.is_empty() {
+        return false;
+    }
+
+    let bstr_path = file_path.into();
+
+    patterns.iter().any(|pattern| {
+        pattern.matches_repo_relative_path(bstr_path, None, None, Case::Sensitive, Mode::empty())
+    })
 }
 
 async fn remote_exists(url: &str) -> Result<bool> {
@@ -553,4 +605,79 @@ pub async fn run(listener: TcpListener, settings: Settings) -> std::io::Result<S
     let span = info_span!("hoc", version = env!("CARGO_PKG_VERSION"));
     let _ = span.enter();
     start_server(listener, settings).instrument(span).await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_empty_patterns() {
+        let patterns = build_patterns("");
+        assert!(!is_matched("src/main.rs", &patterns));
+    }
+
+    #[test]
+    fn test_empty_path() {
+        let patterns = build_patterns("*.rs");
+        assert!(!is_matched("", &patterns));
+    }
+
+    #[test]
+    fn test_simple_extension_match() {
+        let patterns = build_patterns("*.rs");
+        assert!(is_matched("src/main.rs", &patterns));
+        assert!(is_matched("lib.rs", &patterns));
+        assert!(!is_matched("README.md", &patterns));
+    }
+
+    #[test]
+    fn test_directory_match() {
+        let patterns = build_patterns(
+            r"
+                target/
+                dist/*
+                **/temp/
+            ",
+        );
+        assert!(is_matched("target/", &patterns));
+        assert!(is_matched("target/file.txt", &patterns));
+        assert!(is_matched("dist/", &patterns));
+        assert!(is_matched("dist/main.js", &patterns));
+        assert!(is_matched("src/temp/file.txt", &patterns));
+        assert!(!is_matched("src/main.rs", &patterns));
+    }
+
+    #[test]
+    fn test_multiple_patterns() {
+        let patterns = build_patterns(
+            r"
+                *.rs
+                *.md
+            ",
+        );
+        assert!(is_matched("src/main.rs", &patterns));
+        assert!(is_matched("README.md", &patterns));
+        assert!(!is_matched("Makefile", &patterns));
+    }
+
+    #[test]
+    fn test_exact_filename_match() {
+        let patterns = build_patterns("config.toml");
+        assert!(is_matched("config.toml", &patterns));
+        assert!(!is_matched("src/config.toml", &patterns));
+    }
+
+    #[test]
+    fn test_complex_patterns() {
+        let patterns = build_patterns(
+            r"
+                src/**/*.bak
+                *.log
+            ",
+        );
+        assert!(is_matched("src/utils/backup.bak", &patterns));
+        assert!(is_matched("error.log", &patterns));
+        assert!(!is_matched("src/main.rs", &patterns));
+    }
 }

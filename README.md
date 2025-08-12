@@ -41,6 +41,10 @@ To delete a repository and the cache from the server, send a `POST` request to
 `https://<host>/<service>/<user>/<repo>/delete`. On the overview page, there is a button to perform this operation. It
 will respond with a redirect to the overview page so the cache is rebuilt directly.
 
+## Files excluding
+
+If you want to ignore some files on a HoC score calculating you can add a `.hocignore` file to a root of your repository. It works just like a .gitignore file but for the HoC calculation.
+
 ## Building
 
 The code can be built as a standalone binary, using `cargo` or as a Docker container. Run either
