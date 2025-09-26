@@ -13,24 +13,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
 
       - name: Check Formatting
         run: cargo fmt --all -- --check
-
 
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
 
       - name: Cache cargo registry, index and build directory
         uses: actions/cache@v4
@@ -44,7 +47,6 @@ jobs:
       - name: Clippy Linting
         run: cargo clippy --all-features --tests --examples -- -Dclippy::all -Dclippy::pedantic
 
-
   test:
     name: Test Suite
     runs-on: ${{ matrix.os }}
@@ -56,7 +58,7 @@ jobs:
 
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
