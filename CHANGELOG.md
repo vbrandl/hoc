@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing-subscriber` from 0.3.19 to 0.3.20 ([#933](https://github.com/vbrandl/hoc/pull/933))
 - Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#930](https://github.com/vbrandl/hoc/pull/930))
 - Bump `actions/attest-build-provenance` from 2 to 3 ([#932](https://github.com/vbrandl/hoc/pull/932))
+- Bump `actions/checkout` from 4 to 5 ([#931](https://github.com/vbrandl/hoc/pull/931))
 
 ## [0.39.0] 2025-04-09
 
