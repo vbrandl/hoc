@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Dependencies
-- Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#930](https://github.com/vbrandl/hoc/pull/930))
+- Bump `stefanzweifel/git-auto-commit-action` from 5 to 7 ([#930](https://github.com/vbrandl/hoc/pull/930), [#934](https://github.com/vbrandl/hoc/pull/934))
 - Bump `tracing-subscriber` from 0.3.19 to 0.3.20 ([#933](https://github.com/vbrandl/hoc/pull/933))
 - Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#930](https://github.com/vbrandl/hoc/pull/930))
 - Bump `actions/attest-build-provenance` from 2 to 3 ([#932](https://github.com/vbrandl/hoc/pull/932))
