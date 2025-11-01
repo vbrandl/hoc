@@ -19,10 +19,10 @@ updates:
           - minor
           - patch
 
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'daily'
+      interval: "daily"
     open-pull-requests-limit: 10
     assignees:
       - vbrandl
