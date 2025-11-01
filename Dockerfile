@@ -1,21 +1,21 @@
-# FROM ekidd/rust-musl-builder:stable as builder
-FROM clux/muslrust:stable as builder
+FROM blackdex/rust-musl:x86_64-musl-stable as builder
 
+WORKDIR /app
 # create new cargo project
-RUN cargo init --lib
-# RUN USER=rust cargo init --lib
-RUN echo 'fn main() { println!("Hello, world!"); }' >> src/main.rs
+RUN cargo init --lib \
+        && echo 'fn main() { println!("Hello, world!"); }' >> src/main.rs \
+        && echo 'fn foo() { println!("Hello, world!"); }' >> src/lib.rs
+
 # copy build config
-# COPY --chown=rust ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
 # HACK: remove build-dependencies so we have at least some caching
 RUN head -n $(($(grep -n "\[build-dependencies\]" Cargo.toml | cut -f1 -d:) - 1)) Cargo.toml | sed '/src\/build.rs/d' > \
         Cargo.toml2  && rm Cargo.toml && mv Cargo.toml2 Cargo.toml
 # build to cache dependencies
-RUN cargo build --release
 # delete build cache to prevent caching issues later on
-RUN rm -r ./target/x86_64-unknown-linux-musl/release/.fingerprint/hoc-*
+RUN cargo build --release \
+        && rm -r ./target/x86_64-unknown-linux-musl/release/.fingerprint/hoc-*
 
 # copy original Cargo.toml (HACK)
 COPY ./Cargo.toml ./Cargo.toml
@@ -28,11 +28,10 @@ COPY ./src ./src
 # build source code
 RUN cargo build --release
 
-FROM alpine:latest
+FROM alpine:3.22.2
 
-RUN apk --no-cache add --update git
-
-RUN adduser -D hoc
+RUN apk --no-cache add --update git \
+        && adduser -D hoc
 WORKDIR /home/hoc
 USER hoc
 
@@ -41,6 +40,6 @@ USER hoc
 # COPY --from=linuxkit/ca-certificates:v0.7 / /
 
 # COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/hoc .
-COPY --from=builder /volume/target/x86_64-unknown-linux-musl/release/hoc .
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/hoc .
 
 ENTRYPOINT ["/home/hoc/hoc"]
