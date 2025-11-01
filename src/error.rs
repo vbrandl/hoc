@@ -2,7 +2,7 @@ use crate::{statics::VERSION_INFO, templates};
 
 use std::fmt;
 
-use actix_web::{http::StatusCode, HttpResponse, ResponseError};
+use actix_web::{HttpResponse, ResponseError, http::StatusCode};
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;
 

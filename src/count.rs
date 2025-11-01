@@ -1,7 +1,7 @@
 use crate::error::Result;
 
 use std::{
-    fs::{read_dir, ReadDir},
+    fs::{ReadDir, read_dir},
     iter::once,
     path::Path,
     result::Result as StdResult,
