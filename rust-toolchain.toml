@@ -1,0 +1,3 @@
+[toolchain]
+components = ["rust-src", "rust-analyzer", "rustfmt", "clippy"]
+channel = "1.91.0"

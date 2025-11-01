@@ -2,7 +2,7 @@ use hoc::{config::Settings, telemetry};
 
 use std::{net::TcpListener, sync::LazyLock};
 
-use tempfile::{tempdir, TempDir};
+use tempfile::{TempDir, tempdir};
 
 static TRACING: LazyLock<()> = LazyLock::new(|| {
     let filter = if std::env::var("TEST_LOG").is_ok() {

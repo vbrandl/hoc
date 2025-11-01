@@ -1,8 +1,8 @@
 [package]
 name = "hoc"
-version = "0.39.0"
+version = "0.40.0"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
-edition = "2021"
+edition = "2024"
 build = "src/build.rs"
 
 [lib]
@@ -13,22 +13,22 @@ path = "src/main.rs"
 name = "hoc"
 
 [dependencies]
-actix-rt = "2.10.0"
-actix-web = "4.10.2"
+actix-rt = "2.11.0"
+actix-web = "4.11.0"
 badgers = "1.2.0"
 bytes = "1.10.1"
-config = { version = "0.15.11", features = ["toml"], default-features = false }
+config = { version = "0.15.18", features = ["toml"], default-features = false }
 dotenvy = "0.15.7"
 futures = "0.3.31"
-git2 = "0.20.1"
+git2 = "0.20.2"
 mime = "0.3"
 number_prefix = "0.4.0"
 openssl-probe = "0.1.6"
-reqwest = "0.12.15"
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
+reqwest = "0.12.24"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
 tracing = "0.1.41"
-tracing-actix-web = "0.7.16"
+tracing-actix-web = "0.7.19"
 tracing-bunyan-formatter = "0.3.10"
 tracing-futures = "0.2.5"
 tracing-log = "0.2.0"
@@ -38,12 +38,12 @@ tracing-subscriber = { version = "0.3.20", features = [
 ] }
 
 [build-dependencies]
-anyhow = "1.0.97"
+anyhow = "1.0.100"
 ructe = { version = "0.18.2", features = ["mime03"] }
-vergen-gix = "1.0.6"
+vergen-gix = "1.0.9"
 
 [dev-dependencies]
-awc = "3.6.0"
+awc = "3.8.1"
 ructe = "0.18.2"
-tempfile = "3.19.1"
-tokio = "1.44.1"
+tempfile = "3.23.0"
+tokio = "1.48.0"

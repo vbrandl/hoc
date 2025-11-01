@@ -1,5 +1,3 @@
-#![type_length_limit = "2257138"]
-
 mod cache;
 pub mod config;
 pub mod count;
@@ -31,18 +29,19 @@ use std::{
 };
 
 use actix_web::{
+    App, HttpResponse, HttpServer, Responder,
     dev::Server,
     get,
     http::header::{CacheControl, CacheDirective, Expires, LOCATION},
     middleware::{self, TrailingSlash},
-    post, web, App, HttpResponse, HttpServer, Responder,
+    post, web,
 };
 use badgers::{Badge, BadgeOptions};
 use git2::{BranchType, Repository};
 use number_prefix::NumberPrefix;
 use serde::{Deserialize, Serialize};
 use templates::statics::{self as template_statics, StaticFile};
-use tracing::{info, info_span, warn, Instrument};
+use tracing::{Instrument, info, info_span, warn};
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
