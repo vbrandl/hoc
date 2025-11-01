@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.40.0] 2025-11-01
+
 ### Changes
 
 - dev shell using nix-flake ([#936](https://github.com/vbrandl/hoc/pull/936))
