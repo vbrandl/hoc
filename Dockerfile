@@ -1,5 +1,4 @@
-# FROM ekidd/rust-musl-builder:stable as builder
-FROM clux/muslrust:stable as builder
+FROM blackdex/rust-musl:x86_64-musl-stable as builder
 
 WORKDIR /app
 # create new cargo project
