@@ -12,6 +12,11 @@ use tracing::{instrument, trace};
 /// The on disk layout for served repos is `<service>/<user>/<repo>`
 /// so to get the amount of repos, we just have to count everything
 /// in `*/*/*` to get the count.
+///
+/// # Errors
+///
+/// * if `repo_path` cannot be created
+/// * if `repo_path` cannot be read
 #[instrument]
 pub fn count_repositories<P>(repo_path: P) -> Result<usize>
 where
