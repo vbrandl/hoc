@@ -1,6 +1,6 @@
 use crate::{
     State,
-    cache::Persist,
+    cache::{Excludes, Persist},
     error::Result,
     hoc, http,
     service::Service,
@@ -44,6 +44,15 @@ pub(crate) struct BadgeQuery {
     exclude: String,
     #[serde(default = "default_label")]
     label: String,
+}
+
+impl BadgeQuery {
+    fn excludes(&self) -> Excludes {
+        self.exclude
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .collect()
+    }
 }
 
 fn default_label() -> String {
@@ -116,11 +125,31 @@ where
             }
         })?;
         repo_count.fetch_sub(1, Ordering::Relaxed);
-        let branch_query = branch
-            .branch
-            .as_ref()
-            .map_or_else(String::new, |b| format!("&branch={b}"));
-        let query = format!("?label={}{branch_query}", branch.label);
+
+        let branch_query = branch.branch.as_ref().map(|b| format!("branch={b}"));
+
+        let excludes = branch.excludes();
+        let exclude_query = if excludes.is_empty() {
+            None
+        } else {
+            let excludes: Vec<_> = excludes.iter().map(AsRef::as_ref).collect();
+            let excludes = excludes.join(",");
+            let excludes = urlencoding::encode(&excludes);
+            Some(excludes.to_string())
+        };
+
+        let label_query = Some(format!("label={}", branch.label));
+
+        let query: Vec<_> = [branch_query, exclude_query, label_query]
+            .into_iter()
+            .flatten()
+            .collect();
+        let query = query.join("&");
+        let query = if query.is_empty() {
+            query
+        } else {
+            format!("?{query}")
+        };
         Ok(HttpResponse::TemporaryRedirect()
             .insert_header((
                 LOCATION,
@@ -210,11 +239,7 @@ pub(crate) async fn json_hoc<T: Service>(
 ) -> Result<HttpResponse> {
     let query = query.into_inner();
     let branch = query.branch.as_deref().unwrap_or("master");
-    let exclude = query
-        .exclude
-        .split(',')
-        .map(|s| s.trim().to_string())
-        .collect();
+    let exclude = query.excludes();
     let repo_count = repo_count.into_inner();
     let r = handle_hoc_request::<T>(state, cache, &repo_count, data, exclude, branch).await?;
     match r {
@@ -255,11 +280,7 @@ pub(crate) async fn calculate_hoc<T: Service>(
     let repo_count = repo_count.into_inner();
     let label = query.label.clone();
     let branch = query.branch.as_deref().unwrap_or("master");
-    let exclude = query
-        .exclude
-        .split(',')
-        .map(|s| s.trim().to_string())
-        .collect();
+    let exclude = query.excludes();
     if let Ok(r) = handle_hoc_request::<T>(state, cache, &repo_count, data, exclude, branch).await {
         match r {
             HocResult::NotFound => http::p404(&repo_count),
@@ -300,11 +321,7 @@ pub(crate) async fn overview<T: Service>(
     let repo_count = repo_count.into_inner();
     let label = query.label.clone();
     let base_url = state.settings.base_url.clone();
-    let exclude = query
-        .exclude
-        .split(',')
-        .map(|s| s.trim().to_string())
-        .collect();
+    let exclude = query.excludes();
     let r = handle_hoc_request::<T>(state, cache, &repo_count, data, exclude, branch).await?;
     match r {
         HocResult::NotFound => http::p404(&repo_count),
