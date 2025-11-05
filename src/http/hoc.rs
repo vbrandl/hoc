@@ -86,6 +86,7 @@ enum HocResult {
 
 pub(crate) async fn delete_repo_and_cache<T>(
     state: web::Data<State>,
+    cache: web::Data<Persist>,
     repo_count: web::Data<AtomicUsize>,
     data: web::Path<(String, String)>,
     branch: web::Query<BadgeQuery>,
@@ -94,6 +95,7 @@ where
     T: Service,
 {
     let data = data.into_inner();
+    let cache = cache.into_inner();
     let span = info_span!(
         "deleting repository and cache",
         service = T::domain(),
@@ -108,9 +110,9 @@ where
             data.1.to_lowercase()
         );
         info!("Deleting cache and repository");
-        let cache_dir = state.cache().join(&repo).with_extension("json");
+        let cache_dir = state.cache().join(&repo);
         let repo_dir = state.repos().join(&repo);
-        std::fs::remove_file(cache_dir).or_else(|e| {
+        std::fs::remove_dir_all(cache_dir).or_else(|e| {
             if e.kind() == io::ErrorKind::NotFound {
                 Ok(())
             } else {
@@ -125,6 +127,8 @@ where
             }
         })?;
         repo_count.fetch_sub(1, Ordering::Relaxed);
+
+        cache.clear();
 
         let branch_query = branch.branch.as_ref().map(|b| format!("branch={b}"));
 

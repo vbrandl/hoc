@@ -88,6 +88,13 @@ impl Persist {
             disk: DiskCache { settings },
         }
     }
+
+    /// Clear the in-memory part of the cache
+    pub(crate) fn clear(&self) {
+        // TODO: currently this removes everything from the cache. maybe use layered maps to clear
+        // only for specific `service + owner + repo`
+        self.in_memory.cache.clear();
+    }
 }
 
 impl Drop for Persist {
