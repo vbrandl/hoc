@@ -20,7 +20,20 @@ pub(crate) trait Cache<K, V> {
     fn store(&self, key: K, value: V) -> Result<()>;
 }
 
+pub(crate) trait ToQuery {
+    fn to_query(&self) -> String;
+}
+
 pub(crate) type Excludes = BTreeSet<String>;
+
+impl ToQuery for Excludes {
+    fn to_query(&self) -> String {
+        let excludes: Vec<_> = self.iter().map(AsRef::as_ref).collect();
+        let excludes = excludes.join(",");
+        let excludes = urlencoding::encode(&excludes);
+        excludes.to_string()
+    }
+}
 
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
 pub(crate) struct CacheKey {
@@ -49,10 +62,7 @@ impl CacheKey {
     }
 
     fn cache_file(&self, settings: &Settings) -> PathBuf {
-        // TODO: encode to prevent path traversal and the like
-        let excludes: Vec<_> = self.excludes.iter().map(AsRef::as_ref).collect();
-        let excludes = excludes.join(",");
-        let excludes = urlencoding::encode(&excludes);
+        let excludes = self.excludes.to_query();
 
         settings
             .cachedir
@@ -60,7 +70,7 @@ impl CacheKey {
             .join(self.owner.as_str())
             .join(self.repo.as_str())
             .join(self.branch.as_str())
-            .join(excludes.as_ref())
+            .join(excludes.as_str())
             .join("cache")
             .with_extension("json")
     }

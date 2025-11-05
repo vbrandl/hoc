@@ -1,6 +1,6 @@
 use crate::{
     State,
-    cache::{Excludes, Persist},
+    cache::{Excludes, Persist, ToQuery},
     error::Result,
     hoc, http,
     service::Service,
@@ -132,10 +132,7 @@ where
         let exclude_query = if excludes.is_empty() {
             None
         } else {
-            let excludes: Vec<_> = excludes.iter().map(AsRef::as_ref).collect();
-            let excludes = excludes.join(",");
-            let excludes = urlencoding::encode(&excludes);
-            Some(excludes.to_string())
+            Some(excludes.to_query())
         };
 
         let label_query = Some(format!("label={}", branch.label));
@@ -352,6 +349,7 @@ pub(crate) async fn overview<T: Service>(
                 repo_count.load(Ordering::Relaxed),
                 repo_info,
                 &label,
+                &query.exclude,
             )?;
 
             Ok(HttpResponse::Ok().content_type("text/html").body(buf))
