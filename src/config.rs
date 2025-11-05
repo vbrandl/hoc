@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use config::{Config, ConfigError, Environment, File};
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Settings {
     /// Path to store cloned repositories
     pub repodir: PathBuf,

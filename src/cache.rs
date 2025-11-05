@@ -1,148 +1,193 @@
-use crate::error::{Error, Result};
-
-use std::{
-    borrow::Cow,
-    collections::HashMap,
-    fs::{File, OpenOptions, create_dir_all},
-    io::BufReader,
-    path::Path,
+use crate::{
+    config::Settings,
+    error::{Error, Result},
+    service::FormValue,
 };
 
+use std::{
+    collections::BTreeSet,
+    fs::{OpenOptions, create_dir_all},
+    io::{self, BufReader},
+    path::PathBuf,
+};
+
+use dashmap::DashMap;
 use serde::{Deserialize, Serialize};
-use tracing::{instrument, trace};
+use tracing::{error, info, trace};
 
-/// Enum to indicate the state of the cache
-#[derive(Debug)]
-pub(crate) enum CacheState<'a> {
-    /// Current head and cached head are the same
-    Current {
-        count: u64,
-        commits: u64,
-        cache: Cache<'a>,
-    },
-    /// Cached head is older than current head
-    Old {
-        head: String,
-        cache: Cache<'a>,
-    },
-    NoneForBranch(Cache<'a>),
-    /// No cache was found
-    No,
+pub(crate) trait Cache<K, V> {
+    fn load(&self, key: &K) -> Result<Option<V>>;
+    fn store(&self, key: K, value: V) -> Result<()>;
 }
 
-impl<'a> CacheState<'a> {
-    #[instrument]
-    pub(crate) fn read_from_file(
-        path: impl AsRef<Path> + std::fmt::Debug,
-        branch: &str,
-        head: &str,
-    ) -> Result<CacheState<'a>> {
-        trace!("Reading cache");
-        if path.as_ref().exists() {
-            let cache: Cache = serde_json::from_reader(BufReader::new(File::open(path)?))?;
-            Ok(cache.entries.get(branch).map_or_else(
-                // TODO: get rid of clone
-                || CacheState::NoneForBranch(cache.clone()),
-                |c| {
-                    if c.head == head {
-                        trace!("Cache is up to date");
-                        CacheState::Current {
-                            count: c.count,
-                            commits: c.commits,
-                            // TODO: get rid of clone
-                            cache: cache.clone(),
-                        }
-                    } else {
-                        trace!("Cache is out of date");
-                        CacheState::Old {
-                            head: c.head.to_string(),
-                            // TODO: get rid of clone
-                            cache: cache.clone(),
-                        }
-                    }
-                },
-            ))
+pub(crate) type Excludes = BTreeSet<String>;
+
+#[derive(Hash, Eq, PartialEq, Clone, Debug)]
+pub(crate) struct CacheKey {
+    service: FormValue,
+    owner: String,
+    repo: String,
+    branch: String,
+    excludes: Excludes,
+}
+
+impl CacheKey {
+    pub(crate) fn new(
+        service: FormValue,
+        owner: String,
+        repo: String,
+        branch: String,
+        excludes: Excludes,
+    ) -> Self {
+        Self {
+            service,
+            owner,
+            repo,
+            branch,
+            excludes,
+        }
+    }
+
+    fn cache_file(&self, settings: &Settings) -> PathBuf {
+        // TODO: encode to prevent path traversal and the like
+        let excludes: Vec<_> = self.excludes.iter().map(AsRef::as_ref).collect();
+        let excludes = excludes.join(",");
+        let excludes = urlencoding::encode(&excludes);
+
+        settings
+            .cachedir
+            .join(self.service.url())
+            .join(self.owner.as_str())
+            .join(self.repo.as_str())
+            .join(self.branch.as_str())
+            .join(excludes.as_ref())
+            .join("cache")
+            .with_extension("json")
+    }
+}
+
+pub(crate) struct Persist {
+    in_memory: InMemoryCache,
+    disk: DiskCache,
+}
+
+impl Persist {
+    pub(crate) fn new(settings: Settings) -> Self {
+        Self {
+            in_memory: InMemoryCache::new(),
+            disk: DiskCache { settings },
+        }
+    }
+}
+
+impl Drop for Persist {
+    fn drop(&mut self) {
+        info!("persisting cache");
+        for r in &self.in_memory.cache {
+            if let Err(err) = self.disk.store(r.key().clone(), r.value().clone()) {
+                error!(%err, key = ?r.key(), "cannot write cache to disk");
+            } else {
+                trace!(key = ?r.key(), "persisted");
+            }
+        }
+    }
+}
+
+impl Cache<CacheKey, CacheEntry> for Persist {
+    fn load(&self, key: &CacheKey) -> Result<Option<CacheEntry>> {
+        if let Some(val) = self.in_memory.load(key)? {
+            Ok(Some(val))
+        } else if let Some(val) = self.disk.load(key)? {
+            self.in_memory.store(key.clone(), val.clone())?;
+            Ok(Some(val))
         } else {
-            Ok(CacheState::No)
+            Ok(None)
         }
     }
 
-    #[instrument]
-    pub(crate) fn calculate_new_cache(
-        self,
-        count: u64,
-        commits: u64,
-        head: Cow<'a, str>,
-        branch: &'a str,
-    ) -> Cache<'a> {
-        trace!("Calculating new cache");
-        match self {
-            CacheState::Old { mut cache, .. } => {
-                if let Some(cache) = cache.entries.get_mut(branch) {
-                    cache.head = head;
-                    cache.count += count;
-                    cache.commits += commits;
+    fn store(&self, key: CacheKey, value: CacheEntry) -> Result<()> {
+        self.in_memory.store(key, value)
+    }
+}
+
+struct InMemoryCache {
+    cache: DashMap<CacheKey, CacheEntry>,
+}
+
+impl InMemoryCache {
+    fn new() -> Self {
+        Self {
+            cache: DashMap::new(),
+        }
+    }
+}
+
+impl Cache<CacheKey, CacheEntry> for InMemoryCache {
+    fn store(&self, key: CacheKey, value: CacheEntry) -> Result<()> {
+        self.cache.insert(key, value);
+        Ok(())
+    }
+
+    fn load(&self, key: &CacheKey) -> Result<Option<CacheEntry>> {
+        Ok(self.cache.get(key).map(|r| r.value().clone()))
+    }
+}
+
+struct DiskCache {
+    settings: Settings,
+}
+
+impl Cache<CacheKey, CacheEntry> for DiskCache {
+    fn load(&self, key: &CacheKey) -> Result<Option<CacheEntry>> {
+        let cache_file = key.cache_file(&self.settings);
+        match OpenOptions::new().read(true).open(&cache_file) {
+            Ok(f) => Ok(serde_json::from_reader(BufReader::new(f))?),
+            Err(e) => {
+                if e.kind() == io::ErrorKind::NotFound {
+                    Ok(None)
+                } else {
+                    Err(e)?
                 }
-                cache
-            }
-            CacheState::Current { cache, .. } => cache,
-            CacheState::NoneForBranch(mut cache) => {
-                trace!("Creating new cache for branch");
-                cache.entries.insert(
-                    branch.into(),
-                    CacheEntry {
-                        head,
-                        count,
-                        commits,
-                    },
-                );
-                cache
-            }
-            CacheState::No => {
-                trace!("Creating new cache file");
-                let mut entries = HashMap::with_capacity(1);
-                entries.insert(
-                    branch.into(),
-                    CacheEntry {
-                        head,
-                        count,
-                        commits,
-                    },
-                );
-                Cache { entries }
             }
         }
+    }
+
+    fn store(&self, key: CacheKey, value: CacheEntry) -> Result<()> {
+        trace!("writing cache");
+
+        let cache_file = key.cache_file(&self.settings);
+        info!(?cache_file, "cache_file");
+        let parent = cache_file.parent().ok_or(Error::Internal)?;
+        info!(?parent, "parent");
+        create_dir_all(parent)?;
+        serde_json::to_writer(
+            OpenOptions::new()
+                .write(true)
+                .create(true)
+                .truncate(true)
+                .open(cache_file)?,
+            &value,
+        )?;
+        Ok(())
     }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub(crate) struct Cache<'a> {
-    pub entries: HashMap<Cow<'a, str>, CacheEntry<'a>>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub(crate) struct CacheEntry<'a> {
+pub(crate) struct CacheEntry {
     /// HEAD commit ref
-    pub head: Cow<'a, str>,
+    pub head: String,
     /// `HoC` value
     pub count: u64,
     /// Number of commits
     pub commits: u64,
 }
 
-impl Cache<'_> {
-    #[instrument]
-    pub(crate) fn write_to_file(&self, path: impl AsRef<Path> + std::fmt::Debug) -> Result<()> {
-        trace!("Persisting cache to disk");
-        create_dir_all(path.as_ref().parent().ok_or(Error::Internal)?)?;
-        serde_json::to_writer(
-            OpenOptions::new()
-                .write(true)
-                .create(true)
-                .truncate(true)
-                .open(path)?,
-            self,
-        )?;
-        Ok(())
+impl CacheEntry {
+    pub(crate) fn update(self, count: u64, commits: u64) -> Self {
+        Self {
+            count: self.count + count,
+            commits: self.commits + commits,
+            ..self
+        }
     }
 }
