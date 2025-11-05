@@ -166,10 +166,10 @@ impl Cache<CacheKey, CacheEntry> for DiskCache {
         trace!("writing cache");
 
         let cache_file = key.cache_file(&self.settings);
-        info!(?cache_file, "cache_file");
+
         let parent = cache_file.parent().ok_or(Error::Internal)?;
-        info!(?parent, "parent");
         create_dir_all(parent)?;
+
         serde_json::to_writer(
             OpenOptions::new()
                 .write(true)
