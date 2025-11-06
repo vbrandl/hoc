@@ -1,4 +1,4 @@
-use crate::{calculate_hoc, delete_repo_and_cache, json_hoc, overview};
+use crate::http::{calculate_hoc, delete_repo_and_cache, json_hoc, overview};
 
 use actix_web::{
     App,
@@ -11,6 +11,7 @@ pub(crate) trait Service: Sized + 'static {
     fn domain() -> &'static str;
     fn url_path() -> &'static str;
     fn commit_url(repo: &str, commit_ref: &str) -> String;
+    fn form_value() -> FormValue;
 
     fn register_service<T>(app: App<T>) -> App<T>
     where
@@ -30,7 +31,7 @@ pub(crate) trait Service: Sized + 'static {
     }
 }
 
-#[derive(Deserialize, Serialize, Clone, Copy)]
+#[derive(Deserialize, Serialize, Clone, Copy, Hash, Eq, PartialEq, Debug)]
 pub enum FormValue {
     #[serde(rename = "github")]
     GitHub,
@@ -68,11 +69,17 @@ impl Service for GitHub {
     fn domain() -> &'static str {
         "github.com"
     }
+
     fn url_path() -> &'static str {
         "github"
     }
+
     fn commit_url(repo: &str, commit_ref: &str) -> String {
         format!("https://{}/{}/commit/{}", Self::domain(), repo, commit_ref)
+    }
+
+    fn form_value() -> FormValue {
+        FormValue::GitHub
     }
 }
 
@@ -82,11 +89,17 @@ impl Service for Gitlab {
     fn domain() -> &'static str {
         "gitlab.com"
     }
+
     fn url_path() -> &'static str {
         "gitlab"
     }
+
     fn commit_url(repo: &str, commit_ref: &str) -> String {
         format!("https://{}/{}/commit/{}", Self::domain(), repo, commit_ref)
+    }
+
+    fn form_value() -> FormValue {
+        FormValue::Gitlab
     }
 }
 
@@ -96,11 +109,17 @@ impl Service for Bitbucket {
     fn domain() -> &'static str {
         "bitbucket.org"
     }
+
     fn url_path() -> &'static str {
         "bitbucket"
     }
+
     fn commit_url(repo: &str, commit_ref: &str) -> String {
         format!("https://{}/{}/commits/{}", Self::domain(), repo, commit_ref)
+    }
+
+    fn form_value() -> FormValue {
+        FormValue::Bitbucket
     }
 }
 
@@ -110,10 +129,16 @@ impl Service for Sourcehut {
     fn domain() -> &'static str {
         "git.sr.ht"
     }
+
     fn url_path() -> &'static str {
         "sourcehut"
     }
+
     fn commit_url(repo: &str, commit_ref: &str) -> String {
         format!("https://{}/{}/commit/{}", Self::domain(), repo, commit_ref)
+    }
+
+    fn form_value() -> FormValue {
+        FormValue::Sourcehut
     }
 }

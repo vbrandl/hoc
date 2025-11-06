@@ -78,6 +78,14 @@ the lines of
 &#125;
 </pre>
 
+<h2>Exclude Files</h2>
+
+<p>
+The <code>exclude</code> query parameter can be used to exclude files from the calculated metric. It takes a URL encoded list of comma separated values similar to a <code>.gitignore</code> file.
+To exclude a specific file, you can pass <code>exclude=Cargo.lock</code>.
+You can also use globs to exclude all files matching a pattern: <code>exclude=*.generated.foo</code> (don't forget to URL encode the value).
+</p>
+
 <h2>Badge Generator</h2>
 
 <form method="post" action="/generate">
