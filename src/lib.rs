@@ -36,10 +36,6 @@ impl State {
     fn repos(&self) -> &Path {
         &self.settings.repodir
     }
-
-    fn cache(&self) -> &Path {
-        &self.settings.cachedir
-    }
 }
 
 #[allow(clippy::unused_async)]

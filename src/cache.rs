@@ -6,7 +6,7 @@ use crate::{
 
 use std::{
     collections::BTreeSet,
-    fs::{OpenOptions, create_dir_all},
+    fs::{OpenOptions, create_dir_all, remove_dir_all},
     io::{self, BufReader},
     path::PathBuf,
 };
@@ -18,6 +18,8 @@ use tracing::{error, info, trace};
 pub(crate) trait Cache<K, V> {
     fn load(&self, key: &K) -> Result<Option<V>>;
     fn store(&self, key: K, value: V) -> Result<()>;
+
+    fn clear(&self, service: FormValue, owner: &str, repo: &str) -> Result<()>;
 }
 
 pub(crate) trait ToQuery {
@@ -88,23 +90,36 @@ impl Persist {
             disk: DiskCache { settings },
         }
     }
-
-    /// Clear the in-memory part of the cache
-    pub(crate) fn clear(&self) {
-        // TODO: currently this removes everything from the cache. maybe use layered maps to clear
-        // only for specific `service + owner + repo`
-        self.in_memory.cache.clear();
-    }
 }
 
 impl Drop for Persist {
     fn drop(&mut self) {
         info!("persisting cache");
         for r in &self.in_memory.cache {
-            if let Err(err) = self.disk.store(r.key().clone(), r.value().clone()) {
-                error!(%err, key = ?r.key(), "cannot write cache to disk");
-            } else {
-                trace!(key = ?r.key(), "persisted");
+            let service = *r.key();
+            for r in r.value() {
+                let owner = r.key();
+                for r in r.value() {
+                    let repo = r.key();
+                    for r in r.value() {
+                        let branch = r.key();
+                        for r in r.value() {
+                            let excludes = r.key().clone();
+                            let key = CacheKey::new(
+                                service,
+                                owner.clone(),
+                                repo.clone(),
+                                branch.clone(),
+                                excludes,
+                            );
+                            if let Err(err) = self.disk.store(key, r.value().clone()) {
+                                error!(%err, key = ?r.key(), "cannot write cache to disk");
+                            } else {
+                                trace!(key = ?r.key(), "persisted");
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -125,10 +140,26 @@ impl Cache<CacheKey, CacheEntry> for Persist {
     fn store(&self, key: CacheKey, value: CacheEntry) -> Result<()> {
         self.in_memory.store(key, value)
     }
+
+    fn clear(&self, service: FormValue, owner: &str, repo: &str) -> Result<()> {
+        let im_res = self.in_memory.clear(service, owner, repo);
+        let disk_res = self.disk.clear(service, owner, repo);
+        if let Err(e) = im_res {
+            Err(e)?
+        } else if let Err(e) = disk_res {
+            Err(e)?
+        } else {
+            Ok(())
+        }
+    }
 }
 
 struct InMemoryCache {
-    cache: DashMap<CacheKey, CacheEntry>,
+    #[allow(clippy::type_complexity)]
+    cache: DashMap<
+        FormValue,
+        DashMap<String, DashMap<String, DashMap<String, DashMap<Excludes, CacheEntry>>>>,
+    >,
 }
 
 impl InMemoryCache {
@@ -141,12 +172,37 @@ impl InMemoryCache {
 
 impl Cache<CacheKey, CacheEntry> for InMemoryCache {
     fn store(&self, key: CacheKey, value: CacheEntry) -> Result<()> {
-        self.cache.insert(key, value);
+        self.cache
+            .entry(key.service)
+            .or_default()
+            .entry(key.owner)
+            .or_default()
+            .entry(key.repo)
+            .or_default()
+            .entry(key.branch)
+            .or_default()
+            .insert(key.excludes, value);
         Ok(())
     }
 
     fn load(&self, key: &CacheKey) -> Result<Option<CacheEntry>> {
-        Ok(self.cache.get(key).map(|r| r.value().clone()))
+        Ok(self.cache.get(&key.service).and_then(|c| {
+            c.get(&key.owner).and_then(|c| {
+                c.get(&key.repo).and_then(|c| {
+                    c.get(&key.branch)
+                        .and_then(|c| c.get(&key.excludes).map(|r| r.value().clone()))
+                })
+            })
+        }))
+    }
+
+    fn clear(&self, service: FormValue, owner: &str, repo: &str) -> Result<()> {
+        if let Some(c) = self.cache.get(&service)
+            && let Some(c) = c.value().get(owner)
+        {
+            c.value().remove(repo);
+        }
+        Ok(())
     }
 }
 
@@ -185,6 +241,23 @@ impl Cache<CacheKey, CacheEntry> for DiskCache {
                 .open(cache_file)?,
             &value,
         )?;
+        Ok(())
+    }
+
+    fn clear(&self, service: FormValue, owner: &str, repo: &str) -> Result<()> {
+        let cache_dir = self
+            .settings
+            .cachedir
+            .join(service.service())
+            .join(owner)
+            .join(repo);
+        remove_dir_all(cache_dir).or_else(|e| {
+            if e.kind() == io::ErrorKind::NotFound {
+                Ok(())
+            } else {
+                Err(e)
+            }
+        })?;
         Ok(())
     }
 }

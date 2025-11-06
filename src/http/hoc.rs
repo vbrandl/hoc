@@ -1,6 +1,6 @@
 use crate::{
     State,
-    cache::{Excludes, Persist, ToQuery},
+    cache::{Cache, Excludes, Persist, ToQuery},
     error::Result,
     hoc, http,
     service::Service,
@@ -110,15 +110,7 @@ where
             data.1.to_lowercase()
         );
         info!("Deleting cache and repository");
-        let cache_dir = state.cache().join(&repo);
         let repo_dir = state.repos().join(&repo);
-        std::fs::remove_dir_all(cache_dir).or_else(|e| {
-            if e.kind() == io::ErrorKind::NotFound {
-                Ok(())
-            } else {
-                Err(e)
-            }
-        })?;
         std::fs::remove_dir_all(repo_dir).or_else(|e| {
             if e.kind() == io::ErrorKind::NotFound {
                 Ok(())
@@ -128,7 +120,7 @@ where
         })?;
         repo_count.fetch_sub(1, Ordering::Relaxed);
 
-        cache.clear();
+        cache.clear(T::form_value(), data.0.as_str(), data.1.as_str())?;
 
         let branch_query = branch.branch.as_ref().map(|b| format!("branch={b}"));
 
