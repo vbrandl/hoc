@@ -1,8 +1,9 @@
 use hoc::{config::Settings, telemetry};
 
-use std::{net::TcpListener, sync::LazyLock};
+use std::sync::LazyLock;
 
 use tempfile::{TempDir, tempdir};
+use tokio::net::TcpListener;
 
 static TRACING: LazyLock<()> = LazyLock::new(|| {
     let filter = if std::env::var("TEST_LOG").is_ok() {
@@ -10,7 +11,7 @@ static TRACING: LazyLock<()> = LazyLock::new(|| {
     } else {
         ""
     };
-    let subscriber = telemetry::get_subscriber("test", filter);
+    let subscriber = telemetry::get_subscriber(filter);
     telemetry::init_subscriber(subscriber);
 });
 
@@ -24,7 +25,9 @@ pub struct TestApp {
 pub async fn spawn_app() -> TestApp {
     LazyLock::force(&TRACING);
 
-    let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
+    let listener = TcpListener::bind("127.0.0.1:0")
+        .await
+        .expect("Failed to bind random port");
 
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{port}");
@@ -36,13 +39,10 @@ pub async fn spawn_app() -> TestApp {
     settings.repodir = repo_dir.path().to_path_buf();
     settings.cachedir = cache_dir.path().to_path_buf();
 
-    let server = hoc::run(listener, settings)
-        .await
-        .expect("Failed to bind address");
+    let server = hoc::run(listener, settings);
 
-    #[allow(clippy::let_underscore_future)]
     // don't await so the test server runs in the background
-    let _ = tokio::spawn(server);
+    tokio::spawn(server);
 
     TestApp {
         address,

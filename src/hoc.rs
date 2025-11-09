@@ -1,7 +1,7 @@
 use crate::{
     cache::{Cache, CacheEntry, CacheKey, Excludes, Persist},
     error::{Error, Result},
-    service::FormValue,
+    platform::Platform,
 };
 
 use std::{path::Path, process::Command};
@@ -12,14 +12,18 @@ use tracing::{debug, trace};
 
 pub(crate) fn hoc(
     repo_dir: impl AsRef<Path>,
-    service: FormValue,
+    platform: Platform,
     owner: &str,
     repo: &str,
     cache: &Persist,
     branch: &str,
     excludes: Excludes,
 ) -> Result<(u64, String, u64)> {
-    let repo_dir = repo_dir.as_ref().join(service.url()).join(owner).join(repo);
+    let repo_dir = repo_dir
+        .as_ref()
+        .join(platform.domain())
+        .join(owner)
+        .join(repo);
 
     let repository = Repository::open_bare(&repo_dir)?;
     // TODO: do better...
@@ -43,7 +47,7 @@ pub(crate) fn hoc(
     ];
 
     let patterns = compile_patterns(&excludes);
-    let key = CacheKey::new(service, owner.into(), repo.into(), branch.into(), excludes);
+    let key = CacheKey::new(platform, owner.into(), repo.into(), branch.into(), excludes);
     let cached = cache.load(&key)?;
     if let Some(cached) = cached.as_ref() {
         debug!("using cache");

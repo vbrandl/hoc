@@ -1,6 +1,6 @@
 mod util;
 
-#[actix_rt::test]
+#[tokio::test]
 async fn health_check_works() {
     let test_app = util::spawn_app().await;
 

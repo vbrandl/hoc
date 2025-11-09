@@ -1,8 +1,4 @@
-use crate::{statics::VERSION_INFO, templates};
-
 use std::fmt;
-
-use actix_web::{HttpResponse, ResponseError, http::StatusCode};
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;
 
@@ -16,6 +12,7 @@ pub enum Error {
     Parse(std::num::ParseIntError),
     Serial(serde_json::Error),
     BranchNotFound,
+    UnknownPlatform(String),
 }
 
 impl fmt::Display for Error {
@@ -29,28 +26,7 @@ impl fmt::Display for Error {
             Error::Parse(e) => write!(fmt, "Parse({e})"),
             Error::Serial(e) => write!(fmt, "Serial({e})"),
             Error::BranchNotFound => write!(fmt, "Repo doesn't have master branch"),
-        }
-    }
-}
-
-impl ResponseError for Error {
-    fn status_code(&self) -> StatusCode {
-        match self {
-            Error::BranchNotFound => StatusCode::NOT_FOUND,
-            _ => StatusCode::INTERNAL_SERVER_ERROR,
-        }
-    }
-
-    fn error_response(&self) -> HttpResponse {
-        let mut buf = Vec::new();
-        if let Error::BranchNotFound = self {
-            templates::p404_no_master_html(&mut buf, VERSION_INFO, 0).unwrap();
-            HttpResponse::NotFound().content_type("text/html").body(buf)
-        } else {
-            templates::p500_html(&mut buf, VERSION_INFO, 0).unwrap();
-            HttpResponse::InternalServerError()
-                .content_type("text/html")
-                .body(buf)
+            Error::UnknownPlatform(s) => write!(fmt, "Unknown platfom: {s}"),
         }
     }
 }

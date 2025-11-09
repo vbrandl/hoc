@@ -1,6 +1,6 @@
 mod util;
 
-#[actix_rt::test]
+#[tokio::test]
 async fn favicon() {
     let test_app = util::spawn_app().await;
 
