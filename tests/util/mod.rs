@@ -1,9 +1,9 @@
-use hoc::{config::Settings, telemetry};
+use hoc::{config::Settings, http, telemetry};
 
-use std::sync::LazyLock;
+use std::{net::SocketAddr, sync::LazyLock};
 
 use tempfile::{TempDir, tempdir};
-use tokio::net::TcpListener;
+use tokio::task::JoinHandle;
 
 static TRACING: LazyLock<()> = LazyLock::new(|| {
     let filter = if std::env::var("TEST_LOG").is_ok() {
@@ -16,37 +16,32 @@ static TRACING: LazyLock<()> = LazyLock::new(|| {
 });
 
 pub struct TestApp {
-    pub address: String,
     // Those are unused but are hold to be dropped and deleted after the TestApp goes out of scope
     _repo_dir: TempDir,
     _cache_dir: TempDir,
 }
 
-pub async fn spawn_app() -> TestApp {
+pub async fn spawn_app() -> (TestApp, JoinHandle<()>, SocketAddr) {
     LazyLock::force(&TRACING);
-
-    let listener = TcpListener::bind("127.0.0.1:0")
-        .await
-        .expect("Failed to bind random port");
-
-    let port = listener.local_addr().unwrap().port();
-    let address = format!("http://127.0.0.1:{port}");
 
     let repo_dir = tempdir().expect("Cannot create repo_dir");
     let cache_dir = tempdir().expect("Cannot create cache_dir");
 
     let mut settings = Settings::load().expect("Failed to read configuration.");
+    settings.port = 0;
     settings.repodir = repo_dir.path().to_path_buf();
     settings.cachedir = cache_dir.path().to_path_buf();
 
-    let server = hoc::run(listener, settings);
+    let listener = settings.listener().await.unwrap();
+    let app = http::router(settings).into_make_service_with_connect_info::<SocketAddr>();
+    let addr = listener.local_addr().unwrap();
 
-    // don't await so the test server runs in the background
-    tokio::spawn(server);
-
-    TestApp {
-        address,
-        _repo_dir: repo_dir,
-        _cache_dir: cache_dir,
-    }
+    (
+        TestApp {
+            _repo_dir: repo_dir,
+            _cache_dir: cache_dir,
+        },
+        tokio::spawn(async move { axum::serve(listener, app).await.unwrap() }),
+        addr,
+    )
 }

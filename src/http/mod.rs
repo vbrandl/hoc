@@ -50,7 +50,7 @@ async fn redirect_old_overview(
     ))
 }
 
-pub(crate) fn router(settings: Settings) -> Router {
+pub fn router(settings: Settings) -> Router {
     let state = Arc::new(AppState {
         settings: settings.clone(),
         repo_count: AtomicUsize::new(0),

@@ -2690,6 +2690,7 @@ dependencies = [
  "futures",
  "git2",
  "gix 0.74.1",
+ "hyper-util",
  "itertools",
  "jiff",
  "mime",

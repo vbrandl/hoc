@@ -59,6 +59,11 @@ vergen-gix = "1.0.9"
 
 [dev-dependencies]
 awc = "3.8.1"
+hyper-util = { version = "0.1.17", features = [
+  "client",
+  "http1",
+  "client-legacy",
+] }
 ructe = "0.18.2"
 tempfile = "3.23.0"
 tokio = "1.48.0"

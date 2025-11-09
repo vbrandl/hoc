@@ -1,7 +1,9 @@
 use std::path::PathBuf;
 
+use anyhow::Result;
 use config::{Config, ConfigError, Environment, File};
 use serde::Deserialize;
+use tokio::net::TcpListener;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Settings {
@@ -37,5 +39,18 @@ impl Settings {
             .set_default("host", "0.0.0.0")?
             .build()?
             .try_deserialize()
+    }
+
+    /// Create a [`TcpListener`] for this config.
+    ///
+    /// # Errors
+    ///
+    /// If binding fails
+    pub async fn listener(&self) -> Result<TcpListener> {
+        Ok(tokio::net::TcpListener::bind(self.listen_addr()).await?)
+    }
+
+    fn listen_addr(&self) -> String {
+        format!("{}:{}", self.host, self.port)
     }
 }

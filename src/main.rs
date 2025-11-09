@@ -1,6 +1,6 @@
 use hoc::{config::Settings, telemetry};
 
-use tokio::net::TcpListener;
+use anyhow::Result;
 
 fn init() {
     dotenvy::dotenv().ok();
@@ -10,15 +10,14 @@ fn init() {
 }
 
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> Result<()> {
     init();
 
     // TODO: error handling
-    let settings = Settings::load().expect("Cannot load config");
+    let settings = Settings::load()?;
 
-    let address = format!("{}:{}", settings.host, settings.port);
-    // TODO: error handling
-    let listener = TcpListener::bind(address).await?;
-    hoc::run(listener, settings).await.expect("Server error");
+    let listener = settings.listener().await?;
+
+    hoc::run(listener, settings).await?;
     Ok(())
 }

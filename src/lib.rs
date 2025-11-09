@@ -3,7 +3,7 @@ pub mod config;
 pub mod count;
 mod error;
 mod hoc;
-mod http;
+pub mod http;
 mod platform;
 mod statics;
 pub mod telemetry;
