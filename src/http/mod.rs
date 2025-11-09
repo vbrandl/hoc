@@ -107,6 +107,7 @@ impl IntoResponse for Error {
             )
                 .into_response()
         } else {
+            error!(err=%self, "");
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 render!(templates::p500_html, VERSION_INFO, 0),

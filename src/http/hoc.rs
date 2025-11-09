@@ -1,7 +1,7 @@
 use crate::{
     cache::{Cache, Excludes, ToQuery},
     error::Result,
-    hoc,
+    hoc::{self, HocCount},
     http::{self, AppState},
     platform::Platform,
     statics::{CLIENT, VERSION_INFO},
@@ -63,6 +63,7 @@ fn default_label() -> String {
     "Hits-of-Code".to_string()
 }
 
+// TODO: pull/fetch/clone using gix
 fn pull(path: impl AsRef<Path>, branch: &str) -> Result<()> {
     let repo = Repository::open_bare(path)?;
     let mut origin = repo.find_remote("origin")?;
@@ -179,7 +180,7 @@ async fn handle_hoc_request(
         }
         pull(&path, branch)?;
 
-        let (hoc, head, commits) = hoc::hoc(
+        let HocCount { hoc, head, commits } = hoc::hoc(
             state.repos(),
             platform,
             &owner,
