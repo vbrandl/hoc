@@ -5,7 +5,7 @@ pub(crate) type Result<T> = std::result::Result<T, Error>;
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("Badge({0})")]
-    Badge(String),
+    Badge(#[from] badgers::Error),
     #[error("Client({0})")]
     Client(#[from] reqwest::Error),
     #[error("Git({0})")]
@@ -22,12 +22,6 @@ pub enum Error {
     BranchNotFound,
     #[error("UnknownPlatform({0})")]
     UnknownPlatform(String),
-    #[error("Any({0})")]
-    Any(#[from] anyhow::Error),
-}
-
-impl From<String> for Error {
-    fn from(s: String) -> Self {
-        Error::Badge(s)
-    }
+    #[error(transparent)]
+    Other(#[from] anyhow::Error),
 }
