@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump `badgers` from 1.2.0 to 2.0.0 ([#941](https://github.com/vbrandl/hoc/pull/941))
+
 ## [1.0.0] 2025-11-06
 
 ### Changes
