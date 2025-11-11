@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump `rust-toolchain` from 1.91.0 to 1.91.1 ([#942](https://github.com/vbrandl/hoc/pull/942))
+
 ## [1.0.0] 2025-11-06
 
 ### Changes
