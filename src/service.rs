@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 pub(crate) trait Service: Sized + 'static {
     fn domain() -> &'static str;
     fn url_path() -> &'static str;
-    fn commit_url(repo: &str, commit_ref: &str) -> String;
+    fn commit_url(owner: &str, repo: &str, commit_ref: &str) -> String;
     fn form_value() -> FormValue;
 
     fn register_service<T>(app: App<T>) -> App<T>
@@ -74,8 +74,8 @@ impl Service for GitHub {
         "github"
     }
 
-    fn commit_url(repo: &str, commit_ref: &str) -> String {
-        format!("https://{}/{}/commit/{}", Self::domain(), repo, commit_ref)
+    fn commit_url(owner: &str, repo: &str, commit_ref: &str) -> String {
+        format!("https://{}/{}/{}/commit/{}", Self::domain(), owner, repo, commit_ref)
     }
 
     fn form_value() -> FormValue {
@@ -94,8 +94,8 @@ impl Service for Gitlab {
         "gitlab"
     }
 
-    fn commit_url(repo: &str, commit_ref: &str) -> String {
-        format!("https://{}/{}/commit/{}", Self::domain(), repo, commit_ref)
+    fn commit_url(owner: &str, repo: &str, commit_ref: &str) -> String {
+        format!("https://{}/{}/{}commits/{}", Self::domain(), owner, repo, commit_ref)
     }
 
     fn form_value() -> FormValue {
@@ -114,8 +114,8 @@ impl Service for Bitbucket {
         "bitbucket"
     }
 
-    fn commit_url(repo: &str, commit_ref: &str) -> String {
-        format!("https://{}/{}/commits/{}", Self::domain(), repo, commit_ref)
+    fn commit_url(owner: &str, repo: &str, commit_ref: &str) -> String {
+        format!("https://{}/{}/{}commits/{}", Self::domain(), owner, repo, commit_ref)
     }
 
     fn form_value() -> FormValue {
@@ -134,8 +134,8 @@ impl Service for Sourcehut {
         "sourcehut"
     }
 
-    fn commit_url(repo: &str, commit_ref: &str) -> String {
-        format!("https://{}/{}/commit/{}", Self::domain(), repo, commit_ref)
+    fn commit_url(owner: &str, repo: &str, commit_ref: &str) -> String {
+        format!("https://{}/{}/{}/commit/{}", Self::domain(), owner, repo, commit_ref)
     }
 
     fn form_value() -> FormValue {

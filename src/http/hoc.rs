@@ -79,6 +79,7 @@ enum HocResult {
         head: String,
         url: String,
         repo: String,
+        owner: String,
         service_path: String,
     },
     NotFound,
@@ -216,6 +217,7 @@ where
             head,
             url,
             repo,
+            owner,
             service_path,
         };
         Ok(res)
@@ -324,12 +326,13 @@ pub(crate) async fn overview<T: Service>(
             hoc_pretty,
             url,
             head,
+            owner,
             repo,
             service_path,
         } => {
             let mut buf = Vec::new();
             let repo_info = RepoInfo {
-                commit_url: &T::commit_url(&repo, &head),
+                commit_url: &T::commit_url(&owner, &repo, &head),
                 commits,
                 base_url: &base_url,
                 head: &head,
