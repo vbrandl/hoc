@@ -95,7 +95,7 @@ impl Service for Gitlab {
     }
 
     fn commit_url(owner: &str, repo: &str, commit_ref: &str) -> String {
-        format!("https://{}/{}/{}commits/{}", Self::domain(), owner, repo, commit_ref)
+        format!("https://{}/{}/{}/commit/{}", Self::domain(), owner, repo, commit_ref)
     }
 
     fn form_value() -> FormValue {
@@ -115,7 +115,7 @@ impl Service for Bitbucket {
     }
 
     fn commit_url(owner: &str, repo: &str, commit_ref: &str) -> String {
-        format!("https://{}/{}/{}commits/{}", Self::domain(), owner, repo, commit_ref)
+        format!("https://{}/{}/{}/commits/{}", Self::domain(), owner, repo, commit_ref)
     }
 
     fn form_value() -> FormValue {
