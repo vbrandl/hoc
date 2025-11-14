@@ -106,9 +106,9 @@ pub(crate) fn hoc(
         },
         |c| c.update(count, commits),
     );
-    cache.store(key, cached)?;
+    cache.store(key, cached.clone())?;
 
-    Ok((count, head, commits))
+    Ok((cached.count, cached.head, cached.commits))
 }
 
 fn compile_patterns(excludes: &Excludes) -> Vec<Pattern> {
