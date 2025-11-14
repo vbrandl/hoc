@@ -1,18 +1,19 @@
 use tracing::{Subscriber, subscriber::set_global_default};
-use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
-use tracing_subscriber::{EnvFilter, Registry, layer::SubscriberExt};
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt};
 
-pub fn get_subscriber(name: &str, env_filter: &str) -> impl Subscriber + Send + Sync {
-    let env_filter =
-        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(env_filter));
+#[must_use]
+pub fn get_subscriber(level: &str) -> impl Subscriber + Send + Sync {
+    let env_filter = EnvFilter::new(std::env::var("RUST_LOG").unwrap_or_else(|_| {
+        format!(
+            "{}={level},tower_http=debug,axum::rejection=trace",
+            env!("CARGO_CRATE_NAME")
+        )
+    }));
 
-    let formatting_layer = BunyanFormattingLayer::new(name.to_string(), std::io::stdout);
-
-    Registry::default()
+    tracing_subscriber::registry()
         .with(env_filter)
-        .with(JsonStorageLayer)
-        .with(formatting_layer)
+        .with(tracing_subscriber::fmt::layer())
 }
 
 /// # Panics

@@ -1,16 +1,25 @@
+use axum::{body::Body, http::Request};
+
 mod util;
 
-#[actix_rt::test]
+#[tokio::test]
 async fn health_check_works() {
-    let test_app = util::spawn_app().await;
+    // let test_app = util::spawn_app().await;
+    let (_test_app, handle, addr) = util::spawn_app().await;
 
-    let client = awc::Client::default();
+    let client = hyper_util::client::legacy::Client::builder(hyper_util::rt::TokioExecutor::new())
+        .build_http();
 
     let response = client
-        .get(&format!("{}/health_check", test_app.address))
-        .send()
+        .request(
+            Request::builder()
+                .uri(format!("http://{addr}/health_check"))
+                .body(Body::empty())
+                .unwrap(),
+        )
         .await
-        .expect("Failed to execute request");
+        .unwrap();
 
     assert!(response.status().is_success());
+    handle.abort();
 }

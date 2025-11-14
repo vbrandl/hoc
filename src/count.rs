@@ -9,7 +9,7 @@ use std::{
 
 use tracing::{instrument, trace};
 
-/// The on disk layout for served repos is `<service>/<user>/<repo>`
+/// The on disk layout for served repos is `<platform>/<user>/<repo>`
 /// so to get the amount of repos, we just have to count everything
 /// in `*/*/*` to get the count.
 ///

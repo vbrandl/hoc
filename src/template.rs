@@ -1,4 +1,4 @@
-use crate::service::FormValue;
+use crate::platform::Platform;
 
 #[derive(Clone, Copy)]
 pub struct RepoInfo<'a> {
@@ -14,7 +14,7 @@ pub struct RepoInfo<'a> {
 }
 
 pub struct RepoGeneratorInfo<'a> {
-    pub service: FormValue,
+    pub platform: Platform,
     pub user: &'a str,
     pub repo: &'a str,
     pub branch: &'a str,
