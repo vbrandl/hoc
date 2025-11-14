@@ -4,7 +4,6 @@ use tokio::net::TcpListener;
 
 fn init() {
     dotenvy::dotenv().ok();
-    openssl_probe::init_ssl_cert_env_vars();
 
     telemetry::init_subscriber(telemetry::get_subscriber("info"));
 }
