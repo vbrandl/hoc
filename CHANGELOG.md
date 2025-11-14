@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changes
+
+- use axum, update dependencies, fix bugs ([#945](https://github.com/vbrandl/hoc/pull/945))
+
 ## [1.0.0] 2025-11-06
 
 ### Changes
