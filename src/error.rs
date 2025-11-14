@@ -1,94 +1,27 @@
-use crate::{statics::VERSION_INFO, templates};
-
-use std::fmt;
-
-use actix_web::{HttpResponse, ResponseError, http::StatusCode};
+use thiserror::Error;
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
-    Badge(String),
-    Client(reqwest::Error),
-    Git(git2::Error),
+    #[error("Badge({0})")]
+    Badge(#[from] badgers::Error),
+    #[error("Client({0})")]
+    Client(#[from] reqwest::Error),
+    #[error("Git({0})")]
+    Git(#[from] git2::Error),
+    #[error("Internal")]
     Internal,
-    Io(std::io::Error),
-    Parse(std::num::ParseIntError),
-    Serial(serde_json::Error),
+    #[error("Io({0})")]
+    Io(#[from] std::io::Error),
+    #[error("Parse({0})")]
+    Parse(#[from] std::num::ParseIntError),
+    #[error("Serial({0})")]
+    Serial(#[from] serde_json::Error),
+    #[error("BranchNotFound")]
     BranchNotFound,
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::Badge(s) => write!(fmt, "Badge({s})"),
-            Error::Client(e) => write!(fmt, "Client({e})"),
-            Error::Git(e) => write!(fmt, "Git({e})"),
-            Error::Internal => write!(fmt, "Internal Error"),
-            Error::Io(e) => write!(fmt, "Io({e})"),
-            Error::Parse(e) => write!(fmt, "Parse({e})"),
-            Error::Serial(e) => write!(fmt, "Serial({e})"),
-            Error::BranchNotFound => write!(fmt, "Repo doesn't have master branch"),
-        }
-    }
-}
-
-impl ResponseError for Error {
-    fn status_code(&self) -> StatusCode {
-        match self {
-            Error::BranchNotFound => StatusCode::NOT_FOUND,
-            _ => StatusCode::INTERNAL_SERVER_ERROR,
-        }
-    }
-
-    fn error_response(&self) -> HttpResponse {
-        let mut buf = Vec::new();
-        if let Error::BranchNotFound = self {
-            templates::p404_no_master_html(&mut buf, VERSION_INFO, 0).unwrap();
-            HttpResponse::NotFound().content_type("text/html").body(buf)
-        } else {
-            templates::p500_html(&mut buf, VERSION_INFO, 0).unwrap();
-            HttpResponse::InternalServerError()
-                .content_type("text/html")
-                .body(buf)
-        }
-    }
-}
-
-impl std::error::Error for Error {}
-
-impl From<String> for Error {
-    fn from(s: String) -> Self {
-        Error::Badge(s)
-    }
-}
-
-impl From<git2::Error> for Error {
-    fn from(err: git2::Error) -> Self {
-        Error::Git(err)
-    }
-}
-
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Self {
-        Error::Io(err)
-    }
-}
-
-impl From<serde_json::Error> for Error {
-    fn from(err: serde_json::Error) -> Self {
-        Error::Serial(err)
-    }
-}
-
-impl From<reqwest::Error> for Error {
-    fn from(err: reqwest::Error) -> Self {
-        Error::Client(err)
-    }
-}
-
-impl From<std::num::ParseIntError> for Error {
-    fn from(err: std::num::ParseIntError) -> Self {
-        Error::Parse(err)
-    }
+    #[error("UnknownPlatform({0})")]
+    UnknownPlatform(String),
+    #[error(transparent)]
+    Other(#[from] anyhow::Error),
 }

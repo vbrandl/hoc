@@ -1,7 +1,7 @@
 use crate::{
     config::Settings,
     error::{Error, Result},
-    service::FormValue,
+    platform::Platform,
 };
 
 use std::{
@@ -19,7 +19,7 @@ pub(crate) trait Cache<K, V> {
     fn load(&self, key: &K) -> Result<Option<V>>;
     fn store(&self, key: K, value: V) -> Result<()>;
 
-    fn clear(&self, service: FormValue, owner: &str, repo: &str) -> Result<()>;
+    fn clear(&self, platform: Platform, owner: &str, repo: &str) -> Result<()>;
 }
 
 pub(crate) trait ToQuery {
@@ -39,7 +39,7 @@ impl ToQuery for Excludes {
 
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
 pub(crate) struct CacheKey {
-    service: FormValue,
+    platform: Platform,
     owner: String,
     repo: String,
     branch: String,
@@ -48,14 +48,14 @@ pub(crate) struct CacheKey {
 
 impl CacheKey {
     pub(crate) fn new(
-        service: FormValue,
+        platform: Platform,
         owner: String,
         repo: String,
         branch: String,
         excludes: Excludes,
     ) -> Self {
         Self {
-            service,
+            platform,
             owner,
             repo,
             branch,
@@ -68,7 +68,7 @@ impl CacheKey {
 
         settings
             .cachedir
-            .join(self.service.url())
+            .join(self.platform.domain())
             .join(self.owner.as_str())
             .join(self.repo.as_str())
             .join(self.branch.as_str())
@@ -96,7 +96,7 @@ impl Drop for Persist {
     fn drop(&mut self) {
         info!("persisting cache");
         for r in &self.in_memory.cache {
-            let service = *r.key();
+            let platform = *r.key();
             for r in r.value() {
                 let owner = r.key();
                 for r in r.value() {
@@ -106,7 +106,7 @@ impl Drop for Persist {
                         for r in r.value() {
                             let excludes = r.key().clone();
                             let key = CacheKey::new(
-                                service,
+                                platform,
                                 owner.clone(),
                                 repo.clone(),
                                 branch.clone(),
@@ -141,9 +141,9 @@ impl Cache<CacheKey, CacheEntry> for Persist {
         self.in_memory.store(key, value)
     }
 
-    fn clear(&self, service: FormValue, owner: &str, repo: &str) -> Result<()> {
-        let im_res = self.in_memory.clear(service, owner, repo);
-        let disk_res = self.disk.clear(service, owner, repo);
+    fn clear(&self, platform: Platform, owner: &str, repo: &str) -> Result<()> {
+        let im_res = self.in_memory.clear(platform, owner, repo);
+        let disk_res = self.disk.clear(platform, owner, repo);
         if let Err(e) = im_res {
             Err(e)?
         } else if let Err(e) = disk_res {
@@ -157,7 +157,7 @@ impl Cache<CacheKey, CacheEntry> for Persist {
 struct InMemoryCache {
     #[allow(clippy::type_complexity)]
     cache: DashMap<
-        FormValue,
+        Platform,
         DashMap<String, DashMap<String, DashMap<String, DashMap<Excludes, CacheEntry>>>>,
     >,
 }
@@ -173,7 +173,7 @@ impl InMemoryCache {
 impl Cache<CacheKey, CacheEntry> for InMemoryCache {
     fn store(&self, key: CacheKey, value: CacheEntry) -> Result<()> {
         self.cache
-            .entry(key.service)
+            .entry(key.platform)
             .or_default()
             .entry(key.owner)
             .or_default()
@@ -186,7 +186,7 @@ impl Cache<CacheKey, CacheEntry> for InMemoryCache {
     }
 
     fn load(&self, key: &CacheKey) -> Result<Option<CacheEntry>> {
-        Ok(self.cache.get(&key.service).and_then(|c| {
+        Ok(self.cache.get(&key.platform).and_then(|c| {
             c.get(&key.owner).and_then(|c| {
                 c.get(&key.repo).and_then(|c| {
                     c.get(&key.branch)
@@ -196,8 +196,8 @@ impl Cache<CacheKey, CacheEntry> for InMemoryCache {
         }))
     }
 
-    fn clear(&self, service: FormValue, owner: &str, repo: &str) -> Result<()> {
-        if let Some(c) = self.cache.get(&service)
+    fn clear(&self, platform: Platform, owner: &str, repo: &str) -> Result<()> {
+        if let Some(c) = self.cache.get(&platform)
             && let Some(c) = c.value().get(owner)
         {
             c.value().remove(repo);
@@ -244,11 +244,11 @@ impl Cache<CacheKey, CacheEntry> for DiskCache {
         Ok(())
     }
 
-    fn clear(&self, service: FormValue, owner: &str, repo: &str) -> Result<()> {
+    fn clear(&self, platform: Platform, owner: &str, repo: &str) -> Result<()> {
         let cache_dir = self
             .settings
             .cachedir
-            .join(service.service())
+            .join(platform.url_path())
             .join(owner)
             .join(repo);
         remove_dir_all(cache_dir).or_else(|e| {

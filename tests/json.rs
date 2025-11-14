@@ -1,16 +1,24 @@
 mod util;
 
-#[actix_rt::test]
-async fn json_returns_success() {
-    let test_app = util::spawn_app().await;
+use axum::{body::Body, http::Request};
 
-    let client = awc::Client::default();
+#[tokio::test]
+async fn json_returns_success() {
+    let (_test_app, handle, addr) = util::spawn_app().await;
+
+    let client = hyper_util::client::legacy::Client::builder(hyper_util::rt::TokioExecutor::new())
+        .build_http();
 
     let response = client
-        .get(&format!("{}/github/vbrandl/hoc/json", test_app.address))
-        .send()
+        .request(
+            Request::builder()
+                .uri(format!("http://{addr}/github/vbrandl/hoc/json"))
+                .body(Body::empty())
+                .unwrap(),
+        )
         .await
         .expect("Failed to execute request");
 
     assert!(response.status().is_success());
+    handle.abort();
 }
