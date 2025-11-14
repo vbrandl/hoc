@@ -82,6 +82,7 @@ enum HocResult {
         hoc_pretty: String,
         head: String,
         url: String,
+        owner: String,
         repo: String,
         service_path: String,
     },
@@ -200,6 +201,7 @@ async fn handle_hoc_request(
             hoc_pretty,
             head,
             url,
+            owner,
             repo,
             service_path,
         };
@@ -324,11 +326,12 @@ pub(crate) async fn overview(
             hoc_pretty,
             url,
             head,
+            owner,
             repo,
             service_path,
         } => {
             let repo_info = RepoInfo {
-                commit_url: &platform.commit_url(&repo, &head),
+                commit_url: &platform.commit_url(&owner, &repo, &head),
                 commits,
                 base_url: &base_url,
                 head: &head,

@@ -35,13 +35,19 @@ impl Platform {
         }
     }
 
-    pub(crate) fn commit_url(self, repo: &str, commit_ref: &str) -> String {
+    pub(crate) fn commit_url(self, owner: &str, repo: &str, commit_ref: &str) -> String {
         match self {
             Self::GitHub | Self::Gitlab | Self::Sourcehut => {
-                format!("https://{}/{repo}/commit/{commit_ref}", self.domain())
+                format!(
+                    "https://{}/{owner}/{repo}/commit/{commit_ref}",
+                    self.domain()
+                )
             }
             Self::Bitbucket => {
-                format!("https://{}/{repo}/commits/{commit_ref}", self.domain(),)
+                format!(
+                    "https://{}/{owner}/{repo}/commits/{commit_ref}",
+                    self.domain(),
+                )
             }
         }
     }
