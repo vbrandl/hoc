@@ -27,7 +27,10 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use badgers::{Badge, BadgeOptions};
-use git2::Repository;
+use gix::{
+    Repository,
+    remote::{Direction, fetch::Tags},
+};
 use jiff::{SignedDuration, Timestamp, fmt::rfc2822};
 use number_prefix::NumberPrefix;
 use serde::{Deserialize, Serialize};
@@ -64,10 +67,20 @@ fn default_label() -> String {
 }
 
 // TODO: pull/fetch/clone using gix
-fn pull(path: impl AsRef<Path>, branch: &str) -> Result<()> {
-    let repo = Repository::open_bare(path)?;
-    let mut origin = repo.find_remote("origin")?;
-    origin.fetch(&[branch], None, None)?;
+fn fetch(repo: &Repository, branch: &str) -> Result<()> {
+    // let repo = Repository::open_bare(path)?;
+    let refspec = format!("refs/heads/{branch}:refs/remotes/origin/{branch}");
+    let mut remote = repo
+        .find_remote("origin")?
+        .with_fetch_tags(Tags::None)
+        // .with_refspecs(&[refspec.into()], Direction::Fetch)
+        // TODO
+        // .unwrap();
+         ;
+    let url = remote.url(Direction::Fetch).unwrap();
+    let mut transport = gix::tr
+    // remote.connect(Direction::Fetch);
+    // origin.fetch(&[branch], None, None)?;
     Ok(())
 }
 
@@ -173,12 +186,19 @@ async fn handle_hoc_request(
             }
             info!("Cloning for the first time");
             create_dir_all(file)?;
-            let repo = Repository::init_bare(file)?;
-            repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
-            repo.remote_set_url("origin", &url)?;
+            let mut repo = gix::init_bare(file)?;
+            {
+                let mut config = repo.config_snapshot_mut();
+                config.set_raw_value(&"remote.origin.url", url.as_str())?;
+                config.set_raw_value(
+                    &"remote.origin.fetch",
+                    "+refs/heads/*:refs/remotes/origin/*",
+                )?;
+                config.commit()?;
+            }
             state.repo_count.fetch_add(1, Ordering::Relaxed);
         }
-        pull(&path, branch)?;
+        fetch(&path, branch)?;
 
         let HocCount { hoc, head, commits } = hoc::hoc(
             state.repos(),
