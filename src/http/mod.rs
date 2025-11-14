@@ -26,7 +26,6 @@ use tower_http::{
 };
 use tracing::error;
 
-// #[derive(Debug)]
 struct AppState {
     settings: Settings,
     repo_count: AtomicUsize,
@@ -107,6 +106,7 @@ impl IntoResponse for Error {
             )
                 .into_response()
         } else {
+            error!(err=%self, "error");
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 render!(templates::p500_html, VERSION_INFO, 0),
