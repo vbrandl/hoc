@@ -148,20 +148,14 @@ dependencies = [
 
 [[package]]
 name = "badgers"
-version = "1.2.0"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7954c1a712ad1b82f0f719bbeee7dc5ffd3d13a66c7dfb1e1df02f79e2729441"
+checksum = "07edf07a93f8d8bdef82aa987575e6de8765b72348daa4a83a1c7668702a4636"
 dependencies = [
  "ab_glyph",
- "base64 0.21.7",
- "once_cell",
+ "base64",
+ "thiserror",
 ]
-
-[[package]]
-name = "base64"
-version = "0.21.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
 
 [[package]]
 name = "base64"
@@ -1611,6 +1605,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tempfile",
+ "thiserror",
  "tokio",
  "tower-http",
  "tracing",
@@ -1722,7 +1717,7 @@ version = "0.1.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3c6995591a8f1380fcb4ba966a252a4b29188d51d2b89e3a252f5305be65aea8"
 dependencies = [
- "base64 0.22.1",
+ "base64",
  "bytes",
  "futures-channel",
  "futures-core",
@@ -2401,7 +2396,7 @@ dependencies = [
  "once_cell",
  "socket2",
  "tracing",
- "windows-sys 0.52.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -2480,7 +2475,7 @@ version = "0.12.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9d0946410b9f7b082a427e4ef5c8ff541a88b357bc6c637c40db3a68ac70a36f"
 dependencies = [
- "base64 0.22.1",
+ "base64",
  "bytes",
  "encoding_rs",
  "futures-core",
@@ -2535,7 +2530,7 @@ version = "0.18.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dd62dfaca6f048b191559a301dbe2c008eeddee96c23255d0d3df7cfa6434669"
 dependencies = [
- "base64 0.22.1",
+ "base64",
  "bytecount",
  "md5",
  "mime",
