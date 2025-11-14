@@ -22,8 +22,8 @@ pub(crate) fn hoc(
     let repo_dir = repo_dir
         .as_ref()
         .join(platform.domain())
-        .join(owner)
-        .join(repo);
+        .join(owner.to_lowercase())
+        .join(repo.to_lowercase());
 
     let repository = Repository::open_bare(&repo_dir)?;
     // TODO: do better...
