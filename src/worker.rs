@@ -48,6 +48,10 @@ impl<T: Hash + Eq + Clone> Queue<T> {
         }
     }
 
+    pub(crate) fn len(&self) -> usize {
+        self.tasks.len()
+    }
+
     pub(crate) fn close(&self) {
         info!("closing background worker queue");
         self.active.store(false, Ordering::SeqCst);

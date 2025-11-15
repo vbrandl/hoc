@@ -12,13 +12,14 @@ use std::{
 };
 
 use axum::{
-    Form,
+    Form, Json,
     extract::{Path, State},
     http::{StatusCode, header},
     response::IntoResponse,
 };
 use jiff::{SignedDuration, Timestamp, fmt::rfc2822};
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use tracing::error;
 
 pub(crate) async fn index(State(state): State<Arc<AppState>>) -> impl IntoResponse {
@@ -100,8 +101,10 @@ pub(crate) async fn favicon32() -> impl IntoResponse {
     )
 }
 
-pub(crate) async fn health_check() -> impl IntoResponse {
-    StatusCode::OK
+pub(crate) async fn health_check(State(state): State<Arc<AppState>>) -> impl IntoResponse {
+    Json(json!({
+        "queue_size": state.queue.len(),
+    }))
 }
 
 pub(crate) async fn p404(State(state): State<Arc<AppState>>) -> impl IntoResponse {
