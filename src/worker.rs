@@ -11,7 +11,7 @@ use std::{
 use crossbeam_queue::SegQueue;
 use dashmap::DashSet;
 use tokio::sync::Notify;
-use tracing::{error, trace};
+use tracing::{error, info, trace};
 
 pub(crate) struct Queue<T> {
     tasks: SegQueue<T>,
@@ -48,8 +48,8 @@ impl<T: Hash + Eq + Clone> Queue<T> {
         }
     }
 
-    #[cfg(test)]
-    fn close(&self) {
+    pub(crate) fn close(&self) {
+        info!("closing background worker queue");
         self.active.store(false, Ordering::SeqCst);
         // wake up all waiting workers
         self.notify.notify_waiters();

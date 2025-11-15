@@ -33,7 +33,9 @@ pub async fn spawn_app() -> (TestApp, JoinHandle<()>, SocketAddr) {
     settings.cachedir = cache_dir.path().to_path_buf();
 
     let listener = settings.listener().await.unwrap();
-    let app = http::router(&settings).into_make_service_with_connect_info::<SocketAddr>();
+    let app = http::router(&settings)
+        .0
+        .into_make_service_with_connect_info::<SocketAddr>();
     let addr = listener.local_addr().unwrap();
 
     (

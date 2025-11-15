@@ -18,9 +18,12 @@ use tracing::{Instrument, info, info_span};
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Result<()> {
-    axum::serve(listener, http::router(&settings))
+    let (router, close_queue_callback) = http::router(&settings);
+    axum::serve(listener, router)
         .with_graceful_shutdown(shutdown_signal())
-        .await
+        .await?;
+    close_queue_callback();
+    Ok(())
 }
 
 /// Start the server.

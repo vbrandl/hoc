@@ -55,7 +55,7 @@ async fn redirect_old_overview(
     ))
 }
 
-pub fn router(settings: &Settings) -> Router {
+pub fn router(settings: &Settings) -> (Router, impl Fn()) {
     let cache = Arc::new(Persist::new(settings.clone()));
     let queue = Arc::new(Queue::new());
     let state = Arc::new(AppState {
@@ -64,13 +64,19 @@ pub fn router(settings: &Settings) -> Router {
         cache: cache.clone(),
         queue: queue.clone(),
     });
+
+    let close_queue_callback = {
+        let queue = queue.clone();
+        move || queue.close()
+    };
     {
         let state = state.clone();
         tokio::spawn(async move {
             worker(state, queue).await;
         });
     }
-    Router::new()
+
+    let router = Router::new()
         .route("/", get(routes::index))
         .route("/health", get(routes::health_check))
         .route("/favicon.ico", get(routes::favicon32))
@@ -109,7 +115,8 @@ pub fn router(settings: &Settings) -> Router {
         .layer(PropagateRequestIdLayer::x_request_id())
         .layer(SetRequestIdLayer::x_request_id(MakeRequestUuid))
         .layer(CompressionLayer::new().gzip(true).deflate(true))
-        .with_state(state)
+        .with_state(state);
+    (router, close_queue_callback)
 }
 
 impl IntoResponse for Error {

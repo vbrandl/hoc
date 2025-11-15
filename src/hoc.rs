@@ -47,6 +47,7 @@ pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
     {
         let repo_path = repo_path.clone();
         let branch = params.branch.clone();
+        // TODO: this will not abort nicely and must wait for the current fetch to complete
         tokio::task::spawn_blocking(move || fetch(&repo_path, &branch))
     }
     .await
