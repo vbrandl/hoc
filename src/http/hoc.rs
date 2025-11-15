@@ -27,7 +27,7 @@ use jiff::{SignedDuration, Timestamp, fmt::rfc2822};
 use number_prefix::NumberPrefix;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use tracing::{Instrument, error, info, info_span, instrument};
+use tracing::{Instrument, error, info, info_span, instrument, trace};
 
 #[derive(Serialize)]
 struct JsonResponse<'a> {
@@ -130,6 +130,11 @@ pub(crate) async fn delete_repo_and_cache(
 #[instrument(name = "hoc calculation", skip_all, fields(platform = params.platform.domain(), params.owner, params.repo, params.branch))]
 async fn handle_hoc_request(state: &AppState, params: &HocParams) -> Result<HocResult> {
     let queued = state.queue.push(params.clone());
+    if queued {
+        trace!("queued new calculation job");
+    } else {
+        trace!("job already in queue");
+    }
 
     let cached = state.cache.load(params)?;
     Ok(
