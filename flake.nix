@@ -19,6 +19,6 @@
           pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
       in {
         devShells.default = with pkgs;
-          mkShell { buildInputs = [ rust-toolchain ]; };
+          mkShell { buildInputs = [ openssl pkg-config rust-toolchain ]; };
       });
 }

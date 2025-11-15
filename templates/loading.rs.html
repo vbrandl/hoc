@@ -1,0 +1,27 @@
+@use super::base_html;
+@use crate::statics::VersionInfo;
+@use crate::template::RepoInfo;
+
+@(version_info: VersionInfo, repo_count: usize, repo_info: RepoInfo, label: &str, exclude: &str)
+
+@:base_html("Hits-of-Code
+Badges", "Overview", {
+
+<p>
+  The metric for the project <a href="@repo_info.url">@repo_info.url</a> is
+  currently being calculated.
+</p>
+
+<p>To include the badge in your readme, use the following markdown:</p>
+
+<pre>
+  [![@label](@repo_info.base_url/@repo_info.path?branch=@repo_info.branch&label=@label&exclude=@exclude)](@repo_info.base_url/@repo_info.path/view?branch=@repo_info.branch&label=@label&exclude=@exclude)
+</pre>
+
+<form
+  method="post"
+  action="/@repo_info.path/delete?branch=@repo_info.branch&label=@label&exclude=@exclude"
+>
+  <button type="submit">Rebuild Cache</button>
+</form>
+}, version_info, repo_count)

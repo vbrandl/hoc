@@ -1,19 +1,15 @@
 use crate::{
-    cache::{Cache, Excludes, ToQuery},
+    cache::{Cache, CacheEntry, Excludes, HocParams, ToQuery},
     error::Result,
-    hoc,
     http::{self, AppState},
     platform::Platform,
-    statics::{CLIENT, VERSION_INFO},
+    statics::VERSION_INFO,
     template::RepoInfo,
     templates,
 };
 
 use std::{
-    collections::BTreeSet,
-    fs::create_dir_all,
     io,
-    path::Path,
     sync::{Arc, atomic::Ordering},
 };
 
@@ -27,11 +23,11 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use badgers::{Badge, BadgeOptions};
-use git2::Repository;
 use jiff::{SignedDuration, Timestamp, fmt::rfc2822};
 use number_prefix::NumberPrefix;
 use serde::{Deserialize, Serialize};
-use tracing::{Instrument, error, info, info_span, warn};
+use serde_json::json;
+use tracing::{Instrument, error, info, info_span, instrument};
 
 #[derive(Serialize)]
 struct JsonResponse<'a> {
@@ -63,29 +59,15 @@ fn default_label() -> String {
     "Hits-of-Code".to_string()
 }
 
-fn pull(path: impl AsRef<Path>, branch: &str) -> Result<()> {
-    let repo = Repository::open_bare(path)?;
-    let mut origin = repo.find_remote("origin")?;
-    origin.fetch(&[branch], None, None)?;
-    Ok(())
-}
-
-async fn remote_exists(url: &str) -> Result<bool> {
-    let resp = CLIENT.head(url).send().await?;
-    Ok(resp.status() == reqwest::StatusCode::OK)
-}
-
 enum HocResult {
     Hoc {
         hoc: u64,
         commits: u64,
         hoc_pretty: String,
         head: String,
-        url: String,
-        owner: String,
-        repo: String,
-        service_path: String,
+        params: HocParams,
     },
+    Loading,
     NotFound,
 }
 
@@ -145,91 +127,63 @@ pub(crate) async fn delete_repo_and_cache(
     future.instrument(span).await
 }
 
-async fn handle_hoc_request(
-    state: &AppState,
-    (platform, owner, repo): (Platform, String, String),
-    excludes: BTreeSet<String>,
-    branch: &str,
-) -> Result<HocResult> {
-    let span = info_span!(
-        "handling hoc calculation",
-        platform = platform.domain(),
-        user = owner.as_str(),
-        repo = repo.as_str(),
-        branch
-    );
-    let future = async move {
-        let slug = format!("{}/{}", owner.to_lowercase(), repo.to_lowercase());
-        let service_path = format!("{}/{slug}", platform.url_path());
-        let service_url = format!("{}/{slug}", platform.domain());
-        let path = state.repos().join(&service_url);
-        let url = format!("https://{}/{slug}", platform.domain());
-        let remote_exists = remote_exists(&url).await?;
-        let file = Path::new(&path);
-        if !file.exists() {
-            if !remote_exists {
-                warn!("Repository does not exist");
-                return Ok(HocResult::NotFound);
-            }
-            info!("Cloning for the first time");
-            create_dir_all(file)?;
-            let repo = Repository::init_bare(file)?;
-            repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
-            repo.remote_set_url("origin", &url)?;
-            state.repo_count.fetch_add(1, Ordering::Relaxed);
-        }
-        pull(&path, branch)?;
+#[instrument(name = "hoc calculation", skip_all, fields(platform = params.platform.domain(), params.owner, params.repo, params.branch))]
+async fn handle_hoc_request(state: &AppState, params: &HocParams) -> Result<HocResult> {
+    let queued = state.queue.push(params.clone());
 
-        let (hoc, head, commits) = hoc::hoc(
-            state.repos(),
-            platform,
-            &owner,
-            repo.as_str(),
-            &state.cache,
-            branch,
-            excludes,
-        )?;
-
-        #[allow(clippy::cast_precision_loss)]
-        let hoc_pretty = match NumberPrefix::decimal(hoc as f64) {
-            NumberPrefix::Standalone(hoc) => hoc.to_string(),
-            NumberPrefix::Prefixed(prefix, hoc) => format!("{hoc:.1}{prefix}"),
-        };
-        let res = HocResult::Hoc {
-            hoc,
-            commits,
-            hoc_pretty,
+    let cached = state.cache.load(params)?;
+    Ok(
+        if let Some(CacheEntry::Cached {
             head,
-            url,
-            owner,
-            repo,
-            service_path,
-        };
-        Ok(res)
-    };
-    future.instrument(span).await
+            count,
+            commits,
+        }) = cached
+        {
+            #[allow(clippy::cast_precision_loss)]
+            let hoc_pretty = match NumberPrefix::decimal(count as f64) {
+                NumberPrefix::Standalone(hoc) => hoc.to_string(),
+                NumberPrefix::Prefixed(prefix, hoc) => format!("{hoc:.1}{prefix}"),
+            };
+            HocResult::Hoc {
+                hoc: count,
+                commits,
+                hoc_pretty,
+                head,
+                params: params.clone(),
+            }
+        } else if matches!(cached, Some(CacheEntry::NotFound)) || !queued {
+            HocResult::NotFound
+        } else {
+            HocResult::Loading
+        },
+    )
 }
 
 pub(crate) async fn json_hoc(
     State(state): State<Arc<AppState>>,
-    ReqPath(data): ReqPath<(Platform, String, String)>,
+    ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
     let branch = query.branch.as_deref().unwrap_or("master");
     let exclude = query.excludes();
-    let r = handle_hoc_request(&state, data, exclude, branch).await?;
-    match r {
-        HocResult::NotFound => Ok(http::routes::p404(State(state)).await.into_response()),
+    let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
+    let r = handle_hoc_request(&state, &params).await?;
+    Ok(match r {
+        HocResult::NotFound => http::routes::p404(State(state)).await.into_response(),
         HocResult::Hoc {
             hoc, head, commits, ..
-        } => Ok(Json(JsonResponse {
+        } => Json(JsonResponse {
             branch,
             head: &head,
             count: hoc,
             commits,
         })
-        .into_response()),
-    }
+        .into_response(),
+        HocResult::Loading => Json(json!({
+            "status": "loading",
+        }))
+        .into_response(),
+    })
 }
 
 fn no_cache_headers(expires: &Timestamp) -> HeaderMap {
@@ -274,15 +228,29 @@ fn no_cache_response(body: Vec<u8>) -> impl IntoResponse {
 
 pub(crate) async fn calculate_hoc(
     State(state): State<Arc<AppState>>,
-    ReqPath(data): ReqPath<(Platform, String, String)>,
+    ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
     let label = query.label.clone();
     let branch = query.branch.as_deref().unwrap_or("master");
     let exclude = query.excludes();
-    if let Ok(r) = handle_hoc_request(&state, data, exclude, branch).await {
-        match r {
-            HocResult::NotFound => Ok(http::routes::p404(State(state)).await.into_response()),
+    let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
+    if let Ok(r) = handle_hoc_request(&state, &params).await {
+        Ok(match r {
+            HocResult::NotFound => http::routes::p404(State(state)).await.into_response(),
+            HocResult::Loading => {
+                let badge_opt = BadgeOptions {
+                    subject: label,
+                    status: "loading".to_string(),
+                    color: "#ffff00".to_string(),
+                };
+
+                let badge = Badge::new(badge_opt)?;
+                // TODO: remove clone
+                let body = badge.to_svg().as_bytes().to_vec();
+
+                no_cache_response(body).into_response()
+            }
             HocResult::Hoc { hoc_pretty, .. } => {
                 let badge_opt = BadgeOptions {
                     subject: label,
@@ -293,9 +261,9 @@ pub(crate) async fn calculate_hoc(
                 // TODO: remove clone
                 let body = badge.to_svg().as_bytes().to_vec();
 
-                Ok(no_cache_response(body).into_response())
+                no_cache_response(body).into_response()
             }
-        }
+        })
     } else {
         let error_badge = Badge::new(BadgeOptions {
             subject: query.label.clone(),
@@ -310,35 +278,55 @@ pub(crate) async fn calculate_hoc(
 
 pub(crate) async fn overview(
     State(state): State<Arc<AppState>>,
-    ReqPath(data @ (platform, _, _)): ReqPath<(Platform, String, String)>,
+    ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
     let branch = query.branch.as_deref().unwrap_or("master");
     let label = query.label.clone();
     let base_url = state.settings.base_url.clone();
     let exclude = query.excludes();
-    let r = handle_hoc_request(&state, data, exclude, branch).await?;
+    let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
+    let r = handle_hoc_request(&state, &params).await?;
     match r {
         HocResult::NotFound => Ok(http::routes::p404(State(state)).await.into_response()),
+        HocResult::Loading => {
+            let repo_info = RepoInfo {
+                commit_url: "",
+                commits: 0,
+                base_url: &base_url,
+                head: "",
+                hoc: 0,
+                hoc_pretty: "",
+                path: &params.service_path(),
+                url: &params.url(),
+                branch,
+            };
+            Ok(render!(
+                templates::loading_html,
+                VERSION_INFO,
+                state.repo_count.load(Ordering::Relaxed),
+                repo_info,
+                &label,
+                &query.exclude,
+            )
+            .into_response())
+        }
         HocResult::Hoc {
             hoc,
             commits,
             hoc_pretty,
-            url,
             head,
-            owner,
-            repo,
-            service_path,
+            params,
         } => {
             let repo_info = RepoInfo {
-                commit_url: &platform.commit_url(&owner, &repo, &head),
+                commit_url: &platform.commit_url(&params.owner, &params.repo, &head),
                 commits,
                 base_url: &base_url,
                 head: &head,
                 hoc,
                 hoc_pretty: &hoc_pretty,
-                path: &service_path,
-                url: &url,
+                path: &params.service_path(),
+                url: &params.url(),
                 branch,
             };
             Ok(render!(

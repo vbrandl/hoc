@@ -8,6 +8,7 @@ mod platform;
 mod statics;
 pub mod telemetry;
 mod template;
+mod worker;
 
 use crate::config::Settings;
 
@@ -17,7 +18,7 @@ use tracing::{Instrument, info, info_span};
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Result<()> {
-    axum::serve(listener, http::router(settings))
+    axum::serve(listener, http::router(&settings))
         .with_graceful_shutdown(shutdown_signal())
         .await
 }

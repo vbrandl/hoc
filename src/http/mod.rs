@@ -5,8 +5,13 @@ mod hoc;
 mod routes;
 
 use crate::{
-    cache::Persist, config::Settings, error::Error, platform::Platform, statics::VERSION_INFO,
+    cache::{HocParams, Persist},
+    config::Settings,
+    error::Error,
+    platform::Platform,
+    statics::VERSION_INFO,
     templates,
+    worker::{Queue, worker},
 };
 
 use std::sync::{Arc, atomic::AtomicUsize};
@@ -26,10 +31,11 @@ use tower_http::{
 };
 use tracing::error;
 
-struct AppState {
-    settings: Settings,
-    repo_count: AtomicUsize,
-    cache: Persist,
+pub(crate) struct AppState {
+    pub(crate) settings: Settings,
+    pub(crate) repo_count: AtomicUsize,
+    pub(crate) cache: Arc<Persist>,
+    pub(crate) queue: Arc<Queue<HocParams>>,
 }
 
 impl AppState {
@@ -49,12 +55,21 @@ async fn redirect_old_overview(
     ))
 }
 
-pub fn router(settings: Settings) -> Router {
+pub fn router(settings: &Settings) -> Router {
+    let cache = Arc::new(Persist::new(settings.clone()));
+    let queue = Arc::new(Queue::new());
     let state = Arc::new(AppState {
         settings: settings.clone(),
         repo_count: AtomicUsize::new(0),
-        cache: Persist::new(settings),
+        cache: cache.clone(),
+        queue: queue.clone(),
     });
+    {
+        let state = state.clone();
+        tokio::spawn(async move {
+            worker(state, queue).await;
+        });
+    }
     Router::new()
         .route("/", get(routes::index))
         .route("/health", get(routes::health_check))

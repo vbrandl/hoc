@@ -38,15 +38,15 @@ impl ToQuery for Excludes {
 }
 
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
-pub(crate) struct CacheKey {
-    platform: Platform,
-    owner: String,
-    repo: String,
-    branch: String,
-    excludes: Excludes,
+pub(crate) struct HocParams {
+    pub(crate) platform: Platform,
+    pub(crate) owner: String,
+    pub(crate) repo: String,
+    pub(crate) branch: String,
+    pub(crate) excludes: Excludes,
 }
 
-impl CacheKey {
+impl HocParams {
     pub(crate) fn new(
         platform: Platform,
         owner: String,
@@ -69,12 +69,32 @@ impl CacheKey {
         settings
             .cachedir
             .join(self.platform.domain())
-            .join(self.owner.as_str())
-            .join(self.repo.as_str())
+            .join(self.owner.to_lowercase().as_str())
+            .join(self.repo.to_lowercase().as_str())
             .join(self.branch.as_str())
             .join(excludes.as_str())
             .join("cache")
             .with_extension("json")
+    }
+
+    pub(crate) fn repo(&self, settings: &Settings) -> PathBuf {
+        settings
+            .repodir
+            .join(self.platform.domain())
+            .join(self.owner.to_lowercase().as_str())
+            .join(self.repo.to_lowercase().as_str())
+    }
+
+    pub(crate) fn url(&self) -> String {
+        format!("https://{}/{}", self.platform.domain(), self.slug())
+    }
+
+    pub(crate) fn service_path(&self) -> String {
+        format!("{}/{}", self.platform.url_path(), self.slug())
+    }
+
+    fn slug(&self) -> String {
+        format!("{}/{}", self.owner, self.repo)
     }
 }
 
@@ -105,7 +125,7 @@ impl Drop for Persist {
                         let branch = r.key();
                         for r in r.value() {
                             let excludes = r.key().clone();
-                            let key = CacheKey::new(
+                            let key = HocParams::new(
                                 platform,
                                 owner.clone(),
                                 repo.clone(),
@@ -125,8 +145,8 @@ impl Drop for Persist {
     }
 }
 
-impl Cache<CacheKey, CacheEntry> for Persist {
-    fn load(&self, key: &CacheKey) -> Result<Option<CacheEntry>> {
+impl Cache<HocParams, CacheEntry> for Persist {
+    fn load(&self, key: &HocParams) -> Result<Option<CacheEntry>> {
         if let Some(val) = self.in_memory.load(key)? {
             Ok(Some(val))
         } else if let Some(val) = self.disk.load(key)? {
@@ -137,7 +157,7 @@ impl Cache<CacheKey, CacheEntry> for Persist {
         }
     }
 
-    fn store(&self, key: CacheKey, value: CacheEntry) -> Result<()> {
+    fn store(&self, key: HocParams, value: CacheEntry) -> Result<()> {
         self.in_memory.store(key, value)
     }
 
@@ -170,8 +190,8 @@ impl InMemoryCache {
     }
 }
 
-impl Cache<CacheKey, CacheEntry> for InMemoryCache {
-    fn store(&self, key: CacheKey, value: CacheEntry) -> Result<()> {
+impl Cache<HocParams, CacheEntry> for InMemoryCache {
+    fn store(&self, key: HocParams, value: CacheEntry) -> Result<()> {
         self.cache
             .entry(key.platform)
             .or_default()
@@ -185,7 +205,7 @@ impl Cache<CacheKey, CacheEntry> for InMemoryCache {
         Ok(())
     }
 
-    fn load(&self, key: &CacheKey) -> Result<Option<CacheEntry>> {
+    fn load(&self, key: &HocParams) -> Result<Option<CacheEntry>> {
         Ok(self.cache.get(&key.platform).and_then(|c| {
             c.get(&key.owner).and_then(|c| {
                 c.get(&key.repo).and_then(|c| {
@@ -210,8 +230,8 @@ struct DiskCache {
     settings: Settings,
 }
 
-impl Cache<CacheKey, CacheEntry> for DiskCache {
-    fn load(&self, key: &CacheKey) -> Result<Option<CacheEntry>> {
+impl Cache<HocParams, CacheEntry> for DiskCache {
+    fn load(&self, key: &HocParams) -> Result<Option<CacheEntry>> {
         let cache_file = key.cache_file(&self.settings);
         match OpenOptions::new().read(true).open(&cache_file) {
             Ok(f) => Ok(serde_json::from_reader(BufReader::new(f))?),
@@ -225,7 +245,7 @@ impl Cache<CacheKey, CacheEntry> for DiskCache {
         }
     }
 
-    fn store(&self, key: CacheKey, value: CacheEntry) -> Result<()> {
+    fn store(&self, key: HocParams, value: CacheEntry) -> Result<()> {
         trace!("writing cache");
 
         let cache_file = key.cache_file(&self.settings);
@@ -263,21 +283,31 @@ impl Cache<CacheKey, CacheEntry> for DiskCache {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub(crate) struct CacheEntry {
-    /// HEAD commit ref
-    pub head: String,
-    /// `HoC` value
-    pub count: u64,
-    /// Number of commits
-    pub commits: u64,
+pub(crate) enum CacheEntry {
+    Cached {
+        /// HEAD commit ref
+        head: String,
+        /// `HoC` value
+        count: u64,
+        /// Number of commits
+        commits: u64,
+    },
+    NotFound,
 }
 
 impl CacheEntry {
     pub(crate) fn update(self, count: u64, commits: u64) -> Self {
-        Self {
-            count: self.count + count,
-            commits: self.commits + commits,
-            ..self
+        match self {
+            Self::NotFound => self,
+            Self::Cached {
+                count: old_count,
+                commits: old_commits,
+                head,
+            } => Self::Cached {
+                count: old_count + count,
+                commits: old_commits + commits,
+                head,
+            },
         }
     }
 }
