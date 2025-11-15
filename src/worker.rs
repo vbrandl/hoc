@@ -13,7 +13,7 @@ use dashmap::DashSet;
 use tokio::sync::Notify;
 use tracing::{error, info, trace};
 
-pub(crate) struct Queue<T> {
+pub struct Queue<T> {
     tasks: SegQueue<T>,
     uniqueness: DashSet<T>,
     notify: Notify,
@@ -21,7 +21,8 @@ pub(crate) struct Queue<T> {
 }
 
 impl<T: Hash + Eq + Clone> Queue<T> {
-    pub(crate) fn new() -> Self {
+    #[must_use]
+    pub fn new() -> Self {
         Self::default()
     }
 

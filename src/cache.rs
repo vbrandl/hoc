@@ -38,7 +38,7 @@ impl ToQuery for Excludes {
 }
 
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
-pub(crate) struct HocParams {
+pub struct HocParams {
     pub(crate) platform: Platform,
     pub(crate) owner: String,
     pub(crate) repo: String,
