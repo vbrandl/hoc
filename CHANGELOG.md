@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] 2025-11-16
+
 ### Changes
 
 - Use background task to perform cloning and metrics calculation. Make the endpoints non-blocking ([#947](https://github.com/vbrandl/hoc/pull/947))
