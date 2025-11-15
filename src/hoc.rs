@@ -96,6 +96,7 @@ pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
     arg.push("--".to_string());
     arg.push(".".to_string());
 
+    // TODO: this is also kinda blocking but should be fast enough
     let output = Command::new("git")
         .args(&arg)
         .current_dir(&repo_path)
@@ -103,6 +104,7 @@ pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
         .stdout;
     let output = String::from_utf8_lossy(&output);
 
+    // TODO: this is also kinda blocking but should be fast enough
     let output_commits = Command::new("git")
         .args(&arg_commit_count)
         .current_dir(&repo_path)
