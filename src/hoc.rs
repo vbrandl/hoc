@@ -1,37 +1,64 @@
 use crate::{
-    cache::{Cache, CacheEntry, CacheKey, Excludes, Persist},
+    cache::{Cache, CacheEntry, Excludes, HocParams},
     error::{Error, Result},
-    platform::Platform,
+    http::AppState,
+    statics::CLIENT,
 };
 
-use std::{path::Path, process::Command};
+use std::{fs::create_dir_all, path::Path, process::Command, sync::atomic::Ordering};
 
 use git2::{BranchType, Repository};
 use gix_glob::{Pattern, pattern::Case, wildmatch::Mode};
-use tracing::{debug, trace};
+use tracing::{debug, info, trace, warn};
 
-pub(crate) fn hoc(
-    repo_dir: impl AsRef<Path>,
-    platform: Platform,
-    owner: &str,
-    repo: &str,
-    cache: &Persist,
-    branch: &str,
-    excludes: Excludes,
-) -> Result<(u64, String, u64)> {
-    let repo_dir = repo_dir
-        .as_ref()
-        .join(platform.domain())
-        .join(owner.to_lowercase())
-        .join(repo.to_lowercase());
+async fn remote_exists(url: &str) -> Result<bool> {
+    let resp = CLIENT.head(url).send().await?;
+    Ok(resp.status() == reqwest::StatusCode::OK)
+}
 
-    let repository = Repository::open_bare(&repo_dir)?;
-    // TODO: do better...
-    let head = repository
-        .find_branch(branch, BranchType::Local)
+fn fetch(path: impl AsRef<Path>, branch: &str) -> Result<()> {
+    let repo = Repository::open_bare(path)?;
+    let mut origin = repo.find_remote("origin")?;
+    origin.fetch(&[branch], None, None)?;
+    Ok(())
+}
+
+pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
+    let repo_path = params.repo(&state.settings);
+    let repo = if repo_path.exists() {
+        Repository::open_bare(&repo_path)?
+    } else {
+        let url = params.url();
+        let remote_exists = remote_exists(&url).await?;
+        if !remote_exists {
+            warn!("Repository does not exist");
+            state.cache.store(params.clone(), CacheEntry::NotFound)?;
+            return Ok(());
+        }
+        info!("Cloning for the first time");
+        create_dir_all(&repo_path)?;
+        let repo = Repository::init_bare(&repo_path)?;
+        repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
+        repo.remote_set_url("origin", &url)?;
+        state.repo_count.fetch_add(1, Ordering::Relaxed);
+        repo
+    };
+
+    {
+        let repo_path = repo_path.clone();
+        let branch = params.branch.clone();
+        // TODO: this will not abort nicely and must wait for the current fetch to complete
+        tokio::task::spawn_blocking(move || fetch(&repo_path, &branch))
+    }
+    .await
+    .unwrap()?;
+
+    let head = repo
+        .find_branch(&params.branch, BranchType::Local)
         .map_err(|_| Error::BranchNotFound)?
         .into_reference();
     let head = format!("{}", head.target().ok_or(Error::BranchNotFound)?);
+
     let mut arg_commit_count = vec!["rev-list".to_string(), "--count".to_string()];
     let mut arg = vec![
         "log".to_string(),
@@ -46,37 +73,41 @@ pub(crate) fn hoc(
         "--diff-filter=ACDM".to_string(),
     ];
 
-    let patterns = compile_patterns(&excludes);
-    let key = CacheKey::new(platform, owner.into(), repo.into(), branch.into(), excludes);
-    let cached = cache.load(&key)?;
-    if let Some(cached) = cached.as_ref() {
+    let patterns = compile_patterns(&params.excludes);
+    let cached = state.cache.load(params)?;
+    if let Some(CacheEntry::Cached {
+        head: cached_head, ..
+    }) = cached.as_ref()
+    {
         debug!("using cache");
-        if cached.head == head {
+        if cached_head == &head {
             trace!("cache up to date");
-            return Ok((cached.count, head, cached.commits));
+            return Ok(());
         }
         trace!("updating cache");
-        arg.push(format!("{head}..{branch}"));
-        arg_commit_count.push(format!("{head}..{branch}"));
+        arg.push(format!("{head}..{}", params.branch));
+        arg_commit_count.push(format!("{head}..{}", params.branch));
     } else {
         debug!("Creating cache");
-        arg.push(branch.to_string());
-        arg_commit_count.push(branch.to_string());
+        arg.push(params.branch.clone());
+        arg_commit_count.push(params.branch.clone());
     }
 
     arg.push("--".to_string());
     arg.push(".".to_string());
 
+    // TODO: this is also kinda blocking but should be fast enough
     let output = Command::new("git")
         .args(&arg)
-        .current_dir(&repo_dir)
+        .current_dir(&repo_path)
         .output()?
         .stdout;
     let output = String::from_utf8_lossy(&output);
 
+    // TODO: this is also kinda blocking but should be fast enough
     let output_commits = Command::new("git")
         .args(&arg_commit_count)
-        .current_dir(&repo_dir)
+        .current_dir(&repo_path)
         .output()?
         .stdout;
     let output_commits = String::from_utf8_lossy(&output_commits);
@@ -99,16 +130,16 @@ pub(crate) fn hoc(
     });
 
     let cached = cached.map_or_else(
-        || CacheEntry {
+        || CacheEntry::Cached {
             head: head.clone(),
             count,
             commits,
         },
         |c| c.update(count, commits),
     );
-    cache.store(key, cached.clone())?;
+    state.cache.store(params.clone(), cached.clone())?;
 
-    Ok((cached.count, cached.head, cached.commits))
+    Ok(())
 }
 
 fn compile_patterns(excludes: &Excludes) -> Vec<Pattern> {

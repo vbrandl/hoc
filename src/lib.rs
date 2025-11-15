@@ -8,8 +8,11 @@ mod platform;
 mod statics;
 pub mod telemetry;
 mod template;
+pub mod worker;
 
-use crate::config::Settings;
+use std::sync::Arc;
+
+use crate::{config::Settings, worker::Queue};
 
 use tokio::{net::TcpListener, signal};
 use tracing::{Instrument, info, info_span};
@@ -17,9 +20,13 @@ use tracing::{Instrument, info, info_span};
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Result<()> {
-    axum::serve(listener, http::router(settings))
+    let queue = Arc::new(Queue::new());
+    let router = http::router(&settings, queue.clone());
+    axum::serve(listener, router)
         .with_graceful_shutdown(shutdown_signal())
-        .await
+        .await?;
+    queue.close();
+    Ok(())
 }
 
 /// Start the server.

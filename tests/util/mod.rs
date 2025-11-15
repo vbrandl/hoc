@@ -1,6 +1,9 @@
-use hoc::{config::Settings, http, telemetry};
+use hoc::{config::Settings, http, telemetry, worker::Queue};
 
-use std::{net::SocketAddr, sync::LazyLock};
+use std::{
+    net::SocketAddr,
+    sync::{Arc, LazyLock},
+};
 
 use tempfile::{TempDir, tempdir};
 use tokio::task::JoinHandle;
@@ -32,8 +35,10 @@ pub async fn spawn_app() -> (TestApp, JoinHandle<()>, SocketAddr) {
     settings.repodir = repo_dir.path().to_path_buf();
     settings.cachedir = cache_dir.path().to_path_buf();
 
+    let queue = Arc::new(Queue::new());
+
     let listener = settings.listener().await.unwrap();
-    let app = http::router(settings).into_make_service_with_connect_info::<SocketAddr>();
+    let app = http::router(&settings, queue).into_make_service_with_connect_info::<SocketAddr>();
     let addr = listener.local_addr().unwrap();
 
     (
