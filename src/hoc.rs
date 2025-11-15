@@ -44,7 +44,13 @@ pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
         repo
     };
 
-    fetch(&repo_path, &params.branch)?;
+    {
+        let repo_path = repo_path.clone();
+        let branch = params.branch.clone();
+        tokio::task::spawn_blocking(move || fetch(&repo_path, &branch))
+    }
+    .await
+    .unwrap()?;
 
     let head = repo
         .find_branch(&params.branch, BranchType::Local)

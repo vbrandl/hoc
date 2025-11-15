@@ -156,7 +156,7 @@ async fn handle_hoc_request(state: &AppState, params: &HocParams) -> Result<HocR
                 head,
                 params: params.clone(),
             }
-        } else if matches!(cached, Some(CacheEntry::NotFound)) || !queued {
+        } else if matches!(cached, Some(CacheEntry::NotFound)) {
             HocResult::NotFound
         } else {
             HocResult::Loading
@@ -204,7 +204,6 @@ fn no_cache_headers(expires: &Timestamp) -> HeaderMap {
     }
     // TODO: error handling
     let expires = expires.unwrap();
-    info!(expires, "expires");
 
     let expires_value = expires.try_into();
     if let Err(err) = &expires_value {
