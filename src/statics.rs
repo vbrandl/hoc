@@ -11,4 +11,11 @@ pub(crate) const VERSION_INFO: VersionInfo = VersionInfo {
     version: env!("CARGO_PKG_VERSION"),
 };
 
-pub(crate) static CLIENT: LazyLock<reqwest::Client> = LazyLock::new(reqwest::Client::new);
+const USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
+
+pub(crate) static CLIENT: LazyLock<reqwest::Client> = LazyLock::new(|| {
+    reqwest::Client::builder()
+        .user_agent(USER_AGENT)
+        .build()
+        .unwrap()
+});
