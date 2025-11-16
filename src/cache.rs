@@ -297,9 +297,13 @@ pub(crate) enum CacheEntry {
 }
 
 impl CacheEntry {
-    pub(crate) fn update(self, count: u64, commits: u64) -> Self {
+    pub(crate) fn update(self, count: u64, commits: u64, head: &str) -> Self {
         match self {
-            Self::NotFound => self,
+            Self::NotFound => Self::Cached {
+                count,
+                commits,
+                head: head.to_string(),
+            },
             Self::Cached {
                 count: old_count,
                 commits: old_commits,
