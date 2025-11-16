@@ -5,6 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changes
+
+- Better handling of default values (hide parameters with default values) ([#950](https://github.com/vbrandl/hoc/pull/950))
+- Automatically detect the default branch for a repository ([#950](https://github.com/vbrandl/hoc/pull/950))
+
+### Fixes
+
+- fix cache clearing ([#950](https://github.com/vbrandl/hoc/pull/950))
+
 ## [1.3.0] 2025-11-16
 
 ### Changes
