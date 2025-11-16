@@ -22,7 +22,7 @@ pub(crate) trait Cache<K, V> {
     fn clear(&self, platform: Platform, owner: &str, repo: &str) -> Result<()>;
 }
 
-pub(crate) trait ToQuery {
+trait ToQuery {
     fn to_query(&self) -> String;
 }
 
@@ -269,7 +269,7 @@ impl Cache<HocParams, CacheEntry> for DiskCache {
         let cache_dir = self
             .settings
             .cachedir
-            .join(platform.url_path())
+            .join(platform.domain())
             .join(owner)
             .join(repo);
         remove_dir_all(cache_dir).or_else(|e| {

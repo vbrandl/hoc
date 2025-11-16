@@ -81,9 +81,10 @@ pub(crate) async fn delete_repo_and_cache(
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(branch): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let repo = format!("{}/{owner}/{repo}", platform.domain());
     info!("Deleting cache and repository");
-    let repo_dir = state.repos().join(&repo);
+    let repo_dir = state
+        .repos()
+        .join(format!("{}/{owner}/{repo}", platform.domain()));
     std::fs::remove_dir_all(repo_dir).or_else(|e| {
         if e.kind() == io::ErrorKind::NotFound {
             Ok(())
