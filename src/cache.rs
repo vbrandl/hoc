@@ -42,7 +42,7 @@ pub struct HocParams {
     pub(crate) platform: Platform,
     pub(crate) owner: String,
     pub(crate) repo: String,
-    pub(crate) branch: String,
+    pub(crate) branch: Option<String>,
     pub(crate) excludes: Excludes,
 }
 
@@ -51,16 +51,23 @@ impl HocParams {
         platform: Platform,
         owner: String,
         repo: String,
-        branch: String,
+        branch: impl Into<Option<String>>,
         excludes: Excludes,
     ) -> Self {
         Self {
             platform,
             owner,
             repo,
-            branch,
+            branch: branch.into(),
             excludes,
         }
+    }
+
+    fn cache_branch_name(&self) -> &str {
+        self.branch
+            .as_deref()
+            // TODO: lets hope no branch by that name exists...
+            .unwrap_or("default_branch")
     }
 
     fn cache_file(&self, settings: &Settings) -> PathBuf {
@@ -71,7 +78,7 @@ impl HocParams {
             .join(self.platform.domain())
             .join(self.owner.to_lowercase().as_str())
             .join(self.repo.to_lowercase().as_str())
-            .join(self.branch.as_str())
+            .join(self.cache_branch_name())
             .join(excludes.as_str())
             .join("cache")
             .with_extension("json")
@@ -193,6 +200,7 @@ impl InMemoryCache {
 
 impl Cache<HocParams, CacheEntry> for InMemoryCache {
     fn store(&self, key: HocParams, value: CacheEntry) -> Result<()> {
+        let branch_key = key.cache_branch_name().to_string();
         self.cache
             .entry(key.platform)
             .or_default()
@@ -200,7 +208,7 @@ impl Cache<HocParams, CacheEntry> for InMemoryCache {
             .or_default()
             .entry(key.repo)
             .or_default()
-            .entry(key.branch)
+            .entry(branch_key)
             .or_default()
             .insert(key.excludes, value);
         Ok(())
@@ -210,7 +218,7 @@ impl Cache<HocParams, CacheEntry> for InMemoryCache {
         Ok(self.cache.get(&key.platform).and_then(|c| {
             c.get(&key.owner).and_then(|c| {
                 c.get(&key.repo).and_then(|c| {
-                    c.get(&key.branch)
+                    c.get(key.cache_branch_name())
                         .and_then(|c| c.get(&key.excludes).map(|r| r.value().clone()))
                 })
             })

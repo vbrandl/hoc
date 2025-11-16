@@ -53,21 +53,23 @@ alt="example badge" /></a>
 </pre>
 
 <p>
-By default, this service assumes the existence of a branch named <code>master</code>. If no branch with that name exists
-in your repository or you want a badge for another branch of your repository, just append
-<code>?branch=&lt;branch-name&gt;</code> to the URL.
+    This service tries to detect the default branch of the repository and uses that branch as the target.
+    Should the detection not work or you want the badge for another branch, just append
+    <code>?branch=&lt;branch-name&gt;</code> to the URL.
 </p>
 
 <p>
-The badge label can be customized using the <code>label=&lt;some-label&gt;</code> query parameter. It defaults to <code>Hits-of-Code</code>.
+    The badge label can be customized using the <code>label=&lt;some-label&gt;</code> query parameter. It defaults to
+    <code>Hits-of-Code</code>.
 </p>
 
 <p>
-You can also request the HoC as JSON by appending <code>/json</code> to the request path. This will return a JSON object
-with three fields: <code>count</code> (the HoC value), <code>commits</code> (the number of commits) and
-<code>head</code> (the commit ref of HEAD). Requesting <a
-href="@base_url/github/vbrandl/hoc/json">@base_url/github/vbrandl/hoc/json</a> might return something along
-the lines of
+    You can also request the HoC as JSON by appending <code>/json</code> to the request path. This will return a JSON
+    object
+    with three fields: <code>count</code> (the HoC value), <code>commits</code> (the number of commits) and
+    <code>head</code> (the commit ref of HEAD). Requesting <a
+        href="@base_url/github/vbrandl/hoc/json">@base_url/github/vbrandl/hoc/json</a> might return something along
+    the lines of
 </p>
 
 <pre>
@@ -81,9 +83,11 @@ the lines of
 <h2>Exclude Files</h2>
 
 <p>
-The <code>exclude</code> query parameter can be used to exclude files from the calculated metric. It takes a URL encoded list of comma separated values similar to a <code>.gitignore</code> file.
-To exclude a specific file, you can pass <code>exclude=Cargo.lock</code>.
-You can also use globs to exclude all files matching a pattern: <code>exclude=*.generated.foo</code> (don't forget to URL encode the value).
+    The <code>exclude</code> query parameter can be used to exclude files from the calculated metric. It takes a URL
+    encoded list of comma separated values similar to a <code>.gitignore</code> file.
+    To exclude a specific file, you can pass <code>exclude=Cargo.lock</code>.
+    You can also use globs to exclude all files matching a pattern: <code>exclude=*.generated.foo</code> (don't forget
+    to URL encode the value).
 </p>
 
 <h2>Badge Generator</h2>
@@ -100,7 +104,7 @@ You can also use globs to exclude all files matching a pattern: <code>exclude=*.
     <label>/</label>
     <input name="repo" id="repo" type="text" placeholder="repository" />
     <label>:</label>
-    <input name="branch" id="branch" type="text" placeholder="branch (defaults to `master`)" />
+    <input name="branch" id="branch" type="text" placeholder="branch (defaults to the default branch)" />
     <button type="submit">Generate</button>
 </form>
 

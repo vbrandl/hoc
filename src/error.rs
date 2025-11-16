@@ -1,4 +1,5 @@
 use thiserror::Error;
+use tokio::task::JoinError;
 
 pub(crate) type Result<T> = std::result::Result<T, Error>;
 
@@ -22,6 +23,8 @@ pub enum Error {
     BranchNotFound,
     #[error("UnknownPlatform({0})")]
     UnknownPlatform(String),
+    #[error("Join({0})")]
+    Join(#[from] JoinError),
     #[error(transparent)]
     Other(#[from] anyhow::Error),
 }

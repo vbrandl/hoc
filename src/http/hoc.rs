@@ -1,7 +1,7 @@
 use crate::{
     cache::{Cache, CacheEntry, Excludes, HocParams},
     error::Result,
-    http::{self, AppState},
+    http::AppState,
     platform::Platform,
     statics::VERSION_INFO,
     template::RepoInfo,
@@ -164,16 +164,18 @@ pub(crate) async fn json_hoc(
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let branch = query.branch.as_deref().unwrap_or("master");
     let exclude = query.excludes();
-    let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
+    let params = HocParams::new(platform, owner, repo, query.branch.clone(), exclude);
     let r = handle_hoc_request(&state, &params).await?;
     Ok(match r {
-        HocResult::NotFound => http::routes::p404(State(state)).await.into_response(),
+        HocResult::NotFound => Json(json!({
+            "status": "repo not found",
+        }))
+        .into_response(),
         HocResult::Hoc {
             hoc, head, commits, ..
         } => Json(JsonResponse {
-            branch,
+            branch: query.branch.as_deref().unwrap_or("default branch"),
             head: &head,
             count: hoc,
             commits,
@@ -230,48 +232,38 @@ pub(crate) async fn calculate_hoc(
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let branch = query.branch.as_deref().unwrap_or("master");
     let exclude = query.excludes();
-    let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
-    if let Ok(r) = handle_hoc_request(&state, &params).await {
-        Ok(match r {
-            HocResult::NotFound => http::routes::p404(State(state)).await.into_response(),
-            HocResult::Loading => {
-                let badge_opt = BadgeOptions {
-                    subject: query.label().to_string(),
-                    status: "loading".to_string(),
-                    color: "#ffff00".to_string(),
-                };
-
-                let badge = Badge::new(badge_opt)?;
-                // TODO: remove clone
-                let body = badge.to_svg().as_bytes().to_vec();
-
-                no_cache_response(body).into_response()
-            }
-            HocResult::Hoc { hoc_pretty, .. } => {
-                let badge_opt = BadgeOptions {
-                    subject: query.label().to_string(),
-                    color: "#007ec6".to_string(),
-                    status: hoc_pretty,
-                };
-                let badge = Badge::new(badge_opt)?;
-                // TODO: remove clone
-                let body = badge.to_svg().as_bytes().to_vec();
-
-                no_cache_response(body).into_response()
-            }
-        })
+    let params = HocParams::new(platform, owner, repo, query.branch.clone(), exclude);
+    let badge_opt = if let Ok(r) = handle_hoc_request(&state, &params).await {
+        match r {
+            HocResult::NotFound => BadgeOptions {
+                subject: query.label().to_string(),
+                status: "repo not found".to_string(),
+                color: "#ff0000".to_string(),
+            },
+            HocResult::Loading => BadgeOptions {
+                subject: query.label().to_string(),
+                status: "loading".to_string(),
+                color: "#ffff00".to_string(),
+            },
+            HocResult::Hoc { hoc_pretty, .. } => BadgeOptions {
+                subject: query.label().to_string(),
+                color: "#007ec6".to_string(),
+                status: hoc_pretty,
+            },
+        }
     } else {
-        let error_badge = Badge::new(BadgeOptions {
+        BadgeOptions {
             subject: query.label().to_string(),
             color: "#ff0000".to_string(),
             status: "error".to_string(),
-        })
-        .unwrap();
-        let body = error_badge.to_svg().as_bytes().to_vec();
-        Ok(no_cache_response(body).into_response())
-    }
+        }
+    };
+
+    let badge = Badge::new(badge_opt)?;
+    let body = badge.to_svg().as_bytes().to_vec();
+
+    Ok(no_cache_response(body))
 }
 
 pub(crate) async fn overview(
@@ -279,13 +271,12 @@ pub(crate) async fn overview(
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let branch = query.branch.as_deref().unwrap_or("master");
     let base_url = state.settings.base_url.clone();
     let exclude = query.excludes();
-    let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
+    let params = HocParams::new(platform, owner, repo, query.branch.clone(), exclude);
     let r = handle_hoc_request(&state, &params).await?;
     match r {
-        HocResult::NotFound => Ok(http::routes::p404(State(state)).await.into_response()),
+        HocResult::NotFound => Ok(repo_not_found(&state).into_response()),
         HocResult::Loading => {
             let repo_info = RepoInfo {
                 commit_url: "",
@@ -296,7 +287,7 @@ pub(crate) async fn overview(
                 hoc_pretty: "",
                 path: &params.service_path(),
                 url: &params.url(),
-                branch,
+                branch: query.branch.as_deref().unwrap_or("default branch"),
                 query: &query.to_query(),
             };
             let label = query.label();
@@ -325,7 +316,7 @@ pub(crate) async fn overview(
                 hoc_pretty: &hoc_pretty,
                 path: &params.service_path(),
                 url: &params.url(),
-                branch,
+                branch: query.branch.as_deref().unwrap_or("default branch"),
                 query: &query.to_query(),
             };
             let label = query.label();
@@ -339,4 +330,15 @@ pub(crate) async fn overview(
             .into_response())
         }
     }
+}
+
+fn repo_not_found(state: &AppState) -> impl IntoResponse {
+    (
+        StatusCode::NOT_FOUND,
+        render!(
+            templates::p404_repo_not_found_html,
+            VERSION_INFO,
+            state.repo_count.load(Ordering::Relaxed)
+        ),
+    )
 }
