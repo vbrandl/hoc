@@ -12,7 +12,7 @@ async fn health_check_works() {
     let response = client
         .request(
             Request::builder()
-                .uri(format!("http://{addr}/health_check"))
+                .uri(format!("http://{addr}/health"))
                 .body(Body::empty())
                 .unwrap(),
         )
@@ -20,5 +20,9 @@ async fn health_check_works() {
         .expect("Failed to execute request");
 
     assert!(response.status().is_success());
+    assert_eq!(
+        response.headers().get("content-type").unwrap(),
+        "application/json"
+    );
     handle.abort();
 }
