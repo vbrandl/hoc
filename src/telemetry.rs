@@ -1,3 +1,4 @@
+use anyhow::Result;
 use tracing::{Subscriber, subscriber::set_global_default};
 use tracing_log::LogTracer;
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt};
@@ -16,11 +17,10 @@ pub fn get_subscriber(level: &str) -> impl Subscriber + Send + Sync {
         .with(tracing_subscriber::fmt::layer())
 }
 
-/// # Panics
+/// # Errors
 ///
-/// This panics if the `LogTracer` cannot be initialized or `subscriber` cannot be set as global
-/// default.
-pub fn init_subscriber(subscriber: impl Subscriber + Send + Sync) {
-    LogTracer::init().expect("Failed to set logger");
-    set_global_default(subscriber).expect("Failed to set tracing subscriber");
+/// If the `LogTracer` cannot be initialized or `subscriber` cannot be set as global default.
+pub fn init_subscriber(subscriber: impl Subscriber + Send + Sync) -> Result<()> {
+    LogTracer::init()?;
+    Ok(set_global_default(subscriber)?)
 }

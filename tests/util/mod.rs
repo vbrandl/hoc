@@ -21,7 +21,7 @@ static TRACING: LazyLock<()> = LazyLock::new(|| {
         ""
     };
     let subscriber = telemetry::get_subscriber(filter);
-    telemetry::init_subscriber(subscriber);
+    telemetry::init_subscriber(subscriber).unwrap();
 });
 
 pub struct TestApp {
