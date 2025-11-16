@@ -1,4 +1,4 @@
-mod cache;
+pub mod cache;
 pub mod config;
 pub mod count;
 mod error;
@@ -10,22 +10,33 @@ pub mod telemetry;
 mod template;
 pub mod worker;
 
-use std::sync::Arc;
+use std::sync::{Arc, atomic::AtomicUsize};
 
-use crate::{config::Settings, worker::Queue};
+use crate::{
+    cache::Persist, config::Settings, count::count_repositories, error::Result, http::AppState,
+    worker::Queue,
+};
 
 use tokio::{net::TcpListener, signal};
-use tracing::{Instrument, info, info_span};
+use tracing::{info, instrument};
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
-async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Result<()> {
+async fn start_server(listener: TcpListener, settings: Settings) -> Result<()> {
     let queue = Arc::new(Queue::new());
-    let router = http::router(&settings, queue.clone());
+    let cache = Arc::new(Persist::new(settings.clone()));
+    let repo_count = AtomicUsize::new(count_repositories(&settings.repodir)?);
+    let state = Arc::new(AppState {
+        settings,
+        repo_count,
+        cache,
+        queue,
+    });
+    let router = http::router(state.clone());
     axum::serve(listener, router)
         .with_graceful_shutdown(shutdown_signal())
         .await?;
-    queue.close();
+    state.queue.close();
     Ok(())
 }
 
@@ -34,10 +45,9 @@ async fn start_server(listener: TcpListener, settings: Settings) -> std::io::Res
 /// # Errors
 ///
 /// * server cannot bind to `listener`
-pub async fn run(listener: TcpListener, settings: Settings) -> std::io::Result<()> {
-    let span = info_span!("hoc", version = env!("CARGO_PKG_VERSION"));
-    let _ = span.enter();
-    start_server(listener, settings).instrument(span).await
+#[instrument("hoc", skip_all, fields(version = env!("CARGO_PKG_VERSION")))]
+pub async fn run(listener: TcpListener, settings: Settings) -> Result<()> {
+    start_server(listener, settings).await
 }
 
 async fn shutdown_signal() {

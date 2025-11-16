@@ -1,8 +1,14 @@
-use hoc::{config::Settings, http, telemetry, worker::Queue};
+use hoc::{
+    cache::Persist,
+    config::Settings,
+    http::{self, AppState},
+    telemetry,
+    worker::Queue,
+};
 
 use std::{
     net::SocketAddr,
-    sync::{Arc, LazyLock},
+    sync::{Arc, LazyLock, atomic::AtomicUsize},
 };
 
 use tempfile::{TempDir, tempdir};
@@ -36,9 +42,18 @@ pub async fn spawn_app() -> (TestApp, JoinHandle<()>, SocketAddr) {
     settings.cachedir = cache_dir.path().to_path_buf();
 
     let queue = Arc::new(Queue::new());
+    let cache = Arc::new(Persist::new(settings.clone()));
 
     let listener = settings.listener().await.unwrap();
-    let app = http::router(&settings, queue).into_make_service_with_connect_info::<SocketAddr>();
+
+    let state = Arc::new(AppState {
+        settings,
+        repo_count: AtomicUsize::new(0),
+        cache,
+        queue,
+    });
+
+    let app = http::router(state).into_make_service_with_connect_info::<SocketAddr>();
     let addr = listener.local_addr().unwrap();
 
     (

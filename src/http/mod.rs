@@ -31,11 +31,11 @@ use tower_http::{
 };
 use tracing::error;
 
-pub(crate) struct AppState {
-    pub(crate) settings: Settings,
-    pub(crate) repo_count: AtomicUsize,
-    pub(crate) cache: Arc<Persist>,
-    pub(crate) queue: Arc<Queue<HocParams>>,
+pub struct AppState {
+    pub settings: Settings,
+    pub repo_count: AtomicUsize,
+    pub cache: Arc<Persist>,
+    pub queue: Arc<Queue<HocParams>>,
 }
 
 impl AppState {
@@ -55,19 +55,11 @@ async fn redirect_old_overview(
     ))
 }
 
-pub fn router(settings: &Settings, queue: Arc<Queue<HocParams>>) -> Router {
-    let cache = Arc::new(Persist::new(settings.clone()));
-    let state = Arc::new(AppState {
-        settings: settings.clone(),
-        repo_count: AtomicUsize::new(0),
-        cache: cache.clone(),
-        queue: queue.clone(),
-    });
-
+pub fn router(state: Arc<AppState>) -> Router {
     {
         let state = state.clone();
         tokio::spawn(async move {
-            worker(state, queue).await;
+            worker(state).await;
         });
     }
 
