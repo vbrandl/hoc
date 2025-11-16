@@ -41,8 +41,8 @@ pub async fn spawn_app() -> (TestApp, JoinHandle<()>, SocketAddr) {
     settings.repodir = repo_dir.path().to_path_buf();
     settings.cachedir = cache_dir.path().to_path_buf();
 
-    let queue = Arc::new(Queue::new());
-    let cache = Arc::new(Persist::new(settings.clone()));
+    let queue = Queue::new();
+    let cache = Persist::new(settings.clone());
 
     let listener = settings.listener().await.unwrap();
 
