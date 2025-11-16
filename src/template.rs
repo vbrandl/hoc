@@ -11,6 +11,7 @@ pub struct RepoInfo<'a> {
     pub path: &'a str,
     pub url: &'a str,
     pub branch: &'a str,
+    pub query: &'a str,
 }
 
 pub struct RepoGeneratorInfo<'a> {

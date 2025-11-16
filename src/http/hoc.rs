@@ -1,5 +1,5 @@
 use crate::{
-    cache::{Cache, CacheEntry, Excludes, HocParams, ToQuery},
+    cache::{Cache, CacheEntry, Excludes, HocParams},
     error::Result,
     http::{self, AppState},
     platform::Platform,
@@ -37,26 +37,44 @@ struct JsonResponse<'a> {
     commits: u64,
 }
 
+const DEFAULT_LABEL: &str = "Hits-of-Code";
+
 #[derive(Deserialize, Debug)]
 pub(crate) struct BadgeQuery {
     branch: Option<String>,
-    #[serde(default = "String::new")]
-    exclude: String,
-    #[serde(default = "default_label")]
-    label: String,
+    exclude: Option<String>,
+    label: Option<String>,
 }
 
 impl BadgeQuery {
+    fn label(&self) -> &str {
+        self.label.as_deref().unwrap_or(DEFAULT_LABEL)
+    }
+
     fn excludes(&self) -> Excludes {
         self.exclude
-            .split(',')
-            .map(|s| s.trim().to_string())
-            .collect()
+            .as_ref()
+            .map(|e| e.split(',').map(|s| s.trim().to_string()).collect())
+            .unwrap_or_default()
     }
-}
 
-fn default_label() -> String {
-    "Hits-of-Code".to_string()
+    fn to_query(&self) -> String {
+        let branch = self.branch.as_ref().map(|b| format!("branch={b}"));
+        let exclude = self.exclude.as_ref().map(|e| format!("exclude={e}"));
+        let label = self.label.as_ref().map(|l| format!("label={l}"));
+
+        let query = [branch, exclude, label]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>()
+            .join("&");
+
+        if query.is_empty() {
+            String::new()
+        } else {
+            format!("?{query}")
+        }
+    }
 }
 
 enum HocResult {
@@ -96,28 +114,8 @@ pub(crate) async fn delete_repo_and_cache(
 
     state.cache.clear(platform, &owner, &repo)?;
 
-    let branch_query = branch.branch.as_ref().map(|b| format!("branch={b}"));
-
-    let excludes = branch.excludes();
-    let exclude_query = if excludes.is_empty() {
-        None
-    } else {
-        Some(excludes.to_query())
-    };
-
-    let label_query = Some(format!("label={}", branch.label));
-
-    let query: Vec<_> = [branch_query, exclude_query, label_query]
-        .into_iter()
-        .flatten()
-        .collect();
-    let query = query.join("&");
-    let query = if query.is_empty() {
-        query
-    } else {
-        format!("?{query}")
-    };
-    Ok(Redirect::temporary(&format!(
+    let query = branch.to_query();
+    Ok(Redirect::to(&format!(
         "{}/{}/{owner}/{repo}/view{query}",
         state.settings.base_url,
         platform.url_path()
@@ -232,7 +230,6 @@ pub(crate) async fn calculate_hoc(
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let label = query.label.clone();
     let branch = query.branch.as_deref().unwrap_or("master");
     let exclude = query.excludes();
     let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
@@ -241,7 +238,7 @@ pub(crate) async fn calculate_hoc(
             HocResult::NotFound => http::routes::p404(State(state)).await.into_response(),
             HocResult::Loading => {
                 let badge_opt = BadgeOptions {
-                    subject: label,
+                    subject: query.label().to_string(),
                     status: "loading".to_string(),
                     color: "#ffff00".to_string(),
                 };
@@ -254,7 +251,7 @@ pub(crate) async fn calculate_hoc(
             }
             HocResult::Hoc { hoc_pretty, .. } => {
                 let badge_opt = BadgeOptions {
-                    subject: label,
+                    subject: query.label().to_string(),
                     color: "#007ec6".to_string(),
                     status: hoc_pretty,
                 };
@@ -267,7 +264,7 @@ pub(crate) async fn calculate_hoc(
         })
     } else {
         let error_badge = Badge::new(BadgeOptions {
-            subject: query.label.clone(),
+            subject: query.label().to_string(),
             color: "#ff0000".to_string(),
             status: "error".to_string(),
         })
@@ -283,7 +280,6 @@ pub(crate) async fn overview(
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
     let branch = query.branch.as_deref().unwrap_or("master");
-    let label = query.label.clone();
     let base_url = state.settings.base_url.clone();
     let exclude = query.excludes();
     let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
@@ -301,14 +297,15 @@ pub(crate) async fn overview(
                 path: &params.service_path(),
                 url: &params.url(),
                 branch,
+                query: &query.to_query(),
             };
+            let label = query.label();
             Ok(render!(
                 templates::loading_html,
                 VERSION_INFO,
                 state.repo_count.load(Ordering::Relaxed),
                 repo_info,
-                &label,
-                &query.exclude,
+                label
             )
             .into_response())
         }
@@ -329,14 +326,15 @@ pub(crate) async fn overview(
                 path: &params.service_path(),
                 url: &params.url(),
                 branch,
+                query: &query.to_query(),
             };
+            let label = query.label();
             Ok(render!(
                 templates::overview_html,
                 VERSION_INFO,
                 state.repo_count.load(Ordering::Relaxed),
                 repo_info,
-                &label,
-                &query.exclude,
+                label,
             )
             .into_response())
         }

@@ -29,7 +29,7 @@ use tower_http::{
     request_id::{MakeRequestUuid, PropagateRequestIdLayer, RequestId, SetRequestIdLayer},
     trace::{DefaultMakeSpan, MakeSpan, TraceLayer},
 };
-use tracing::error;
+use tracing::{error, instrument, warn};
 
 pub struct AppState {
     pub settings: Settings,
@@ -44,10 +44,12 @@ impl AppState {
     }
 }
 
+#[instrument(skip(state))]
 async fn redirect_old_overview(
     State(state): State<Arc<AppState>>,
     Path((platform, owner, repo)): Path<(Platform, String, String)>,
 ) -> impl IntoResponse {
+    warn!("request to deprecated endpoint");
     Redirect::permanent(&format!(
         "{}/{}/{owner}/{repo}/view",
         state.settings.base_url,
