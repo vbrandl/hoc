@@ -1,4 +1,4 @@
-use crate::{cache::HocParams, hoc::hoc, http::AppState};
+use crate::{hoc::hoc, http::AppState};
 
 use std::{
     hash::Hash,
@@ -11,7 +11,7 @@ use std::{
 use crossbeam_queue::SegQueue;
 use dashmap::DashSet;
 use tokio::sync::Notify;
-use tracing::{error, info, trace};
+use tracing::{error, info, instrument, trace};
 
 pub struct Queue<T> {
     tasks: SegQueue<T>,
@@ -72,8 +72,9 @@ impl<T: Hash + Eq + Clone> Default for Queue<T> {
     }
 }
 
-pub(crate) async fn worker(state: Arc<AppState>, queue: Arc<Queue<HocParams>>) {
-    while let Some(task) = queue.pop().await {
+#[instrument(skip_all)]
+pub(crate) async fn worker(state: Arc<AppState>) {
+    while let Some(task) = state.queue.pop().await {
         trace!(?task, "handling hoc calculation");
 
         if let Err(err) = hoc(&task, &state).await {

@@ -108,9 +108,12 @@ pub(crate) async fn health_check(State(state): State<Arc<AppState>>) -> impl Int
 }
 
 pub(crate) async fn p404(State(state): State<Arc<AppState>>) -> impl IntoResponse {
-    render!(
-        templates::p404_html,
-        VERSION_INFO,
-        state.repo_count.load(Ordering::Relaxed)
+    (
+        StatusCode::NOT_FOUND,
+        render!(
+            templates::p404_html,
+            VERSION_INFO,
+            state.repo_count.load(Ordering::Relaxed)
+        ),
     )
 }

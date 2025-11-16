@@ -98,13 +98,14 @@ impl HocParams {
     }
 }
 
-pub(crate) struct Persist {
+pub struct Persist {
     in_memory: InMemoryCache,
     disk: DiskCache,
 }
 
 impl Persist {
-    pub(crate) fn new(settings: Settings) -> Self {
+    #[must_use]
+    pub fn new(settings: Settings) -> Self {
         Self {
             in_memory: InMemoryCache::new(),
             disk: DiskCache { settings },

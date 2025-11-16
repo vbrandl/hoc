@@ -9,20 +9,23 @@ use std::{fs::create_dir_all, path::Path, process::Command, sync::atomic::Orderi
 
 use git2::{BranchType, Repository};
 use gix_glob::{Pattern, pattern::Case, wildmatch::Mode};
-use tracing::{debug, info, trace, warn};
+use tracing::{debug, info, instrument, trace, warn};
 
 async fn remote_exists(url: &str) -> Result<bool> {
     let resp = CLIENT.head(url).send().await?;
     Ok(resp.status() == reqwest::StatusCode::OK)
 }
 
+#[instrument("fetch", skip(path), fields(path = ?path.as_ref().display()))]
 fn fetch(path: impl AsRef<Path>, branch: &str) -> Result<()> {
+    info!("fetching");
     let repo = Repository::open_bare(path)?;
     let mut origin = repo.find_remote("origin")?;
     origin.fetch(&[branch], None, None)?;
     Ok(())
 }
 
+#[instrument(skip(state))]
 pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
     let repo_path = params.repo(&state.settings);
     let repo = if repo_path.exists() {

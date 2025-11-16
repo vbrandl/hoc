@@ -27,7 +27,7 @@ use jiff::{SignedDuration, Timestamp, fmt::rfc2822};
 use number_prefix::NumberPrefix;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use tracing::{Instrument, error, info, info_span, instrument, trace};
+use tracing::{error, info, instrument, trace};
 
 #[derive(Serialize)]
 struct JsonResponse<'a> {
@@ -71,60 +71,56 @@ enum HocResult {
     NotFound,
 }
 
+#[instrument(
+    "deleting repository and cache",
+    skip_all,
+    fields(platform, owner, repo, branch)
+)]
 pub(crate) async fn delete_repo_and_cache(
     State(state): State<Arc<AppState>>,
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(branch): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let span = info_span!(
-        "deleting repository and cache",
-        platform = platform.domain(),
-        user = owner,
-        repo
-    );
-    let future = async {
-        let repo = format!("{}/{owner}/{repo}", platform.domain());
-        info!("Deleting cache and repository");
-        let repo_dir = state.repos().join(&repo);
-        std::fs::remove_dir_all(repo_dir).or_else(|e| {
-            if e.kind() == io::ErrorKind::NotFound {
-                Ok(())
-            } else {
-                Err(e)
-            }
-        })?;
-        state.repo_count.fetch_sub(1, Ordering::Relaxed);
-
-        state.cache.clear(platform, &owner, &repo)?;
-
-        let branch_query = branch.branch.as_ref().map(|b| format!("branch={b}"));
-
-        let excludes = branch.excludes();
-        let exclude_query = if excludes.is_empty() {
-            None
+    let repo = format!("{}/{owner}/{repo}", platform.domain());
+    info!("Deleting cache and repository");
+    let repo_dir = state.repos().join(&repo);
+    std::fs::remove_dir_all(repo_dir).or_else(|e| {
+        if e.kind() == io::ErrorKind::NotFound {
+            Ok(())
         } else {
-            Some(excludes.to_query())
-        };
+            Err(e)
+        }
+    })?;
+    state.repo_count.fetch_sub(1, Ordering::Relaxed);
 
-        let label_query = Some(format!("label={}", branch.label));
+    state.cache.clear(platform, &owner, &repo)?;
 
-        let query: Vec<_> = [branch_query, exclude_query, label_query]
-            .into_iter()
-            .flatten()
-            .collect();
-        let query = query.join("&");
-        let query = if query.is_empty() {
-            query
-        } else {
-            format!("?{query}")
-        };
-        Ok(Redirect::temporary(&format!(
-            "{}/{}/{owner}/{repo}/view{query}",
-            state.settings.base_url,
-            platform.url_path()
-        )))
+    let branch_query = branch.branch.as_ref().map(|b| format!("branch={b}"));
+
+    let excludes = branch.excludes();
+    let exclude_query = if excludes.is_empty() {
+        None
+    } else {
+        Some(excludes.to_query())
     };
-    future.instrument(span).await
+
+    let label_query = Some(format!("label={}", branch.label));
+
+    let query: Vec<_> = [branch_query, exclude_query, label_query]
+        .into_iter()
+        .flatten()
+        .collect();
+    let query = query.join("&");
+    let query = if query.is_empty() {
+        query
+    } else {
+        format!("?{query}")
+    };
+    Ok(Redirect::temporary(&format!(
+        "{}/{}/{owner}/{repo}/view{query}",
+        state.settings.base_url,
+        platform.url_path()
+    )))
 }
 
 #[instrument(name = "hoc calculation", skip_all, fields(platform = params.platform.domain(), params.owner, params.repo, params.branch))]
