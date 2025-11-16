@@ -52,11 +52,7 @@ pub(crate) async fn generate(
             platform: params.service,
             user: &params.user,
             repo: &params.repo,
-            branch: params
-                .branch
-                .as_deref()
-                .filter(|s| !s.is_empty())
-                .unwrap_or("master"),
+            branch: params.branch.as_deref().filter(|s| !s.is_empty()),
         }
     )
 }

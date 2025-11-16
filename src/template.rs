@@ -18,5 +18,12 @@ pub struct RepoGeneratorInfo<'a> {
     pub platform: Platform,
     pub user: &'a str,
     pub repo: &'a str,
-    pub branch: &'a str,
+    pub branch: Option<&'a str>,
+}
+
+impl RepoGeneratorInfo<'_> {
+    pub fn query(&self) -> String {
+        self.branch
+            .map_or_else(String::new, |b| format!("?branch={b}"))
+    }
 }
