@@ -34,8 +34,8 @@ use tracing::error;
 pub struct AppState {
     pub settings: Settings,
     pub repo_count: AtomicUsize,
-    pub cache: Arc<Persist>,
-    pub queue: Arc<Queue<HocParams>>,
+    pub cache: Persist,
+    pub queue: Queue<HocParams>,
 }
 
 impl AppState {

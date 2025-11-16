@@ -123,7 +123,7 @@ pub(crate) async fn delete_repo_and_cache(
     )))
 }
 
-#[instrument(name = "hoc calculation", skip_all, fields(platform = params.platform.domain(), params.owner, params.repo, params.branch))]
+#[instrument(skip_all, fields(platform = params.platform.domain(), owner=params.owner, repo=params.repo, branch=params.branch))]
 async fn handle_hoc_request(state: &AppState, params: &HocParams) -> Result<HocResult> {
     let queued = state.queue.push(params.clone());
     if queued {

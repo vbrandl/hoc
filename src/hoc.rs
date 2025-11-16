@@ -29,6 +29,7 @@ fn fetch(path: impl AsRef<Path>, branch: &str) -> Result<()> {
 pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
     let repo_path = params.repo(&state.settings);
     let repo = if repo_path.exists() {
+        trace!("using existing repo");
         Repository::open_bare(&repo_path)?
     } else {
         let url = params.url();
@@ -38,7 +39,7 @@ pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
             state.cache.store(params.clone(), CacheEntry::NotFound)?;
             return Ok(());
         }
-        info!("Cloning for the first time");
+        info!("cloning for the first time");
         create_dir_all(&repo_path)?;
         let repo = Repository::init_bare(&repo_path)?;
         repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
@@ -138,7 +139,7 @@ pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
             count,
             commits,
         },
-        |c| c.update(count, commits),
+        |c| c.update(count, commits, &head),
     );
     state.cache.store(params.clone(), cached.clone())?;
 

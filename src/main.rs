@@ -1,23 +1,25 @@
 use hoc::{config::Settings, telemetry};
 
+use anyhow::Result;
 use tokio::net::TcpListener;
+use tracing::{info, instrument};
 
-fn init() {
+fn init() -> Result<()> {
     dotenvy::dotenv().ok();
 
-    telemetry::init_subscriber(telemetry::get_subscriber("info"));
+    telemetry::init_subscriber(telemetry::get_subscriber("info"))
 }
 
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
-    init();
+#[instrument(skip_all, fields(version = env!("CARGO_PKG_VERSION")))]
+async fn main() -> Result<()> {
+    init()?;
 
-    // TODO: error handling
-    let settings = Settings::load().expect("Cannot load config");
+    let settings = Settings::load()?;
 
     let address = format!("{}:{}", settings.host, settings.port);
-    // TODO: error handling
+    info!(?settings, "starting server");
     let listener = TcpListener::bind(address).await?;
-    hoc::run(listener, settings).await.expect("Server error");
+    hoc::run(listener, settings).await?;
     Ok(())
 }

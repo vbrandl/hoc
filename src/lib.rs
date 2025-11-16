@@ -18,13 +18,13 @@ use crate::{
 };
 
 use tokio::{net::TcpListener, signal};
-use tracing::{info, instrument};
+use tracing::info;
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 
 async fn start_server(listener: TcpListener, settings: Settings) -> Result<()> {
-    let queue = Arc::new(Queue::new());
-    let cache = Arc::new(Persist::new(settings.clone()));
+    let queue = Queue::new();
+    let cache = Persist::new(settings.clone());
     let repo_count = AtomicUsize::new(count_repositories(&settings.repodir)?);
     let state = Arc::new(AppState {
         settings,
@@ -45,7 +45,6 @@ async fn start_server(listener: TcpListener, settings: Settings) -> Result<()> {
 /// # Errors
 ///
 /// * server cannot bind to `listener`
-#[instrument("hoc", skip_all, fields(version = env!("CARGO_PKG_VERSION")))]
 pub async fn run(listener: TcpListener, settings: Settings) -> Result<()> {
     start_server(listener, settings).await
 }

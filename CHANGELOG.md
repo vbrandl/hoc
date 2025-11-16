@@ -5,9 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] 2025-11-16
+
 ### Changes
 
 - Fix initial repo count, status 404 for not found pages and improved logging ([#948](https://github.com/vbrandl/hoc/pull/948))
+- Fix sourcehut lookups and cache updates ([#949](https://github.com/vbrandl/hoc/pull/949))
 
 ## [1.2.0] 2025-11-16
 
