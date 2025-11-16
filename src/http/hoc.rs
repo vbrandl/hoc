@@ -1,7 +1,7 @@
 use crate::{
-    cache::{Cache, CacheEntry, Excludes, HocParams, ToQuery},
+    cache::{Cache, CacheEntry, Excludes, HocParams},
     error::Result,
-    http::{self, AppState},
+    http::AppState,
     platform::Platform,
     statics::VERSION_INFO,
     template::RepoInfo,
@@ -37,26 +37,44 @@ struct JsonResponse<'a> {
     commits: u64,
 }
 
+const DEFAULT_LABEL: &str = "Hits-of-Code";
+
 #[derive(Deserialize, Debug)]
 pub(crate) struct BadgeQuery {
     branch: Option<String>,
-    #[serde(default = "String::new")]
-    exclude: String,
-    #[serde(default = "default_label")]
-    label: String,
+    exclude: Option<String>,
+    label: Option<String>,
 }
 
 impl BadgeQuery {
+    fn label(&self) -> &str {
+        self.label.as_deref().unwrap_or(DEFAULT_LABEL)
+    }
+
     fn excludes(&self) -> Excludes {
         self.exclude
-            .split(',')
-            .map(|s| s.trim().to_string())
-            .collect()
+            .as_ref()
+            .map(|e| e.split(',').map(|s| s.trim().to_string()).collect())
+            .unwrap_or_default()
     }
-}
 
-fn default_label() -> String {
-    "Hits-of-Code".to_string()
+    fn to_query(&self) -> String {
+        let branch = self.branch.as_ref().map(|b| format!("branch={b}"));
+        let exclude = self.exclude.as_ref().map(|e| format!("exclude={e}"));
+        let label = self.label.as_ref().map(|l| format!("label={l}"));
+
+        let query = [branch, exclude, label]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>()
+            .join("&");
+
+        if query.is_empty() {
+            String::new()
+        } else {
+            format!("?{query}")
+        }
+    }
 }
 
 enum HocResult {
@@ -81,9 +99,10 @@ pub(crate) async fn delete_repo_and_cache(
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(branch): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let repo = format!("{}/{owner}/{repo}", platform.domain());
     info!("Deleting cache and repository");
-    let repo_dir = state.repos().join(&repo);
+    let repo_dir = state
+        .repos()
+        .join(format!("{}/{owner}/{repo}", platform.domain()));
     std::fs::remove_dir_all(repo_dir).or_else(|e| {
         if e.kind() == io::ErrorKind::NotFound {
             Ok(())
@@ -95,28 +114,8 @@ pub(crate) async fn delete_repo_and_cache(
 
     state.cache.clear(platform, &owner, &repo)?;
 
-    let branch_query = branch.branch.as_ref().map(|b| format!("branch={b}"));
-
-    let excludes = branch.excludes();
-    let exclude_query = if excludes.is_empty() {
-        None
-    } else {
-        Some(excludes.to_query())
-    };
-
-    let label_query = Some(format!("label={}", branch.label));
-
-    let query: Vec<_> = [branch_query, exclude_query, label_query]
-        .into_iter()
-        .flatten()
-        .collect();
-    let query = query.join("&");
-    let query = if query.is_empty() {
-        query
-    } else {
-        format!("?{query}")
-    };
-    Ok(Redirect::temporary(&format!(
+    let query = branch.to_query();
+    Ok(Redirect::to(&format!(
         "{}/{}/{owner}/{repo}/view{query}",
         state.settings.base_url,
         platform.url_path()
@@ -165,16 +164,18 @@ pub(crate) async fn json_hoc(
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let branch = query.branch.as_deref().unwrap_or("master");
     let exclude = query.excludes();
-    let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
+    let params = HocParams::new(platform, owner, repo, query.branch.clone(), exclude);
     let r = handle_hoc_request(&state, &params).await?;
     Ok(match r {
-        HocResult::NotFound => http::routes::p404(State(state)).await.into_response(),
+        HocResult::NotFound => Json(json!({
+            "status": "repo not found",
+        }))
+        .into_response(),
         HocResult::Hoc {
             hoc, head, commits, ..
         } => Json(JsonResponse {
-            branch,
+            branch: query.branch.as_deref().unwrap_or("default branch"),
             head: &head,
             count: hoc,
             commits,
@@ -231,49 +232,38 @@ pub(crate) async fn calculate_hoc(
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let label = query.label.clone();
-    let branch = query.branch.as_deref().unwrap_or("master");
     let exclude = query.excludes();
-    let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
-    if let Ok(r) = handle_hoc_request(&state, &params).await {
-        Ok(match r {
-            HocResult::NotFound => http::routes::p404(State(state)).await.into_response(),
-            HocResult::Loading => {
-                let badge_opt = BadgeOptions {
-                    subject: label,
-                    status: "loading".to_string(),
-                    color: "#ffff00".to_string(),
-                };
-
-                let badge = Badge::new(badge_opt)?;
-                // TODO: remove clone
-                let body = badge.to_svg().as_bytes().to_vec();
-
-                no_cache_response(body).into_response()
-            }
-            HocResult::Hoc { hoc_pretty, .. } => {
-                let badge_opt = BadgeOptions {
-                    subject: label,
-                    color: "#007ec6".to_string(),
-                    status: hoc_pretty,
-                };
-                let badge = Badge::new(badge_opt)?;
-                // TODO: remove clone
-                let body = badge.to_svg().as_bytes().to_vec();
-
-                no_cache_response(body).into_response()
-            }
-        })
+    let params = HocParams::new(platform, owner, repo, query.branch.clone(), exclude);
+    let badge_opt = if let Ok(r) = handle_hoc_request(&state, &params).await {
+        match r {
+            HocResult::NotFound => BadgeOptions {
+                subject: query.label().to_string(),
+                status: "repo not found".to_string(),
+                color: "#ff0000".to_string(),
+            },
+            HocResult::Loading => BadgeOptions {
+                subject: query.label().to_string(),
+                status: "loading".to_string(),
+                color: "#ffff00".to_string(),
+            },
+            HocResult::Hoc { hoc_pretty, .. } => BadgeOptions {
+                subject: query.label().to_string(),
+                color: "#007ec6".to_string(),
+                status: hoc_pretty,
+            },
+        }
     } else {
-        let error_badge = Badge::new(BadgeOptions {
-            subject: query.label.clone(),
+        BadgeOptions {
+            subject: query.label().to_string(),
             color: "#ff0000".to_string(),
             status: "error".to_string(),
-        })
-        .unwrap();
-        let body = error_badge.to_svg().as_bytes().to_vec();
-        Ok(no_cache_response(body).into_response())
-    }
+        }
+    };
+
+    let badge = Badge::new(badge_opt)?;
+    let body = badge.to_svg().as_bytes().to_vec();
+
+    Ok(no_cache_response(body))
 }
 
 pub(crate) async fn overview(
@@ -281,14 +271,12 @@ pub(crate) async fn overview(
     ReqPath((platform, owner, repo)): ReqPath<(Platform, String, String)>,
     Query(query): Query<BadgeQuery>,
 ) -> Result<impl IntoResponse> {
-    let branch = query.branch.as_deref().unwrap_or("master");
-    let label = query.label.clone();
     let base_url = state.settings.base_url.clone();
     let exclude = query.excludes();
-    let params = HocParams::new(platform, owner, repo, branch.to_string(), exclude);
+    let params = HocParams::new(platform, owner, repo, query.branch.clone(), exclude);
     let r = handle_hoc_request(&state, &params).await?;
     match r {
-        HocResult::NotFound => Ok(http::routes::p404(State(state)).await.into_response()),
+        HocResult::NotFound => Ok(repo_not_found(&state).into_response()),
         HocResult::Loading => {
             let repo_info = RepoInfo {
                 commit_url: "",
@@ -299,15 +287,16 @@ pub(crate) async fn overview(
                 hoc_pretty: "",
                 path: &params.service_path(),
                 url: &params.url(),
-                branch,
+                branch: query.branch.as_deref().unwrap_or("default branch"),
+                query: &query.to_query(),
             };
+            let label = query.label();
             Ok(render!(
                 templates::loading_html,
                 VERSION_INFO,
                 state.repo_count.load(Ordering::Relaxed),
                 repo_info,
-                &label,
-                &query.exclude,
+                label
             )
             .into_response())
         }
@@ -327,17 +316,29 @@ pub(crate) async fn overview(
                 hoc_pretty: &hoc_pretty,
                 path: &params.service_path(),
                 url: &params.url(),
-                branch,
+                branch: query.branch.as_deref().unwrap_or("default branch"),
+                query: &query.to_query(),
             };
+            let label = query.label();
             Ok(render!(
                 templates::overview_html,
                 VERSION_INFO,
                 state.repo_count.load(Ordering::Relaxed),
                 repo_info,
-                &label,
-                &query.exclude,
+                label,
             )
             .into_response())
         }
     }
+}
+
+fn repo_not_found(state: &AppState) -> impl IntoResponse {
+    (
+        StatusCode::NOT_FOUND,
+        render!(
+            templates::p404_repo_not_found_html,
+            VERSION_INFO,
+            state.repo_count.load(Ordering::Relaxed)
+        ),
+    )
 }

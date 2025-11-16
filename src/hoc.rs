@@ -2,63 +2,91 @@ use crate::{
     cache::{Cache, CacheEntry, Excludes, HocParams},
     error::{Error, Result},
     http::AppState,
-    statics::CLIENT,
 };
 
-use std::{fs::create_dir_all, path::Path, process::Command, sync::atomic::Ordering};
+use std::{path::Path, process::Command, sync::atomic::Ordering};
 
-use git2::{BranchType, Repository};
+use git2::{BranchType, ErrorCode, Repository, build::RepoBuilder};
 use gix_glob::{Pattern, pattern::Case, wildmatch::Mode};
 use tracing::{debug, info, instrument, trace, warn};
 
-async fn remote_exists(url: &str) -> Result<bool> {
-    let resp = CLIENT.head(url).send().await?;
-    Ok(resp.status() == reqwest::StatusCode::OK)
-}
-
 #[instrument("fetch", skip(path), fields(path = ?path.as_ref().display()))]
-fn fetch(path: impl AsRef<Path>, branch: &str) -> Result<()> {
+fn fetch(path: impl AsRef<Path>, branch: Option<&str>) -> Result<()> {
     info!("fetching");
     let repo = Repository::open_bare(path)?;
     let mut origin = repo.find_remote("origin")?;
-    origin.fetch(&[branch], None, None)?;
+    origin.fetch(&[branch.unwrap_or("refs/heads/*:refs/heads/*")], None, None)?;
     Ok(())
+}
+
+#[instrument("clone", skip(path), fields(path = ?path.as_ref().display(), origin))]
+fn clone(path: impl AsRef<Path>, origin: &str) -> Result<Option<Repository>> {
+    info!("cloning");
+    Ok(
+        match RepoBuilder::new().bare(true).clone(origin, path.as_ref()) {
+            Ok(repo) => Ok(Some(repo)),
+            Err(e) if e.code() == ErrorCode::Auth => Ok(None),
+            Err(e) => Err(e),
+        }?,
+    )
+}
+
+fn find_default_branch(repo: &Repository) -> Result<Option<String>> {
+    Ok(repo
+        .head()?
+        .name()
+        .map(|s| s.strip_prefix("refs/heads/").unwrap_or(s).to_string()))
+}
+
+#[instrument(skip(state))]
+async fn open_repo(params: &HocParams, state: &AppState) -> Result<Option<Repository>> {
+    let repo_path = params.repo(&state.settings);
+    let repo = if repo_path.exists() {
+        trace!("using existing repo");
+        let repo = Repository::open_bare(&repo_path)?;
+        {
+            let repo_path = repo_path.clone();
+            let branch = params.branch.clone();
+            //
+            // TODO: this will not abort nicely and must wait for the current fetch to complete
+            tokio::task::spawn_blocking(move || fetch(&repo_path, branch.as_deref()))
+        }
+        .await??;
+        Some(repo)
+    } else {
+        let url = params.url();
+        info!("cloning for the first time");
+        if let Some(repo) = {
+            let repo_path = repo_path.clone();
+            tokio::task::spawn_blocking(move || clone(&repo_path, &url))
+        }
+        .await??
+        {
+            state.repo_count.fetch_add(1, Ordering::Relaxed);
+            Some(repo)
+        } else {
+            warn!("repository does not exist");
+            state.cache.store(params.clone(), CacheEntry::NotFound)?;
+            None
+        }
+    };
+    Ok(repo)
 }
 
 #[instrument(skip(state))]
 pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
-    let repo_path = params.repo(&state.settings);
-    let repo = if repo_path.exists() {
-        trace!("using existing repo");
-        Repository::open_bare(&repo_path)?
-    } else {
-        let url = params.url();
-        let remote_exists = remote_exists(&url).await?;
-        if !remote_exists {
-            warn!("Repository does not exist");
-            state.cache.store(params.clone(), CacheEntry::NotFound)?;
-            return Ok(());
-        }
-        info!("cloning for the first time");
-        create_dir_all(&repo_path)?;
-        let repo = Repository::init_bare(&repo_path)?;
-        repo.remote_add_fetch("origin", "refs/heads/*:refs/heads/*")?;
-        repo.remote_set_url("origin", &url)?;
-        state.repo_count.fetch_add(1, Ordering::Relaxed);
-        repo
+    let Some(repo) = open_repo(params, state).await? else {
+        return Ok(());
     };
 
-    {
-        let repo_path = repo_path.clone();
-        let branch = params.branch.clone();
-        // TODO: this will not abort nicely and must wait for the current fetch to complete
-        tokio::task::spawn_blocking(move || fetch(&repo_path, &branch))
-    }
-    .await
-    .unwrap()?;
+    let branch = if let Some(ref branch) = params.branch {
+        branch.clone()
+    } else {
+        find_default_branch(&repo)?.ok_or(Error::BranchNotFound)?
+    };
 
     let head = repo
-        .find_branch(&params.branch, BranchType::Local)
+        .find_branch(&branch, BranchType::Local)
         .map_err(|_| Error::BranchNotFound)?
         .into_reference();
     let head = format!("{}", head.target().ok_or(Error::BranchNotFound)?);
@@ -89,16 +117,18 @@ pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
             return Ok(());
         }
         trace!("updating cache");
-        arg.push(format!("{head}..{}", params.branch));
-        arg_commit_count.push(format!("{head}..{}", params.branch));
+        arg.push(format!("{head}..{branch}"));
+        arg_commit_count.push(format!("{head}..{branch}"));
     } else {
         debug!("Creating cache");
-        arg.push(params.branch.clone());
-        arg_commit_count.push(params.branch.clone());
+        arg.push(branch.clone());
+        arg_commit_count.push(branch.clone());
     }
 
     arg.push("--".to_string());
     arg.push(".".to_string());
+
+    let repo_path = params.repo(&state.settings);
 
     // TODO: this is also kinda blocking but should be fast enough
     let output = Command::new("git")

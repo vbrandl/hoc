@@ -1,0 +1,15 @@
+@use super::base_html;
+@use crate::statics::VersionInfo;
+
+@(version_info: VersionInfo, repo_count: usize)
+
+@:base_html("Page not Found - Hits-of-Code Badges", "404 - Repository not Found", {
+<p>
+  <big>Sorry</big>. I couldn't find the repository you requested. Maybe you made a typo or the repository is not
+  publich. Please go <a href="/">back to the homepage</a>.
+</p>
+
+<p>
+If you think, this is a mistake on my side, please <a href="mailto:mail+hoc@@vbrandl.net">drop me a mail</a>.
+</p>
+}, version_info, repo_count)
