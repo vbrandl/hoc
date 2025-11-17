@@ -7,20 +7,22 @@
 @:base_html("Hits-of-Code Badges", "Overview", {
 
 <p>
-The project <a href="@repo_info.url">@repo_info.url</a> has
-<strong>@repo_info.hoc_pretty</strong> (exactly @repo_info.hoc) hits of code at
-<a href="@repo_info.commit_url">@repo_info.head</a> on the
-<code>@repo_info.branch</code> branch. The repository contains
-<strong>@repo_info.commits</strong> commits.
+    The project <a href="@repo_info.url">@repo_info.url</a> has
+    <strong>@repo_info.hoc_pretty</strong> (exactly @repo_info.hoc) hits of code at
+    <a href="@repo_info.commit_url">@repo_info.head</a> on the
+    <code>@repo_info.branch</code> branch. The repository contains
+    <strong>@repo_info.commits</strong> commits.
 </p>
 
 <p>
-To include the badge in your readme, use the following markdown:
+    To include the badge in your readme, use the following markdown:
 </p>
 
-<pre>
-[![@label](@repo_info.base_url/@repo_info.path@repo_info.query)](@repo_info.base_url/@repo_info.path/view@repo_info.query)
-</pre>
+<p>
+    <code>
+        [![@label](@repo_info.base_url/@repo_info.path@repo_info.query)](@repo_info.base_url/@repo_info.path/view@repo_info.query)
+    </code>
+</p>
 
 
 <form method="post" action="/@repo_info.path/delete@repo_info.query">

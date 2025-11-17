@@ -8,19 +8,20 @@ use crate::{
 
 use std::{
     borrow::Cow,
+    collections::BTreeSet,
     sync::{Arc, atomic::Ordering},
 };
 
 use axum::{
-    Form, Json,
-    extract::{Path, State},
+    Json,
+    extract::{Path, Query, State},
     http::{StatusCode, header},
     response::IntoResponse,
 };
 use jiff::{SignedDuration, Timestamp, fmt::rfc2822};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use tracing::error;
+use tracing::{error, instrument};
 
 pub(crate) async fn index(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     render!(
@@ -31,28 +32,41 @@ pub(crate) async fn index(State(state): State<Arc<AppState>>) -> impl IntoRespon
     )
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub(crate) struct GeneratorForm<'a> {
     service: Platform,
     user: Cow<'a, str>,
     repo: Cow<'a, str>,
     branch: Option<Cow<'a, str>>,
+    exclude: Option<Cow<'a, str>>,
 }
 
+#[instrument(skip(state))]
 pub(crate) async fn generate(
     State(state): State<Arc<AppState>>,
-    Form(params): Form<GeneratorForm<'_>>,
+    Query(form): Query<GeneratorForm<'_>>,
 ) -> impl IntoResponse {
+    let exclude = form.exclude.map(|e| {
+        e.split(&[',', '\n'])
+            .map(str::trim)
+            // remove duplicates and sort
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            // is there a better way to join?
+            .collect::<Vec<_>>()
+            .join(",")
+    });
     render!(
         templates::generate_html,
         VERSION_INFO,
         state.repo_count.load(Ordering::Relaxed),
         &state.settings.base_url,
         &RepoGeneratorInfo {
-            platform: params.service,
-            user: &params.user,
-            repo: &params.repo,
-            branch: params.branch.as_deref().filter(|s| !s.is_empty()),
+            platform: form.service,
+            user: &form.user,
+            repo: &form.repo,
+            branch: form.branch.as_deref().filter(|s| !s.is_empty()),
+            exclude: exclude.as_deref(),
         }
     )
 }

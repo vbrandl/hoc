@@ -19,11 +19,24 @@ pub struct RepoGeneratorInfo<'a> {
     pub user: &'a str,
     pub repo: &'a str,
     pub branch: Option<&'a str>,
+    pub exclude: Option<&'a str>,
 }
 
 impl RepoGeneratorInfo<'_> {
     pub fn query(&self) -> String {
-        self.branch
-            .map_or_else(String::new, |b| format!("?branch={b}"))
+        let branch = self.branch.map(|b| format!("branch={b}"));
+        let exclude = self.exclude.map(|e| format!("exclude={e}"));
+
+        let query = [branch, exclude]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>()
+            .join("&");
+
+        if query.is_empty() {
+            String::new()
+        } else {
+            format!("?{query}")
+        }
     }
 }

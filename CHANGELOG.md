@@ -5,6 +5,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] 2025-11-17
+
+### Changes
+
+- Layout changes ([#951](https://github.com/vbrandl/hoc/pull/951))
+- Add excludes to the generator ([#951](https://github.com/vbrandl/hoc/pull/951))
+
+### Dependencies
+
+- Bump `tacit-css` to 1.9.4 ([#951](https://github.com/vbrandl/hoc/pull/951))
+
 ## [1.4.0] 2025-11-16
 
 ### Changes

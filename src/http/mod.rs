@@ -69,7 +69,7 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route("/", get(routes::index))
         .route("/health", get(routes::health_check))
         .route("/favicon.ico", get(routes::favicon32))
-        .route("/generate", post(routes::generate))
+        .route("/generate", get(routes::generate))
         .route("/static/{filename}", get(routes::static_file))
         .route("/view/{platform}/{user}/{repo}", get(redirect_old_overview))
         .nest(
