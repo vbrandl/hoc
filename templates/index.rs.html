@@ -21,36 +21,42 @@ gives an overview about the amount of work put into a codebase.
 There is a <a href="https://github.com/yegor256/hoc/">command-line tool</a> to calculate the HoC of a repository. For a Git repository you can use this one-line command:
 </p>
 
-<pre>
+<p>
+<code>
 git log --pretty=tformat: --numstat --ignore-space-change --ignore-all-space --ignore-submodules --no-color --find-copies-harder -M --diff-filter=ACDM -- . | awk '$1 ~ /^[0-9]+$/ && $2 ~ /^[0-9]+$/ &#123 add += $1; del += $2 &#125 END &#123 print add + del &#125'
-</pre>
+</code>
+</p>
 
 <p>
 Some people might want a nice badge to put in their README, that's why I implemented this API. Currently the API can be
 used for GitHub, GitLab, Bitbucket and Sourcehut repositories. Just put the following code in your README:
 </p>
 
-<pre>
+<p>
+<code>
 [![Hits-of-Code](@base_url/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;)](@base_url/&lt;service&gt;/&lt;user&gt;/&lt;repo&gt;/view)
-</pre>
+</code>
+</p>
 
 <p>
 where <code>&lt;service&gt;</code> is one of <code>github</code>, <code>gitlab</code>, <code>bitbucket</code> or
 <code>sourcehut</code>. So the following Markdown
 </p>
 
-<pre>
+<p>
+<code>
 [![Hits-of-Code](@base_url/github/vbrandl/hoc)](@base_url/github/vbrandl/hoc/view)
-</pre>
+</code>
+</p>
 
 <p>
 would render this badge:
 </p>
 
-<pre>
+<p>
 <a href="@base_url/github/vbrandl/hoc/view"><img src="@base_url/github/vbrandl/hoc"
 alt="example badge" /></a>
-</pre>
+</p>
 
 <p>
     This service tries to detect the default branch of the repository and uses that branch as the target.
@@ -73,11 +79,13 @@ alt="example badge" /></a>
 </p>
 
 <pre>
+<code>
 &#123;
     "head": "1f01c3b964b018fb0c0c2c5b572bf4ace2968546",
     "count": 8324,
     "commits": 223
 &#125;
+</code>
 </pre>
 
 <h2>Exclude Files</h2>
@@ -92,20 +100,31 @@ alt="example badge" /></a>
 
 <h2>Badge Generator</h2>
 
-<form method="post" action="/generate">
-    <select name="service" id="service">
-        <option value="github">GitHub</option>
-        <option value="gitlab">Gitlab</option>
-        <option value="bitbucket">Bitbucket</option>
-        <option value="sourcehut">Sourcehut</option>
-    </select>
-    <label>/</label>
-    <input name="user" id="user" type="text" placeholder="user" />
-    <label>/</label>
-    <input name="repo" id="repo" type="text" placeholder="repository" />
-    <label>:</label>
-    <input name="branch" id="branch" type="text" placeholder="branch (defaults to the default branch)" />
-    <button type="submit">Generate</button>
+<form action="/generate">
+    <fieldset>
+        <label for="service">Service</label>
+        <select name="service" id="service" required>
+            <option value="github">GitHub</option>
+            <option value="gitlab">Gitlab</option>
+            <option value="bitbucket">Bitbucket</option>
+            <option value="sourcehut">Sourcehut</option>
+        </select>
+
+        <label for="user">Owner</label>
+        <input name="user" id="user" type="text" placeholder="Owner" required />
+
+        <label for="repo">Repository</label>
+        <input name="repo" id="repo" type="text" placeholder="Repository" required />
+
+        <label for="branch">Branch</label>
+        <input name="branch" id="branch" type="text" placeholder="Leave empty for default branch" />
+
+        <label for="exclude">Excludes</label>
+        <textarea name="exclude" id="exclude" placeholder="Exclude patterns as in .gitignore. One per line"></textarea>
+
+        <label></label>
+        <button type="submit">Generate</button>
+    </fieldset>
 </form>
 
 <h2>Source Code</h2>
