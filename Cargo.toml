@@ -14,9 +14,9 @@ name = "hoc"
 
 [dependencies]
 anyhow = "1.0.100"
-axum = { version = "0.8.6", features = ["macros"] }
+axum = { version = "0.8.7", features = ["macros"] }
 badgers = "2.0.0"
-bytes = "1.10.1"
+bytes = "1.11.0"
 config = { version = "0.15.19", features = ["toml"], default-features = false }
 crossbeam-queue = "0.3.12"
 dashmap = "6.1.0"
