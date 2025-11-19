@@ -1,6 +1,6 @@
 [package]
 name = "hoc"
-version = "1.5.0"
+version = "1.6.0"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
 edition = "2024"
 build = "src/build.rs"
@@ -26,7 +26,6 @@ git2 = "0.20.2"
 gix-glob = "0.22.1"
 jiff = "0.2.16"
 mime = "0.3.17"
-number_prefix = "0.4.0"
 reqwest = { version = "0.12.24", default-features = false, features = [
   "charset",
   "system-proxy",
@@ -54,6 +53,7 @@ tracing-subscriber = { version = "0.3.20", features = [
   "registry",
   "env-filter",
 ] }
+unit-prefix = "0.5.2"
 urlencoding = "2.1.3"
 
 [build-dependencies]

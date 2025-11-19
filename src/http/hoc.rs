@@ -24,10 +24,10 @@ use axum::{
 };
 use badgers::{Badge, BadgeOptions};
 use jiff::{SignedDuration, Timestamp, fmt::rfc2822};
-use number_prefix::NumberPrefix;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tracing::{error, info, instrument, trace};
+use unit_prefix::NumberPrefix;
 
 #[derive(Serialize)]
 struct JsonResponse<'a> {
