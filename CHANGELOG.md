@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump `axum` from 0.8.6 to 0.8.7 ([#952](https://github.com/vbrandl/hoc/pull/952))
 - Bump `bytes` from 1.10.1 to 1.11.0 ([#952](https://github.com/vbrandl/hoc/pull/952))
+- Replace unmaintained `number-prefix` with `unit-prefix` ([#954](https://github.com/vbrandl/hoc/pull/954))
 
 ## [1.5.0] 2025-11-17
 
