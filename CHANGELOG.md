@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump `actions/checkout` from 5 to 6 ([#955](https://github.com/vbrandl/hoc/pull/955))
+
 ## [1.6.0] 2025-11-19
 
 ### Dependencies
