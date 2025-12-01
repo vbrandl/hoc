@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `actions/checkout` from 5 to 6 ([#955](https://github.com/vbrandl/hoc/pull/955))
 - Bump `tower-http` from 0.6.6 to 0.6.7 ([#956](https://github.com/vbrandl/hoc/pull/956))
 - Bump `actions/checkout` from 5 to 6 ([#955](https://github.com/vbrandl/hoc/pull/955))
+- Bump `tracing` from 0.1.41 to 0.1.43 ([#957](https://github.com/vbrandl/hoc/pull/957))
+- Bump `tracing-subscriber` from 0.3.20 to 0.3.22 ([#957](https://github.com/vbrandl/hoc/pull/957))
 
 ## [1.6.0] 2025-11-19
 
