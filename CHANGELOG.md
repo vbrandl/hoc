@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing-subscriber` from 0.3.20 to 0.3.22 ([#958](https://github.com/vbrandl/hoc/pull/958))
 - Bump `hyper-util` from 0.1.18 to 0.1.19 ([#958](https://github.com/vbrandl/hoc/pull/958))
 - Bump `alpine` from 3.22.2 to 3.23.0 ([#959](https://github.com/vbrandl/hoc/pull/959))
+- Bump `git2` from 0.20.2 to 0.20.3 ([#960](https://github.com/vbrandl/hoc/pull/960))
 
 ## [1.6.0] 2025-11-19
 
