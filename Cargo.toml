@@ -26,7 +26,7 @@ git2 = "0.20.3"
 gix-glob = "0.22.1"
 jiff = "0.2.16"
 mime = "0.3.17"
-reqwest = { version = "0.12.25", default-features = false, features = [
+reqwest = { version = "0.12.26", default-features = false, features = [
   "charset",
   "system-proxy",
   "http2",
