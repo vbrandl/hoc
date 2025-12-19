@@ -46,7 +46,7 @@ tower-http = { version = "0.6.7", features = [
   "compression-deflate",
   "compression-gzip",
 ] }
-tracing = "0.1.43"
+tracing = "0.1.44"
 tracing-futures = "0.2.5"
 tracing-log = "0.2.0"
 tracing-subscriber = { version = "0.3.22", features = [
