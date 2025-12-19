@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing` from 0.1.41 to 0.1.44 ([#958](https://github.com/vbrandl/hoc/pull/958), [#965](https://github.com/vbrandl/hoc/pull/965))
 - Bump `tracing-subscriber` from 0.3.20 to 0.3.22 ([#958](https://github.com/vbrandl/hoc/pull/958))
 - Bump `hyper-util` from 0.1.18 to 0.1.19 ([#958](https://github.com/vbrandl/hoc/pull/958))
-- Bump `alpine` from 3.22.2 to 3.23.0 ([#959](https://github.com/vbrandl/hoc/pull/959))
+- Bump `alpine` from 3.22.2 to 3.23.2 ([#959](https://github.com/vbrandl/hoc/pull/959), [#966](https://github.com/vbrandl/hoc/pull/966))
 - Bump `git2` from 0.20.2 to 0.20.3 ([#961](https://github.com/vbrandl/hoc/pull/961))
 - Bump `reqwest` from 0.12.24 to 0.12.26 ([#961](https://github.com/vbrandl/hoc/pull/961), [#964](https://github.com/vbrandl/hoc/pull/964))
 - Bump `rust-toolchain` from 1.91.1 to 1.92.0 ([#963](https://github.com/vbrandl/hoc/pull/963))
