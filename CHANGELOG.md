@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `actions/checkout` from 5 to 6 ([#955](https://github.com/vbrandl/hoc/pull/955))
 - Bump `tower-http` from 0.6.6 to 0.6.8 ([#956](https://github.com/vbrandl/hoc/pull/956), [#961](https://github.com/vbrandl/hoc/pull/961))
 - Bump `actions/checkout` from 5 to 6 ([#955](https://github.com/vbrandl/hoc/pull/955))
-- Bump `tracing` from 0.1.41 to 0.1.43 ([#958](https://github.com/vbrandl/hoc/pull/958))
+- Bump `tracing` from 0.1.41 to 0.1.44 ([#958](https://github.com/vbrandl/hoc/pull/958), [#965](https://github.com/vbrandl/hoc/pull/965))
 - Bump `tracing-subscriber` from 0.3.20 to 0.3.22 ([#958](https://github.com/vbrandl/hoc/pull/958))
 - Bump `hyper-util` from 0.1.18 to 0.1.19 ([#958](https://github.com/vbrandl/hoc/pull/958))
 - Bump `alpine` from 3.22.2 to 3.23.0 ([#959](https://github.com/vbrandl/hoc/pull/959))
