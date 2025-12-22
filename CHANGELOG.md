@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `reqwest` from 0.12.24 to 0.12.26 ([#961](https://github.com/vbrandl/hoc/pull/961), [#964](https://github.com/vbrandl/hoc/pull/964))
 - Bump `rust-toolchain` from 1.91.1 to 1.92.0 ([#963](https://github.com/vbrandl/hoc/pull/963))
 - Bump `actions/cache` from 4 to 5 ([#962](https://github.com/vbrandl/hoc/pull/962))
+- Bump `axum` from 0.8.7 to 0.8.8 ([#968](https://github.com/vbrandl/hoc/pull/968))
 
 ## [1.6.0] 2025-11-19
 
