@@ -6,7 +6,7 @@
 
 Small webservice, that returns a badge of the Hits-of-Code of a git repository, as described by [Yegor
 Bugayenko](https://www.yegor256.com/2014/11/14/hits-of-code.html). It is implemented in
-[Rust](https://www.rust-lang.org/), using the [actix-web](https://actix.rs/) web framework.
+[Rust](https://www.rust-lang.org/), using the [axum](https://github.com/tokio-rs/axum) web framework.
 
 A live version of this webservice can be found on [hitsofcode.com](https://hitsofcode.com/).
 
