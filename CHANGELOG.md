@@ -14,10 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `hyper-util` from 0.1.18 to 0.1.19 ([#958](https://github.com/vbrandl/hoc/pull/958))
 - Bump `alpine` from 3.22.2 to 3.23.2 ([#959](https://github.com/vbrandl/hoc/pull/959), [#966](https://github.com/vbrandl/hoc/pull/966))
 - Bump `git2` from 0.20.2 to 0.20.3 ([#961](https://github.com/vbrandl/hoc/pull/961))
-- Bump `reqwest` from 0.12.24 to 0.12.26 ([#961](https://github.com/vbrandl/hoc/pull/961), [#964](https://github.com/vbrandl/hoc/pull/964))
+- Bump `reqwest` from 0.12.24 to 0.12.28 ([#961](https://github.com/vbrandl/hoc/pull/961), [#964](https://github.com/vbrandl/hoc/pull/964), [#969](https://github.com/vbrandl/hoc/pull/969))
 - Bump `rust-toolchain` from 1.91.1 to 1.92.0 ([#963](https://github.com/vbrandl/hoc/pull/963))
 - Bump `actions/cache` from 4 to 5 ([#962](https://github.com/vbrandl/hoc/pull/962))
 - Bump `axum` from 0.8.7 to 0.8.8 ([#968](https://github.com/vbrandl/hoc/pull/968))
+- Bump `serde_json` from 1.0.145 to 1.0.146 ([#969](https://github.com/vbrandl/hoc/pull/969))
 
 ## [1.6.0] 2025-11-19
 
