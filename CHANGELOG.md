@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+- Update `README.md` to clarify change from `actix-web` to `axum` (thanks to @hongbo-miao) ([#971](https://github.com/vbrandl/hoc/pull/971))
+
 ### Dependencies
 - Bump `actions/checkout` from 5 to 6 ([#955](https://github.com/vbrandl/hoc/pull/955))
 - Bump `tower-http` from 0.6.6 to 0.6.8 ([#956](https://github.com/vbrandl/hoc/pull/956), [#961](https://github.com/vbrandl/hoc/pull/961))
