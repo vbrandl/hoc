@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `rust-toolchain` from 1.91.1 to 1.92.0 ([#963](https://github.com/vbrandl/hoc/pull/963))
 - Bump `actions/cache` from 4 to 5 ([#962](https://github.com/vbrandl/hoc/pull/962))
 - Bump `axum` from 0.8.7 to 0.8.8 ([#968](https://github.com/vbrandl/hoc/pull/968))
+- Bump `gix-glob` from 0.22.1 to 0.23.0 ([#970](https://github.com/vbrandl/hoc/pull/970))
 
 ## [1.6.0] 2025-11-19
 
