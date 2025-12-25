@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] 2025-12-25
+
 ### Documentation
 
 - Update `README.md` to clarify change from `actix-web` to `axum` (thanks to @hongbo-miao) ([#971](https://github.com/vbrandl/hoc/pull/971))
