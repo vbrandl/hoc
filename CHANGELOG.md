@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Dependencies
-
 - Bump `serde_json` from 1.0.147 to 1.0.148 ([#975](https://github.com/vbrandl/hoc/pull/975))
+- Update `Cargo.lock` and `flake.lock` ([#977](https://github.com/vbrandl/hoc/pull/977))
+- Bump `jiff` from 0.2.17 to 0.2.18 ([#978](https://github.com/vbrandl/hoc/pull/978))
 - Update `Cargo.lock` and `flake.lock` ([#977](https://github.com/vbrandl/hoc/pull/977))
 
 ## [1.7.0] 2025-12-25
