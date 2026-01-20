@@ -68,10 +68,3 @@ updates:
     labels:
       - dependencies
       - dependabot
-    groups:
-      minor:
-        patterns:
-          - "*"
-        update-types:
-          - minor
-          - patch
