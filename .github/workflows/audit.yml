@@ -1,14 +1,14 @@
 name: Security audit
 on:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: "0 1 * * *"
   push:
     branches:
       - master
   pull_request:
     paths:
-      - '**/Cargo.toml'
-      - '**/Cargo.lock'
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
       - ".cargo/audit.toml"
 
 jobs:
@@ -16,6 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+
+      - name: Cache cargo registry, index and build directory
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/cargo-audit
+          key: cargo-audit-${{ runner.os }}
+
       - uses: rustsec/audit-check@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
