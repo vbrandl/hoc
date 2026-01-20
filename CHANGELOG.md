@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `jiff` from 0.2.17 to 0.2.18 ([#978](https://github.com/vbrandl/hoc/pull/978))
 - Update `Cargo.lock` and `flake.lock` ([#977](https://github.com/vbrandl/hoc/pull/977))
 - Bump `vergen-gix` from 1.0.9 to 9.1.0 ([#981](https://github.com/vbrandl/hoc/pull/981))
+- Bump `thiserror` from 2.0.17 to 2.0.18 ([#980](https://github.com/vbrandl/hoc/pull/980))
 
 ## [1.7.0] 2025-12-25
 
