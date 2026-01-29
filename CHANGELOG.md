@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `thiserror` from 2.0.17 to 2.0.18 ([#980](https://github.com/vbrandl/hoc/pull/980))
 - Bump `gix-glob` from 0.23.0 to 0.24.0 ([#984](https://github.com/vbrandl/hoc/pull/984))
 - Bump `rust-toolchain` from 1.92.0 to 1.93.0 ([#985](https://github.com/vbrandl/hoc/pull/985))
+- Bump `alpine` from 3.23.2 to 3.23.3 ([#986](https://github.com/vbrandl/hoc/pull/986))
 
 ## [1.7.0] 2025-12-25
 
