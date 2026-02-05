@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `rust-toolchain` from 1.92.0 to 1.93.0 ([#985](https://github.com/vbrandl/hoc/pull/985))
 - Bump `alpine` from 3.23.2 to 3.23.3 ([#986](https://github.com/vbrandl/hoc/pull/986))
 - Bump `bytes` from 1.11.0 to 1.11.1 ([#991](https://github.com/vbrandl/hoc/pull/991))
+- Bump `git2` from 0.20.3 to 0.20.4 ([#994](https://github.com/vbrandl/hoc/pull/994))
 
 ## [1.7.0] 2025-12-25
 
