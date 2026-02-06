@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bump `serde_json` from 1.0.147 to 1.0.149 ([#975](https://github.com/vbrandl/hoc/pull/975), [#979](https://github.com/vbrandl/hoc/pull/979))
 - Update `Cargo.lock` and `flake.lock` ([#977](https://github.com/vbrandl/hoc/pull/977))
-- Bump `jiff` from 0.2.17 to 0.2.18 ([#978](https://github.com/vbrandl/hoc/pull/978))
+- Bump `jiff` from 0.2.17 to 0.2.19 ([#978](https://github.com/vbrandl/hoc/pull/978), [#999](https://github.com/vbrandl/hoc/pull/999))
 - Update `Cargo.lock` and `flake.lock` ([#977](https://github.com/vbrandl/hoc/pull/977))
 - Bump `vergen-gix` from 1.0.9 to 9.1.0 ([#981](https://github.com/vbrandl/hoc/pull/981))
 - Bump `thiserror` from 2.0.17 to 2.0.18 ([#980](https://github.com/vbrandl/hoc/pull/980))
