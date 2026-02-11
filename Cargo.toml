@@ -69,5 +69,5 @@ hyper-util = { version = "0.1.20", features = [
   "client-legacy",
 ] }
 ructe = "0.18.2"
-tempfile = "3.24.0"
+tempfile = "3.25.0"
 tokio = "1.49.0"

@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `time` from 0.3.45 to 0.3.47 ([#996](https://github.com/vbrandl/hoc/pull/996))
 - Bump `anyhow` from 1.0.100 to 1.0.101 ([#997](https://github.com/vbrandl/hoc/pull/997))
 - Bump `hyper-util` from 0.1.19 to 0.1.20 ([#997](https://github.com/vbrandl/hoc/pull/997))
+- Bump `tempfile` from 3.24.0 to 3.25.0 ([#1000](https://github.com/vbrandl/hoc/pull/1000))
 
 ## [1.7.0] 2025-12-25
 
