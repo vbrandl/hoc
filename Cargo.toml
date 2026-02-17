@@ -21,7 +21,7 @@ config = { version = "0.15.19", features = ["toml"], default-features = false }
 crossbeam-queue = "0.3.12"
 dashmap = "6.1.0"
 dotenvy = "0.15.7"
-futures = "0.3.31"
+futures = "0.3.32"
 git2 = "0.20.4"
 gix-glob = "0.24.0"
 jiff = "0.2.20"
