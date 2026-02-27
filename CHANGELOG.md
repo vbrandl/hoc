@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `hyper-util` from 0.1.19 to 0.1.20 ([#997](https://github.com/vbrandl/hoc/pull/997))
 - Bump `tempfile` from 3.24.0 to 3.26.0 ([#1000](https://github.com/vbrandl/hoc/pull/1000), [#1010](https://github.com/vbrandl/hoc/pull/1010))
 - Bump `futures` from 0.3.31 to 0.3.32 ([#1005](https://github.com/vbrandl/hoc/pull/1005))
+- Bump `actions/attest-build-provenance` from 3 to 4 ([#1012](https://github.com/vbrandl/hoc/pull/1012))
 
 ## [1.7.0] 2025-12-25
 
