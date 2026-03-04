@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bump `serde_json` from 1.0.147 to 1.0.149 ([#975](https://github.com/vbrandl/hoc/pull/975), [#979](https://github.com/vbrandl/hoc/pull/979))
 - Update `Cargo.lock` and `flake.lock` ([#977](https://github.com/vbrandl/hoc/pull/977))
-- Bump `jiff` from 0.2.17 to 0.2.22 ([#978](https://github.com/vbrandl/hoc/pull/978), [#999](https://github.com/vbrandl/hoc/pull/999), [#1002](https://github.com/vbrandl/hoc/pull/1002), [#1010](https://github.com/vbrandl/hoc/pull/1010), [#1014](https://github.com/vbrandl/hoc/pull/1014))
+- Bump `jiff` from 0.2.17 to 0.2.23 ([#978](https://github.com/vbrandl/hoc/pull/978), [#999](https://github.com/vbrandl/hoc/pull/999), [#1002](https://github.com/vbrandl/hoc/pull/1002), [#1010](https://github.com/vbrandl/hoc/pull/1010), [#1014](https://github.com/vbrandl/hoc/pull/1014), [#1016](https://github.com/vbrandl/hoc/pull/1016))
 - Update `Cargo.lock` and `flake.lock` ([#977](https://github.com/vbrandl/hoc/pull/977))
 - Bump `vergen-gix` from 1.0.9 to 9.1.0 ([#981](https://github.com/vbrandl/hoc/pull/981))
 - Bump `thiserror` from 2.0.17 to 2.0.18 ([#980](https://github.com/vbrandl/hoc/pull/980))
@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tempfile` from 3.24.0 to 3.26.0 ([#1000](https://github.com/vbrandl/hoc/pull/1000), [#1010](https://github.com/vbrandl/hoc/pull/1010))
 - Bump `futures` from 0.3.31 to 0.3.32 ([#1005](https://github.com/vbrandl/hoc/pull/1005))
 - Bump `actions/attest-build-provenance` from 3 to 4 ([#1012](https://github.com/vbrandl/hoc/pull/1012))
+- Bump `tokio` from 1.49.0 to 1.50.0 ([#1016](https://github.com/vbrandl/hoc/pull/1016))
 
 ## [1.7.0] 2025-12-25
 
