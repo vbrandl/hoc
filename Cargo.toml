@@ -24,7 +24,7 @@ dotenvy = "0.15.7"
 futures = "0.3.32"
 git2 = "0.20.4"
 gix-glob = "0.24.0"
-jiff = "0.2.22"
+jiff = "0.2.23"
 mime = "0.3.17"
 reqwest = { version = "0.12.28", default-features = false, features = [
   "charset",
@@ -35,7 +35,7 @@ reqwest = { version = "0.12.28", default-features = false, features = [
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 thiserror = "2.0.18"
-tokio = { version = "1.49.0", features = [
+tokio = { version = "1.50.0", features = [
   "macros",
   "rt-multi-thread",
   "signal",
@@ -70,4 +70,4 @@ hyper-util = { version = "0.1.20", features = [
 ] }
 ructe = "0.18.2"
 tempfile = "3.26.0"
-tokio = "1.49.0"
+tokio = "1.50.0"
