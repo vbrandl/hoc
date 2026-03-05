@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `futures` from 0.3.31 to 0.3.32 ([#1005](https://github.com/vbrandl/hoc/pull/1005))
 - Bump `actions/attest-build-provenance` from 3 to 4 ([#1012](https://github.com/vbrandl/hoc/pull/1012))
 - Bump `tokio` from 1.49.0 to 1.50.0 ([#1016](https://github.com/vbrandl/hoc/pull/1016))
+- Bump `docker/login-action` from 3 to 4 ([#1017](https://github.com/vbrandl/hoc/pull/1017))
 
 ## [1.7.0] 2025-12-25
 
