@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tokio` from 1.49.0 to 1.50.0 ([#1016](https://github.com/vbrandl/hoc/pull/1016))
 - Bump `docker/login-action` from 3 to 4 ([#1017](https://github.com/vbrandl/hoc/pull/1017))
 - Bump `docker/build-push-action` from 6 to 7 ([#1018](https://github.com/vbrandl/hoc/pull/1018))
+- Bump `docker/metadata-action` from 5 to 6 ([#1019](https://github.com/vbrandl/hoc/pull/1019))
 
 ## [1.7.0] 2025-12-25
 
