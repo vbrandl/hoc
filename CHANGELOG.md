@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+- Update `flake.lock` ([#1023](https://github.com/vbrandl/hoc/pull/1023))
+- Update `Cargo.lock` and fix [RUSTSEC-2026-0037](https://rustsec.org/advisories/RUSTSEC-2026-0037.html) ([#1023](https://github.com/vbrandl/hoc/pull/1023))
+
 ## [1.8.0] 2026-03-09
 
 ### Dependencies
