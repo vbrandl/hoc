@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update `Cargo.lock` and fix [RUSTSEC-2026-0037](https://rustsec.org/advisories/RUSTSEC-2026-0037.html) ([#1023](https://github.com/vbrandl/hoc/pull/1023))
 - Bump `tempfile` from 3.26.0 to 3.27.0 ([#1024](https://github.com/vbrandl/hoc/pull/1024))
 - Bump `config` from 0.15.19 to 0.15.21 ([#1025](https://github.com/vbrandl/hoc/pull/1025))
+- Bump `tracing-subscriber` from 0.3.22 to 0.3.23 ([#1026](https://github.com/vbrandl/hoc/pull/1026))
 
 ## [1.8.0] 2026-03-09
 
