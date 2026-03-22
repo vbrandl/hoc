@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tempfile` from 3.26.0 to 3.27.0 ([#1024](https://github.com/vbrandl/hoc/pull/1024))
 - Bump `config` from 0.15.19 to 0.15.22 ([#1025](https://github.com/vbrandl/hoc/pull/1025), [#1027](https://github.com/vbrandl/hoc/pull/1027))
 - Bump `tracing-subscriber` from 0.3.22 to 0.3.23 ([#1027](https://github.com/vbrandl/hoc/pull/1027))
+- Bump `rustls-webpki` from 0.103.9 to 0.103.10 ([#1029](https://github.com/vbrandl/hoc/pull/1029))
 
 ## [1.8.0] 2026-03-09
 
