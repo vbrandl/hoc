@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tracing-subscriber` from 0.3.22 to 0.3.23 ([#1027](https://github.com/vbrandl/hoc/pull/1027))
 - Bump `rustls-webpki` from 0.103.9 to 0.103.10 ([#1029](https://github.com/vbrandl/hoc/pull/1029))
 - Bump `rust-toolchain` from 1.94.0 to 1.94.1 ([#1030](https://github.com/vbrandl/hoc/pull/1030))
+- Bump `tokio` from 1.50.0 to 1.51.0 ([#1032](https://github.com/vbrandl/hoc/pull/1032))
 
 ## [1.8.0] 2026-03-09
 
