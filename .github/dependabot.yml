@@ -68,3 +68,14 @@ updates:
     labels:
       - dependencies
       - dependabot
+
+  - package-ecosystem: "nix"
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    assignees:
+      - vbrandl
+    labels:
+      - dependencies
+      - dependabot
