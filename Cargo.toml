@@ -14,7 +14,7 @@ name = "hoc"
 
 [dependencies]
 anyhow = "1.0.102"
-axum = { version = "0.8.8", features = ["macros"] }
+axum = { version = "0.8.9", features = ["macros"] }
 badgers = "2.0.0"
 bytes = "1.11.1"
 config = { version = "0.15.22", features = ["toml"], default-features = false }
@@ -35,7 +35,7 @@ reqwest = { version = "0.12.28", default-features = false, features = [
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 thiserror = "2.0.18"
-tokio = { version = "1.51.1", features = [
+tokio = { version = "1.52.0", features = [
   "macros",
   "rt-multi-thread",
   "signal",
@@ -70,4 +70,4 @@ hyper-util = { version = "0.1.20", features = [
 ] }
 ructe = "0.18.2"
 tempfile = "3.27.0"
-tokio = "1.51.1"
+tokio = "1.52.0"
