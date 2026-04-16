@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `rust-overlay` from `962a093` to `573a61f` ([#1036](https://github.com/vbrandl/hoc/pull/1036))
 - Bump `nixpkgs` from `8110df5` to `4c1018d` ([#1037](https://github.com/vbrandl/hoc/pull/1037))
 - Bump `rust-overlay` from `962a093` to `573a61f` ([#1036](https://github.com/vbrandl/hoc/pull/1036))
+- Bump `alpine` from 3.23.3 to 3.23.4 ([#1040](https://github.com/vbrandl/hoc/pull/1040))
 
 ## [1.9.0] 2026-04-13
 
