@@ -33,6 +33,6 @@ where
 
 fn sub_directories(dir: ReadDir) -> impl Iterator<Item = ReadDir> {
     dir.filter_map(StdResult::ok)
-        .filter(|entry| entry.file_type().map(|ft| ft.is_dir()).unwrap_or(false))
+        .filter(|entry| entry.file_type().is_ok_and(|ft| ft.is_dir()))
         .filter_map(|entry| read_dir(entry.path()).ok())
 }
