@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `rust-overlay` from `962a093` to `573a61f` ([#1036](https://github.com/vbrandl/hoc/pull/1036))
 - Bump `alpine` from 3.23.3 to 3.23.4 ([#1040](https://github.com/vbrandl/hoc/pull/1040))
 - Bump `rust-toolchain` from 1.94.1 to 1.95.0 ([#1045](https://github.com/vbrandl/hoc/pull/1045))
+- Update transitive dependencies ([#1046](https://github.com/vbrandl/hoc/pull/1046))
 
 ## [1.9.0] 2026-04-13
 
