@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `nixpkgs` from `4bd9165` to `b12141e` ([#1048](https://github.com/vbrandl/hoc/pull/1048))
 - Bump `gix-glob` from 0.24.0 to 0.26.0 ([#1052](https://github.com/vbrandl/hoc/pull/1052))
 - Bump `tokio` from 1.52.1 to 1.52.2 ([#1055](https://github.com/vbrandl/hoc/pull/1055))
+- Bump `tower-http` from 0.6.8 to 0.6.9 ([#1056](https://github.com/vbrandl/hoc/pull/1056))
 
 ## [1.10.0] 2026-04-20
 
