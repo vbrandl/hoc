@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Dependencies
 - Bump `nixpkgs` from `4bd9165` to `da5ad66` ([#1048](https://github.com/vbrandl/hoc/pull/1048), [#1054](https://github.com/vbrandl/hoc/pull/1054), [#1058](https://github.com/vbrandl/hoc/pull/1058), [#1061](https://github.com/vbrandl/hoc/pull/1061))
-- Bump `rust-overlay` from `62e3b8a` to `592e5de` ([#1049](https://github.com/vbrandl/hoc/pull/1049), [#1053](https://github.com/vbrandl/hoc/pull/1053), [#1059](https://github.com/vbrandl/hoc/pull/1059))
+- Bump `rust-overlay` from `62e3b8a` to `83a17eb` ([#1049](https://github.com/vbrandl/hoc/pull/1049), [#1053](https://github.com/vbrandl/hoc/pull/1053), [#1059](https://github.com/vbrandl/hoc/pull/1059), [#1062](https://github.com/vbrandl/hoc/pull/1062))
 - Bump `nixpkgs` from `4bd9165` to `b12141e` ([#1048](https://github.com/vbrandl/hoc/pull/1048))
 - Bump `gix-glob` from 0.24.0 to 0.26.0 ([#1052](https://github.com/vbrandl/hoc/pull/1052))
 - Bump `tokio` from 1.52.1 to 1.52.3 ([#1055](https://github.com/vbrandl/hoc/pull/1055), [#1060](https://github.com/vbrandl/hoc/pull/1060))
