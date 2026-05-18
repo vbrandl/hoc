@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tokio` from 1.52.1 to 1.52.3 ([#1055](https://github.com/vbrandl/hoc/pull/1055), [#1060](https://github.com/vbrandl/hoc/pull/1060))
 - Bump `tower-http` from 0.6.8 to 0.6.10 ([#1056](https://github.com/vbrandl/hoc/pull/1056), [#1057](https://github.com/vbrandl/hoc/pull/1057))
 - Bump `config` from 0.15.22 to 0.15.23 ([#1063](https://github.com/vbrandl/hoc/pull/1063))
+- Bump `dashmap` from 6.1.0 to 6.2.1 ([#1064](https://github.com/vbrandl/hoc/pull/1064))
 
 ## [1.10.0] 2026-04-20
 
