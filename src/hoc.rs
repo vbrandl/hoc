@@ -31,11 +31,10 @@ fn clone(path: impl AsRef<Path>, origin: &str) -> Result<Option<Repository>> {
     )
 }
 
-fn find_default_branch(repo: &Repository) -> Result<Option<String>> {
-    Ok(repo
-        .head()?
-        .name()
-        .map(|s| s.strip_prefix("refs/heads/").unwrap_or(s).to_string()))
+fn find_default_branch(repo: &Repository) -> Result<String> {
+    let head = repo.head()?;
+    let head = head.name()?;
+    Ok(head.strip_prefix("refs/heads/").unwrap_or(head).to_string())
 }
 
 #[instrument(skip(state))]
@@ -82,7 +81,7 @@ pub(crate) async fn hoc(params: &HocParams, state: &AppState) -> Result<()> {
     let branch = if let Some(ref branch) = params.branch {
         branch.clone()
     } else {
-        find_default_branch(&repo)?.ok_or(Error::BranchNotFound)?
+        find_default_branch(&repo)?
     };
 
     let head = repo
