@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.11.0] 2026-050-19
+
 ### Dependencies
 - Bump `nixpkgs` from `4bd9165` to `da5ad66` ([#1048](https://github.com/vbrandl/hoc/pull/1048), [#1054](https://github.com/vbrandl/hoc/pull/1054), [#1058](https://github.com/vbrandl/hoc/pull/1058), [#1061](https://github.com/vbrandl/hoc/pull/1061))
 - Bump `rust-overlay` from `62e3b8a` to `83a17eb` ([#1049](https://github.com/vbrandl/hoc/pull/1049), [#1053](https://github.com/vbrandl/hoc/pull/1053), [#1059](https://github.com/vbrandl/hoc/pull/1059), [#1062](https://github.com/vbrandl/hoc/pull/1062))
