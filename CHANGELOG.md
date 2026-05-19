@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tower-http` from 0.6.8 to 0.6.11 ([#1056](https://github.com/vbrandl/hoc/pull/1056), [#1057](https://github.com/vbrandl/hoc/pull/1057), [#1065](https://github.com/vbrandl/hoc/pull/1065))
 - Bump `config` from 0.15.22 to 0.15.23 ([#1063](https://github.com/vbrandl/hoc/pull/1063))
 - Bump `dashmap` from 6.1.0 to 6.2.1 ([#1064](https://github.com/vbrandl/hoc/pull/1064))
+- Bump `git2` from 0.20.4 to 0.21.0 ([#1066](https://github.com/vbrandl/hoc/pull/1066))
 
 ## [1.10.0] 2026-04-20
 
