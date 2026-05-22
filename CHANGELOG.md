@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump `rust-overlay` from `83a17eb` to `672fa5f` ([#1069](https://github.com/vbrandl/hoc/pull/1069))
+
 ## [1.11.0] 2026-050-19
 
 ### Dependencies
