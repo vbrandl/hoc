@@ -79,3 +79,10 @@ updates:
     labels:
       - dependencies
       - dependabot
+    groups:
+      flake-inputs:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
