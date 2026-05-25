@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `nixpkgs` from `da5ad66` to `d233902` ([#1068](https://github.com/vbrandl/hoc/pull/1068))
 - Bump `rust-overlay` from `83a17eb` to `672fa5f` ([#1069](https://github.com/vbrandl/hoc/pull/1069))
 - Bump `serde_json` from 1.0.149 to 1.0.150 ([#1070](https://github.com/vbrandl/hoc/pull/1070))
+- Bump `jiff` from 0.2.24 to 0.2.25 ([#1073](https://github.com/vbrandl/hoc/pull/1073))
 
 ## [1.11.0] 2026-050-19
 
