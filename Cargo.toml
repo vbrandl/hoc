@@ -24,7 +24,7 @@ dotenvy = "0.15.7"
 futures = "0.3.32"
 git2 = { version = "0.21.0", features = ["https"] }
 gix-glob = "0.26.0"
-jiff = "0.2.24"
+jiff = "0.2.25"
 mime = "0.3.17"
 reqwest = { version = "0.13.3", default-features = false, features = [
   "charset",
