@@ -3,7 +3,7 @@ name = "hoc"
 version = "1.11.0"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
 edition = "2024"
-build = "src/build.rs"
+build = "build.rs"
 
 [lib]
 path = "src/lib.rs"
