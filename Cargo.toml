@@ -59,7 +59,7 @@ urlencoding = "2.1.3"
 [build-dependencies]
 anyhow = "1.0.102"
 ructe = { version = "0.18.2", features = ["mime03"] }
-vergen-gix = "9.1.0"
+vergen-gix = "10.0.0"
 
 [dev-dependencies]
 http-body-util = "0.1.3"
