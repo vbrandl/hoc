@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `gix-glob` from 0.26.0 to 0.26.1 ([#1074](https://github.com/vbrandl/hoc/pull/1074))
 - Bump `<code>jiff-sqlx</code>` to use ([#1074](https://github.com/vbrandl/hoc/pull/1074))
 - Bump `reqwest` from 0.13.3 to 0.13.4 ([#1074](https://github.com/vbrandl/hoc/pull/1074))
+- Bump `vergen-gix` from 9.1.0 to 10.0.0 ([#1080](https://github.com/vbrandl/hoc/pull/1080))
 
 ## [1.11.0] 2026-050-19
 
