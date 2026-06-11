@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Dependencies
-- Bump `rust-overlay` from `83a17eb` to `fe64e6b` ([#1069](https://github.com/vbrandl/hoc/pull/1069), [#1072](https://github.com/vbrandl/hoc/pull/1072), [#1075](https://github.com/vbrandl/hoc/pull/1075), [#1079](https://github.com/vbrandl/hoc/pull/1079), [#1082](https://github.com/vbrandl/hoc/pull/1082))
+- Bump `rust-overlay` from `83a17eb` to `107c334` ([#1069](https://github.com/vbrandl/hoc/pull/1069), [#1072](https://github.com/vbrandl/hoc/pull/1072), [#1075](https://github.com/vbrandl/hoc/pull/1075), [#1079](https://github.com/vbrandl/hoc/pull/1079), [#1082](https://github.com/vbrandl/hoc/pull/1082), [#1084](https://github.com/vbrandl/hoc/pull/1084))
 - Bump `nixpkgs` from `da5ad66` to `a799d3e` ([#1068](https://github.com/vbrandl/hoc/pull/1068), [#1076](https://github.com/vbrandl/hoc/pull/1076), [#1078](https://github.com/vbrandl/hoc/pull/1078), [#1082](https://github.com/vbrandl/hoc/pull/1082))
 - Bump `rust-overlay` from `83a17eb` to `672fa5f` ([#1069](https://github.com/vbrandl/hoc/pull/1069))
 - Bump `serde_json` from 1.0.149 to 1.0.150 ([#1070](https://github.com/vbrandl/hoc/pull/1070))
