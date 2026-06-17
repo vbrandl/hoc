@@ -40,7 +40,7 @@ tokio = { version = "1.52.3", features = [
   "rt-multi-thread",
   "signal",
 ] }
-tower-http = { version = "0.6.11", features = [
+tower-http = { version = "0.7.0", features = [
   "trace",
   "request-id",
   "compression-deflate",
