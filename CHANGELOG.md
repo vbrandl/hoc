@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `<code>jiff-sqlx</code>` to use ([#1074](https://github.com/vbrandl/hoc/pull/1074))
 - Bump `reqwest` from 0.13.3 to 0.13.4 ([#1074](https://github.com/vbrandl/hoc/pull/1074))
 - Bump `vergen-gix` from 9.1.0 to 10.0.0 ([#1080](https://github.com/vbrandl/hoc/pull/1080))
-- Bump `alpine` from 3.23.4 to 3.24.0 ([#1083](https://github.com/vbrandl/hoc/pull/1083))
+- Bump `alpine` from 3.23.4 to 3.24.1 ([#1083](https://github.com/vbrandl/hoc/pull/1083), [#1087](https://github.com/vbrandl/hoc/pull/1087))
 - Bump `tower-http` from 0.6.11 to 0.7.0 ([#1085](https://github.com/vbrandl/hoc/pull/1085))
 - Bump `config` from 0.15.23 to 0.15.24 ([#1086](https://github.com/vbrandl/hoc/pull/1086))
 
