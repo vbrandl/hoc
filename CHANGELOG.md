@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `vergen-gix` from 9.1.0 to 10.0.0 ([#1080](https://github.com/vbrandl/hoc/pull/1080))
 - Bump `alpine` from 3.23.4 to 3.24.0 ([#1083](https://github.com/vbrandl/hoc/pull/1083))
 - Bump `tower-http` from 0.6.11 to 0.7.0 ([#1085](https://github.com/vbrandl/hoc/pull/1085))
+- Bump `config` from 0.15.23 to 0.15.24 ([#1086](https://github.com/vbrandl/hoc/pull/1086))
 
 ## [1.11.0] 2026-050-19
 
