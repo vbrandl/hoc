@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `alpine` from 3.23.4 to 3.24.1 ([#1083](https://github.com/vbrandl/hoc/pull/1083), [#1087](https://github.com/vbrandl/hoc/pull/1087))
 - Bump `tower-http` from 0.6.11 to 0.7.0 ([#1085](https://github.com/vbrandl/hoc/pull/1085))
 - Bump `config` from 0.15.23 to 0.15.24 ([#1086](https://github.com/vbrandl/hoc/pull/1086))
+- Bump `actions/checkout` from 6 to 7 ([#1090](https://github.com/vbrandl/hoc/pull/1090))
 
 ## [1.11.0] 2026-050-19
 
