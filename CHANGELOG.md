@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `config` from 0.15.23 to 0.15.24 ([#1086](https://github.com/vbrandl/hoc/pull/1086))
 - Bump `actions/checkout` from 6 to 7 ([#1090](https://github.com/vbrandl/hoc/pull/1090))
 - Bump `bytes` from 1.11.1 to 1.12.0 ([#1089](https://github.com/vbrandl/hoc/pull/1089))
+- Bump `actions/cache` from 5 to 6 ([#1095](https://github.com/vbrandl/hoc/pull/1095))
 
 ## [1.11.0] 2026-050-19
 
