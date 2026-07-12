@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `nixpkgs` from `da5ad66` to `d407951` ([#1068](https://github.com/vbrandl/hoc/pull/1068), [#1076](https://github.com/vbrandl/hoc/pull/1076), [#1078](https://github.com/vbrandl/hoc/pull/1078), [#1082](https://github.com/vbrandl/hoc/pull/1082), [#1088](https://github.com/vbrandl/hoc/pull/1088), [#1103](https://github.com/vbrandl/hoc/pull/1103), [#1106](https://github.com/vbrandl/hoc/pull/1106))
 - Bump `rust-overlay` from `83a17eb` to `672fa5f` ([#1069](https://github.com/vbrandl/hoc/pull/1069))
 - Bump `serde_json` from 1.0.149 to 1.0.150 ([#1070](https://github.com/vbrandl/hoc/pull/1070))
-- Bump `jiff` from 0.2.24 to 0.2.31 ([#1073](https://github.com/vbrandl/hoc/pull/1073), [#1074](https://github.com/vbrandl/hoc/pull/1074), [#1091](https://github.com/vbrandl/hoc/pull/1091), [#1100](https://github.com/vbrandl/hoc/pull/1100))
+- Bump `jiff` from 0.2.24 to 0.2.32 ([#1073](https://github.com/vbrandl/hoc/pull/1073), [#1074](https://github.com/vbrandl/hoc/pull/1074), [#1091](https://github.com/vbrandl/hoc/pull/1091), [#1100](https://github.com/vbrandl/hoc/pull/1100), [#1105](https://github.com/vbrandl/hoc/pull/1105))
 - Bump `rust-toolchain` from 1.95.0 to 1.97.0 ([#1077](https://github.com/vbrandl/hoc/pull/1077), [#1102](https://github.com/vbrandl/hoc/pull/1102), [#1107](https://github.com/vbrandl/hoc/pull/1107))
 - Bump `gix-glob` from 0.26.0 to 0.26.1 ([#1074](https://github.com/vbrandl/hoc/pull/1074))
 - Bump `<code>jiff-sqlx</code>` to use ([#1074](https://github.com/vbrandl/hoc/pull/1074))
@@ -20,9 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tower-http` from 0.6.11 to 0.7.0 ([#1085](https://github.com/vbrandl/hoc/pull/1085))
 - Bump `config` from 0.15.23 to 0.15.25 ([#1086](https://github.com/vbrandl/hoc/pull/1086), [#1100](https://github.com/vbrandl/hoc/pull/1100))
 - Bump `actions/checkout` from 6 to 7 ([#1090](https://github.com/vbrandl/hoc/pull/1090))
-- Bump `bytes` from 1.11.1 to 1.12.0 ([#1089](https://github.com/vbrandl/hoc/pull/1089))
+- Bump `bytes` from 1.11.1 to 1.12.1 ([#1089](https://github.com/vbrandl/hoc/pull/1089), [#1105](https://github.com/vbrandl/hoc/pull/1105))
 - Bump `actions/cache` from 5 to 6 ([#1095](https://github.com/vbrandl/hoc/pull/1095))
 - Bump `anyhow` from 1.0.102 to 1.0.103 ([#1098](https://github.com/vbrandl/hoc/pull/1098))
+- Bump `crossbeam-queue` from 0.3.12 to 0.3.13 ([#1105](https://github.com/vbrandl/hoc/pull/1105))
 
 ## [1.11.0] 2026-050-19
 
