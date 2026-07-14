@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `actions/cache` from 5 to 6 ([#1095](https://github.com/vbrandl/hoc/pull/1095))
 - Bump `anyhow` from 1.0.102 to 1.0.103 ([#1098](https://github.com/vbrandl/hoc/pull/1098))
 - Bump `crossbeam-queue` from 0.3.12 to 0.3.13 ([#1105](https://github.com/vbrandl/hoc/pull/1105))
+- Bump `http-body-util` from 0.1.3 to 0.1.4 ([#1108](https://github.com/vbrandl/hoc/pull/1108))
 
 ## [1.11.0] 2026-050-19
 
