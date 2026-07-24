@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `serde_json` from 1.0.149 to 1.0.151 ([#1070](https://github.com/vbrandl/hoc/pull/1070), [#1113](https://github.com/vbrandl/hoc/pull/1113))
 - Bump `jiff` from 0.2.24 to 0.2.34 ([#1073](https://github.com/vbrandl/hoc/pull/1073), [#1074](https://github.com/vbrandl/hoc/pull/1074), [#1091](https://github.com/vbrandl/hoc/pull/1091), [#1100](https://github.com/vbrandl/hoc/pull/1100), [#1105](https://github.com/vbrandl/hoc/pull/1105), [#1113](https://github.com/vbrandl/hoc/pull/1113))
 - Bump `rust-toolchain` from 1.95.0 to 1.97.1 ([#1077](https://github.com/vbrandl/hoc/pull/1077), [#1102](https://github.com/vbrandl/hoc/pull/1102), [#1107](https://github.com/vbrandl/hoc/pull/1107), [#1111](https://github.com/vbrandl/hoc/pull/1111))
-- Bump `gix-glob` from 0.26.0 to 0.26.1 ([#1074](https://github.com/vbrandl/hoc/pull/1074))
+- Bump `gix-glob` from 0.26.0 to 0.27.0 ([#1074](https://github.com/vbrandl/hoc/pull/1074), [#1115](https://github.com/vbrandl/hoc/pull/1115))
 - Bump `<code>jiff-sqlx</code>` to use ([#1074](https://github.com/vbrandl/hoc/pull/1074))
 - Bump `reqwest` from 0.13.3 to 0.13.4 ([#1074](https://github.com/vbrandl/hoc/pull/1074))
 - Bump `vergen-gix` from 9.1.0 to 10.0.1 ([#1080](https://github.com/vbrandl/hoc/pull/1080), [#1096](https://github.com/vbrandl/hoc/pull/1096))

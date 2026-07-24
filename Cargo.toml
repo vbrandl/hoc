@@ -23,7 +23,7 @@ dashmap = "6.2.1"
 dotenvy = "0.15.7"
 futures = "0.3.32"
 git2 = { version = "0.21.0", features = ["https"] }
-gix-glob = "0.26.1"
+gix-glob = "0.27.0"
 jiff = "0.2.29"
 mime = "0.3.17"
 reqwest = { version = "0.13.4", default-features = false, features = [
