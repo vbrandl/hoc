@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `futures` from 0.3.32 to 0.3.33 ([#1113](https://github.com/vbrandl/hoc/pull/1113))
 - Bump `serde` from 1.0.228 to 1.0.229 ([#1113](https://github.com/vbrandl/hoc/pull/1113))
 - Bump `thiserror` from 2.0.18 to 2.0.19 ([#1113](https://github.com/vbrandl/hoc/pull/1113))
-- Bump `docker/login-action` from 4 to 4.5.2 ([#1118](https://github.com/vbrandl/hoc/pull/1118))
+- Bump `docker/login-action` from 4 to 4.6.0 ([#1118](https://github.com/vbrandl/hoc/pull/1118), [#1119](https://github.com/vbrandl/hoc/pull/1119))
 
 ## [1.11.0] 2026-050-19
 
