@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `bytes` from 1.11.1 to 1.12.1 ([#1089](https://github.com/vbrandl/hoc/pull/1089), [#1105](https://github.com/vbrandl/hoc/pull/1105))
 - Bump `actions/cache` from 5 to 6 ([#1095](https://github.com/vbrandl/hoc/pull/1095))
 - Bump `anyhow` from 1.0.102 to 1.0.104 ([#1098](https://github.com/vbrandl/hoc/pull/1098), [#1113](https://github.com/vbrandl/hoc/pull/1113))
-- Bump `crossbeam-queue` from 0.3.12 to 0.3.13 ([#1105](https://github.com/vbrandl/hoc/pull/1105))
+- Bump `crossbeam-queue` from 0.3.12 to 0.3.14 ([#1105](https://github.com/vbrandl/hoc/pull/1105), [#1133](https://github.com/vbrandl/hoc/pull/1133))
 - Bump `tokio` from 1.52.3 to 1.53.1 ([#1110](https://github.com/vbrandl/hoc/pull/1110), [#1113](https://github.com/vbrandl/hoc/pull/1113))
 - Bump `http-body-util` from 0.1.3 to 0.1.5 ([#1110](https://github.com/vbrandl/hoc/pull/1110), [#1124](https://github.com/vbrandl/hoc/pull/1124))
 - Bump `futures` from 0.3.32 to 0.3.34 ([#1113](https://github.com/vbrandl/hoc/pull/1113), [#1124](https://github.com/vbrandl/hoc/pull/1124))
