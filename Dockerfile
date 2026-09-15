@@ -10,7 +10,7 @@ RUN cargo init --lib \
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
 # HACK: remove build-dependencies so we have at least some caching
-RUN head -n $(($(grep -n "\[build-dependencies\]" Cargo.toml | cut -f1 -d:) - 1)) Cargo.toml | sed '/src\/build.rs/d' > \
+RUN head -n $(($(grep -n "\[build-dependencies\]" Cargo.toml | cut -f1 -d:) - 1)) Cargo.toml | sed '/build.rs/d' > \
         Cargo.toml2  && rm Cargo.toml && mv Cargo.toml2 Cargo.toml
 # build to cache dependencies
 # delete build cache to prevent caching issues later on
@@ -21,6 +21,7 @@ RUN cargo build --release \
 COPY ./Cargo.toml ./Cargo.toml
 # we need our git folder so we can determine the commitref of HEAD
 COPY ./.git ./.git
+COPY ./build.rs ./build.rs
 # copy source code
 COPY ./static ./static
 COPY ./templates ./templates
