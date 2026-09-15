@@ -49,12 +49,7 @@ jobs:
 
   test:
     name: Test Suite
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        # add windows-latest when it is clear why tests are failing
-        # os: [ubuntu-latest, macos-latest]
-        os: [ubuntu-latest]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout sources
