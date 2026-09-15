@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `rust-toolchain` from 1.95.0 to 1.98.1 ([#1077](https://github.com/vbrandl/hoc/pull/1077), [#1102](https://github.com/vbrandl/hoc/pull/1102), [#1107](https://github.com/vbrandl/hoc/pull/1107), [#1111](https://github.com/vbrandl/hoc/pull/1111), [#1127](https://github.com/vbrandl/hoc/pull/1127), [#1132](https://github.com/vbrandl/hoc/pull/1132))
 - Bump `gix-glob` from 0.26.0 to 0.27.0 ([#1074](https://github.com/vbrandl/hoc/pull/1074), [#1115](https://github.com/vbrandl/hoc/pull/1115))
 - Bump `<code>jiff-sqlx</code>` to use ([#1074](https://github.com/vbrandl/hoc/pull/1074))
-- Bump `reqwest` from 0.13.3 to 0.13.4 ([#1074](https://github.com/vbrandl/hoc/pull/1074))
+- Bump `reqwest` from 0.13.3 to 0.13.5 ([#1074](https://github.com/vbrandl/hoc/pull/1074), [#1135](https://github.com/vbrandl/hoc/pull/1135))
 - Bump `vergen-gix` from 9.1.0 to 10.0.3 ([#1080](https://github.com/vbrandl/hoc/pull/1080), [#1096](https://github.com/vbrandl/hoc/pull/1096), [#1121](https://github.com/vbrandl/hoc/pull/1121), [#1131](https://github.com/vbrandl/hoc/pull/1131))
 - Bump `alpine` from 3.23.4 to 3.24.1 ([#1083](https://github.com/vbrandl/hoc/pull/1083), [#1087](https://github.com/vbrandl/hoc/pull/1087))
 - Bump `tower-http` from 0.6.11 to 0.7.1 ([#1085](https://github.com/vbrandl/hoc/pull/1085), [#1131](https://github.com/vbrandl/hoc/pull/1131))
