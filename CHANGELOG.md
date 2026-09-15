@@ -5,6 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- Fix [RUSTSEC-2026-0285](https://rustsec.org/advisories/RUSTSEC-2026-0285.html)/[GHSA-2mjx-qc3c-rqvc](https://github.com/rustls/rustls/security/advisories/GHSA-2mjx-qc3c-rqvc) ([#1137](https://github.com/vbrandl/hoc/issues/1136), [#1137](https://github.com/vbrandl/hoc/pull/1137))
+
+### Chores
+
+- Update dependency locks (cargo and nix) ([#1137](https://github.com/vbrandl/hoc/pull/1137))
+
 ### Dependencies
 - Bump `rust-overlay` from `83a17eb` to `ca7f624` ([#1069](https://github.com/vbrandl/hoc/pull/1069), [#1072](https://github.com/vbrandl/hoc/pull/1072), [#1075](https://github.com/vbrandl/hoc/pull/1075), [#1079](https://github.com/vbrandl/hoc/pull/1079), [#1082](https://github.com/vbrandl/hoc/pull/1082), [#1084](https://github.com/vbrandl/hoc/pull/1084), [#1088](https://github.com/vbrandl/hoc/pull/1088), [#1097](https://github.com/vbrandl/hoc/pull/1097), [#1103](https://github.com/vbrandl/hoc/pull/1103), [#1106](https://github.com/vbrandl/hoc/pull/1106), [#1109](https://github.com/vbrandl/hoc/pull/1109), [#1114](https://github.com/vbrandl/hoc/pull/1114), [#1117](https://github.com/vbrandl/hoc/pull/1117), [#1120](https://github.com/vbrandl/hoc/pull/1120), [#1123](https://github.com/vbrandl/hoc/pull/1123), [#1126](https://github.com/vbrandl/hoc/pull/1126), [#1129](https://github.com/vbrandl/hoc/pull/1129), [#1134](https://github.com/vbrandl/hoc/pull/1134))
 - Bump `nixpkgs` from `da5ad66` to `dc5d91f` ([#1068](https://github.com/vbrandl/hoc/pull/1068), [#1076](https://github.com/vbrandl/hoc/pull/1076), [#1078](https://github.com/vbrandl/hoc/pull/1078), [#1082](https://github.com/vbrandl/hoc/pull/1082), [#1088](https://github.com/vbrandl/hoc/pull/1088), [#1103](https://github.com/vbrandl/hoc/pull/1103), [#1106](https://github.com/vbrandl/hoc/pull/1106), [#1109](https://github.com/vbrandl/hoc/pull/1109), [#1114](https://github.com/vbrandl/hoc/pull/1114), [#1117](https://github.com/vbrandl/hoc/pull/1117), [#1120](https://github.com/vbrandl/hoc/pull/1120), [#1123](https://github.com/vbrandl/hoc/pull/1123), [#1126](https://github.com/vbrandl/hoc/pull/1126), [#1129](https://github.com/vbrandl/hoc/pull/1129), [#1134](https://github.com/vbrandl/hoc/pull/1134))
