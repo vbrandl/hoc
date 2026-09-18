@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump `alpine` from 3.24.1 to 3.24.2 ([#1141](https://github.com/vbrandl/hoc/pull/1141))
+
 ## [1.12.0] 2026-09-15
 
 ### Security
