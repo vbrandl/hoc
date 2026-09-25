@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump `config` from 0.15.25 to 0.15.26 ([#1145](https://github.com/vbrandl/hoc/pull/1145))
+
 ## [1.12.0] 2026-09-15
 
 ### Security
