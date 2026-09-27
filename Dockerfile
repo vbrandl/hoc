@@ -29,7 +29,7 @@ COPY ./src ./src
 # build source code
 RUN cargo build --release
 
-FROM alpine:3.24.1
+FROM alpine:3.24.2
 
 RUN apk --no-cache add --update git \
         && adduser -D hoc
