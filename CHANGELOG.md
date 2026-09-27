@@ -5,6 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- Fix [RUSTSEC-2026-0306](https://rustsec.org/advisories/RUSTSEC-2026-0306.html) ([#1143](https://github.com/vbrandl/hoc/issues/1143), [#1146](https://github.com/vbrandl/hoc/pull/1146))
+
+### Chores
+
+- Updte dependency locks (cargo) ([#1146](https://github.com/vbrandl/hoc/pull/1146))
+
 ### Dependencies
 - Bump `config` from 0.15.25 to 0.15.26 ([#1145](https://github.com/vbrandl/hoc/pull/1145))
 - Bump `nixpkgs` from `ef34387` to `4975466` ([#1144](https://github.com/vbrandl/hoc/pull/1144))
