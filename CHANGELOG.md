@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changes
+
+- Link to homepage in the footer, thanks [@hazzuk](https://github.com/hazzuk) ([#1140](https://github.com/vbrandl/hoc/pull/1140), [#1148](https://github.com/vbrandl/hoc/pull/1148))
+
 ## [1.13.0] 2026-09-28
 
 ### Security
