@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Link to homepage in the footer, thanks [@hazzuk](https://github.com/hazzuk) ([#1140](https://github.com/vbrandl/hoc/pull/1140), [#1148](https://github.com/vbrandl/hoc/pull/1148))
 
+### Dependencies
+
+- Bump `gix-glob` from 0.27.1 to 0.28.0 ([#1149](https://github.com/vbrandl/hoc/pull/1149))
+
 ## [1.13.0] 2026-09-28
 
 ### Security
