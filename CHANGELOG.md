@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `rust-overlay` from `ed34466` to `3f4df21` ([#1151](https://github.com/vbrandl/hoc/pull/1151))
 - Bump `config` from 0.15.26 to 0.15.27 ([#1153](https://github.com/vbrandl/hoc/pull/1153))
 - Bump `tokio` from 1.53.1 to 1.53.2 ([#1154](https://github.com/vbrandl/hoc/pull/1154))
+- Bump `jiff` from 0.2.37 to 0.2.38 ([#1156](https://github.com/vbrandl/hoc/pull/1156))
 
 ## [1.14.0] 2026-10-01
 
