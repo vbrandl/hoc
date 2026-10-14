@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `tokio` from 1.53.1 to 1.53.2 ([#1154](https://github.com/vbrandl/hoc/pull/1154))
 - Bump `jiff` from 0.2.37 to 0.2.38 ([#1156](https://github.com/vbrandl/hoc/pull/1156))
 - Bump `gix-glob` from 0.28.0 to 0.29.0 ([#1157](https://github.com/vbrandl/hoc/pull/1157))
+- Bump `serde_json` from 1.0.151 to 1.0.153 ([#1158](https://github.com/vbrandl/hoc/pull/1158))
 
 ## [1.14.0] 2026-10-01
 
