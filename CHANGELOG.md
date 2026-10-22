@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 
 ### Dependencies
-- Bump `nixpkgs` from `4975466` to `6510408` ([#1151](https://github.com/vbrandl/hoc/pull/1151), [#1155](https://github.com/vbrandl/hoc/pull/1155), [#1159](https://github.com/vbrandl/hoc/pull/1159))
-- Bump `rust-overlay` from `ed34466` to `404b7a5` ([#1151](https://github.com/vbrandl/hoc/pull/1151), [#1155](https://github.com/vbrandl/hoc/pull/1155), [#1159](https://github.com/vbrandl/hoc/pull/1159))
+- Bump `nixpkgs` from `4975466` to `fe13242` ([#1151](https://github.com/vbrandl/hoc/pull/1151), [#1155](https://github.com/vbrandl/hoc/pull/1155), [#1159](https://github.com/vbrandl/hoc/pull/1159), [#1163](https://github.com/vbrandl/hoc/pull/1163))
+- Bump `rust-overlay` from `ed34466` to `550547c` ([#1151](https://github.com/vbrandl/hoc/pull/1151), [#1155](https://github.com/vbrandl/hoc/pull/1155), [#1159](https://github.com/vbrandl/hoc/pull/1159), [#1163](https://github.com/vbrandl/hoc/pull/1163))
 - Bump `rust-toolchain` from 1.98.1 to 1.99.1 ([#1152](https://github.com/vbrandl/hoc/pull/1152), [#1160](https://github.com/vbrandl/hoc/pull/1160))
 - Bump `rust-overlay` from `ed34466` to `3f4df21` ([#1151](https://github.com/vbrandl/hoc/pull/1151))
 - Bump `config` from 0.15.26 to 0.15.27 ([#1153](https://github.com/vbrandl/hoc/pull/1153))
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `jiff` from 0.2.37 to 0.2.38 ([#1156](https://github.com/vbrandl/hoc/pull/1156))
 - Bump `gix-glob` from 0.28.0 to 0.29.0 ([#1157](https://github.com/vbrandl/hoc/pull/1157))
 - Bump `serde_json` from 1.0.151 to 1.0.153 ([#1158](https://github.com/vbrandl/hoc/pull/1158))
+- Bump `flake-utils` from `11707dc` to `b7a79d3` ([#1163](https://github.com/vbrandl/hoc/pull/1163))
 
 ## [1.14.0] 2026-10-01
 
