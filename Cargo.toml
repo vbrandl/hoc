@@ -17,14 +17,14 @@ anyhow = "1.0.104"
 axum = { version = "0.8.9", features = ["macros"] }
 badgers = "2.0.0"
 bytes = "1.12.1"
-config = { version = "0.15.26", features = ["toml"], default-features = false }
+config = { version = "0.15.27", features = ["toml"], default-features = false }
 crossbeam-queue = "0.3.14"
 dashmap = "6.2.1"
 dotenvy = "0.15.7"
 futures = "0.3.34"
 git2 = { version = "0.21.0", features = ["https"] }
-gix-glob = "0.29.0"
-jiff = "0.2.37"
+gix-glob = "0.29.1"
+jiff = "0.2.38"
 mime = "0.3.17"
 reqwest = { version = "0.13.5", default-features = false, features = [
   "charset",
@@ -33,9 +33,9 @@ reqwest = { version = "0.13.5", default-features = false, features = [
   "system-proxy",
 ] }
 serde = { version = "1.0.229", features = ["derive"] }
-serde_json = "1.0.151"
+serde_json = "1.0.154"
 thiserror = "2.0.21"
-tokio = { version = "1.53.1", features = [
+tokio = { version = "1.54.1", features = [
   "macros",
   "rt-multi-thread",
   "signal",
@@ -70,4 +70,4 @@ hyper-util = { version = "0.1.21", features = [
 ] }
 ructe = "0.18.2"
 tempfile = "3.27.0"
-tokio = "1.53.1"
+tokio = "1.54.1"
