@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [UNRELEASED]
 
+### Security
+
+- Fix [RUSTSEC-2026-0382](https://rustsec.org/advisories/RUSTSEC-2026-0382.html)/[CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943) and [RUSTSEC-2026-0383](https://rustsec.org/advisories/RUSTSEC-2026-0383.html) ([#1164](https://github.com/vbrandl/hoc/pull/1164))
+
 ### Dependencies
 - Bump `nixpkgs` from `4975466` to `fe13242` ([#1151](https://github.com/vbrandl/hoc/pull/1151), [#1155](https://github.com/vbrandl/hoc/pull/1155), [#1159](https://github.com/vbrandl/hoc/pull/1159), [#1163](https://github.com/vbrandl/hoc/pull/1163))
 - Bump `rust-overlay` from `ed34466` to `550547c` ([#1151](https://github.com/vbrandl/hoc/pull/1151), [#1155](https://github.com/vbrandl/hoc/pull/1155), [#1159](https://github.com/vbrandl/hoc/pull/1159), [#1163](https://github.com/vbrandl/hoc/pull/1163))
