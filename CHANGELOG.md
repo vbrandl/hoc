@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [UNRELEASED]
+
+### Dependencies
+
+- Bump `docker/login-action` from 4.6.0 to 4.7.0 ([#1166](https://github.com/vbrandl/hoc/pull/1166))
+
 ## [1.15.0] 2026-10-25
 
 ### Security
