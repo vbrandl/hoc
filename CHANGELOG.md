@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 
 ### Dependencies
-
+- Bump `docker/login-action` from 4.6.0 to 4.7.0 ([#1166](https://github.com/vbrandl/hoc/pull/1166))
+- Bump `alpine` from 3.24.2 to 3.24.3 ([#1167](https://github.com/vbrandl/hoc/pull/1167))
 - Bump `docker/login-action` from 4.6.0 to 4.7.0 ([#1166](https://github.com/vbrandl/hoc/pull/1166))
 
 ## [1.15.0] 2026-10-25
