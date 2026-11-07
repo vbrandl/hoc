@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `docker/login-action` from 4.6.0 to 4.7.0 ([#1166](https://github.com/vbrandl/hoc/pull/1166))
 - Bump `nixpkgs` from `fe13242` to `0bb2eed` ([#1168](https://github.com/vbrandl/hoc/pull/1168), [#1171](https://github.com/vbrandl/hoc/pull/1171))
 - Bump `rust-overlay` from `550547c` to `6b29b8e` ([#1168](https://github.com/vbrandl/hoc/pull/1168), [#1171](https://github.com/vbrandl/hoc/pull/1171))
+- Bump `jiff` from 0.2.38 to 0.2.39 ([#1172](https://github.com/vbrandl/hoc/pull/1172))
 
 ## [1.15.0] 2026-10-25
 
