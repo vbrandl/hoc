@@ -13,10 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `docker/login-action` from 4.6.0 to 4.8.0 ([#1166](https://github.com/vbrandl/hoc/pull/1166), [#1174](https://github.com/vbrandl/hoc/pull/1174))
 - Bump `alpine` from 3.24.2 to 3.24.3 ([#1167](https://github.com/vbrandl/hoc/pull/1167))
 - Bump `docker/login-action` from 4.6.0 to 4.7.0 ([#1166](https://github.com/vbrandl/hoc/pull/1166))
-- Bump `nixpkgs` from `fe13242` to `0bb2eed` ([#1168](https://github.com/vbrandl/hoc/pull/1168), [#1171](https://github.com/vbrandl/hoc/pull/1171))
-- Bump `rust-overlay` from `550547c` to `6b29b8e` ([#1168](https://github.com/vbrandl/hoc/pull/1168), [#1171](https://github.com/vbrandl/hoc/pull/1171))
+- Bump `nixpkgs` from `fe13242` to `f4a03c0` ([#1168](https://github.com/vbrandl/hoc/pull/1168), [#1171](https://github.com/vbrandl/hoc/pull/1171), [#1177](https://github.com/vbrandl/hoc/pull/1177))
+- Bump `rust-overlay` from `550547c` to `b705383` ([#1168](https://github.com/vbrandl/hoc/pull/1168), [#1171](https://github.com/vbrandl/hoc/pull/1171), [#1177](https://github.com/vbrandl/hoc/pull/1177))
 - Bump `jiff` from 0.2.38 to 0.2.39 ([#1172](https://github.com/vbrandl/hoc/pull/1172))
 - Bump `mime` from 0.3.17 to 0.3.18 ([#1173](https://github.com/vbrandl/hoc/pull/1173))
+- Bump `flake-utils` from `b7a79d3` to `bd48884` ([#1177](https://github.com/vbrandl/hoc/pull/1177))
 
 ## [1.15.0] 2026-10-25
 
