@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Dependencies
 - Bump `docker/login-action` from 4.6.0 to 4.8.0 ([#1166](https://github.com/vbrandl/hoc/pull/1166), [#1174](https://github.com/vbrandl/hoc/pull/1174))
-- Bump `alpine` from 3.24.2 to 3.24.3 ([#1167](https://github.com/vbrandl/hoc/pull/1167))
+- Bump `alpine` from 3.24.2 to 3.24.4 ([#1167](https://github.com/vbrandl/hoc/pull/1167), [#1176](https://github.com/vbrandl/hoc/pull/1176))
 - Bump `docker/login-action` from 4.6.0 to 4.7.0 ([#1166](https://github.com/vbrandl/hoc/pull/1166))
 - Bump `nixpkgs` from `fe13242` to `f4a03c0` ([#1168](https://github.com/vbrandl/hoc/pull/1168), [#1171](https://github.com/vbrandl/hoc/pull/1171), [#1177](https://github.com/vbrandl/hoc/pull/1177))
 - Bump `rust-overlay` from `550547c` to `b705383` ([#1168](https://github.com/vbrandl/hoc/pull/1168), [#1171](https://github.com/vbrandl/hoc/pull/1171), [#1177](https://github.com/vbrandl/hoc/pull/1177))
