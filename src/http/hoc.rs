@@ -54,8 +54,7 @@ impl BadgeQuery {
     fn excludes(&self) -> Excludes {
         self.exclude
             .as_ref()
-            .map(|e| e.split(',').map(|s| s.trim().to_string()).collect())
-            .unwrap_or_default()
+            .map_or_default(|e| e.split(',').map(|s| s.trim().to_string()).collect())
     }
 
     fn to_query(&self) -> String {

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `jiff` from 0.2.38 to 0.2.42 ([#1172](https://github.com/vbrandl/hoc/pull/1172), [#1175](https://github.com/vbrandl/hoc/pull/1175), [#1178](https://github.com/vbrandl/hoc/pull/1178))
 - Bump `mime` from 0.3.17 to 0.3.18 ([#1173](https://github.com/vbrandl/hoc/pull/1173))
 - Bump `flake-utils` from `b7a79d3` to `bd48884` ([#1177](https://github.com/vbrandl/hoc/pull/1177))
+- Bump `rust-toolchain` from 1.99.1 to 1.100.0 ([#1179](https://github.com/vbrandl/hoc/pull/1179))
 
 ## [1.15.0] 2026-10-25
 
