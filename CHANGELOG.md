@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `flake-utils` from `b7a79d3` to `cd48955` ([#1177](https://github.com/vbrandl/hoc/pull/1177), [#1184](https://github.com/vbrandl/hoc/pull/1184))
 - Bump `rust-toolchain` from 1.99.1 to 1.100.0 ([#1179](https://github.com/vbrandl/hoc/pull/1179))
 - Bump `vergen-gix` from 10.0.3 to 10.0.4 ([#1194](https://github.com/vbrandl/hoc/pull/1194))
+- Bump `gix-glob` from 0.29.1 to 0.30.0 ([#1196](https://github.com/vbrandl/hoc/pull/1196))
 
 ## [1.15.0] 2026-10-25
 
