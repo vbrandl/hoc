@@ -844,8 +844,8 @@ dependencies = [
  "gix-discover",
  "gix-error",
  "gix-filter",
- "gix-fs",
- "gix-glob",
+ "gix-fs 0.24.1",
+ "gix-glob 0.29.1",
  "gix-hash",
  "gix-hashtable",
  "gix-ignore",
@@ -906,7 +906,7 @@ checksum = "6b9947d93a94d41ddde66ac655674269121cbebaf6cdee30d8d0e7dbe85edb4c"
 dependencies = [
  "bstr",
  "gix-error",
- "gix-glob",
+ "gix-glob 0.29.1",
  "gix-parallel",
  "gix-path",
  "gix-quote",
@@ -969,7 +969,7 @@ dependencies = [
  "bstr",
  "gix-config-value",
  "gix-error",
- "gix-glob",
+ "gix-glob 0.29.1",
  "gix-parallel",
  "gix-path",
  "gix-ref",
@@ -1037,7 +1037,7 @@ dependencies = [
  "gix-command",
  "gix-error",
  "gix-filter",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-hash",
  "gix-imara-diff",
  "gix-index",
@@ -1059,7 +1059,7 @@ dependencies = [
  "bstr",
  "gix-discover",
  "gix-error",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-ignore",
  "gix-index",
  "gix-object",
@@ -1079,7 +1079,7 @@ dependencies = [
  "bstr",
  "dunce",
  "gix-error",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-path",
  "gix-ref",
  "gix-sec",
@@ -1131,6 +1131,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "gix-fs"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "516aec0f136bdfb26420ced8e43e1d5b36b967cd94aa1c763036208f25b8e888"
+dependencies = [
+ "bstr",
+ "gix-error",
+ "gix-macros",
+ "gix-parallel",
+ "gix-path",
+ "gix-utils",
+ "libc",
+]
+
+[[package]]
 name = "gix-glob"
 version = "0.29.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1138,7 +1153,21 @@ checksum = "7a12789fa68a150293ad8834d267b31044240532b5ccf2734d228fe985cba2be"
 dependencies = [
  "bitflags 2.13.2",
  "bstr",
- "gix-fs",
+ "gix-fs 0.24.1",
+ "gix-path",
+ "gix-trace",
+ "gix-utils",
+]
+
+[[package]]
+name = "gix-glob"
+version = "0.30.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "48b4b3c2353cc9f9709a49d8c3b9c7a7a0188d43eeb756ac9a5a36bc397b013c"
+dependencies = [
+ "bitflags 2.13.2",
+ "bstr",
+ "gix-fs 1.0.0",
  "gix-path",
  "gix-trace",
  "gix-utils",
@@ -1174,7 +1203,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "968f12fe42896873504f46127cd5bf0f9a34fc1479a781f43cf94b5d8d760a15"
 dependencies = [
  "bstr",
- "gix-glob",
+ "gix-glob 0.29.1",
  "gix-path",
  "gix-trace",
  "unicode-bom",
@@ -1202,7 +1231,7 @@ dependencies = [
  "fnv",
  "gix-bitmap",
  "gix-error",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-hash",
  "gix-lock",
  "gix-object",
@@ -1226,7 +1255,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "64783de116c477c5ea4a7f3b56e18ab363dabfdae2724291ea0587b642cadb3d"
 dependencies = [
  "gix-error",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-tempfile",
  "gix-utils",
 ]
@@ -1298,7 +1327,7 @@ dependencies = [
  "arc-swap",
  "crc32fast",
  "gix-error",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-hash",
  "gix-hashtable",
  "gix-object",
@@ -1386,7 +1415,7 @@ dependencies = [
  "gix-attributes",
  "gix-config-value",
  "gix-error",
- "gix-glob",
+ "gix-glob 0.29.1",
  "gix-path",
 ]
 
@@ -1447,7 +1476,7 @@ checksum = "68686e4697b9cd15d1b152ef51df870513210ed22938eacc13b3672b76035f13"
 dependencies = [
  "gix-actor",
  "gix-error",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-hash",
  "gix-lock",
  "gix-object",
@@ -1543,7 +1572,7 @@ dependencies = [
  "gix-dir",
  "gix-error",
  "gix-filter",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-hash",
  "gix-index",
  "gix-object",
@@ -1579,7 +1608,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8fdb135a043d6106b59bc58d59a326b277e495ec26fb9e02a1e2b6354bf4b5a"
 dependencies = [
  "dashmap",
- "gix-fs",
+ "gix-fs 0.24.1",
  "libc",
  "parking_lot 0.12.5",
  "signal-hook",
@@ -1677,8 +1706,8 @@ dependencies = [
  "dua-core",
  "gix-attributes",
  "gix-error",
- "gix-fs",
- "gix-glob",
+ "gix-fs 0.24.1",
+ "gix-glob 0.29.1",
  "gix-hash",
  "gix-ignore",
  "gix-index",
@@ -1698,7 +1727,7 @@ dependencies = [
  "bstr",
  "gix-error",
  "gix-filter",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-index",
  "gix-object",
  "gix-parallel",
@@ -1718,7 +1747,7 @@ dependencies = [
  "gix-attributes",
  "gix-error",
  "gix-filter",
- "gix-fs",
+ "gix-fs 0.24.1",
  "gix-hash",
  "gix-object",
  "gix-parallel",
@@ -1819,7 +1848,7 @@ dependencies = [
  "dotenvy",
  "futures",
  "git2",
- "gix-glob",
+ "gix-glob 0.30.0",
  "http-body-util",
  "hyper-util",
  "jiff 1.0.3",
